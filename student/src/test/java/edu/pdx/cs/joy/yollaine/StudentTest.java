@@ -1,5 +1,6 @@
 package edu.pdx.cs.joy.yollaine;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -18,8 +19,18 @@ public class StudentTest
   @Test
   void studentNamedPatIsNamedPat() {
     String name = "Pat";
-    var pat = new Student(name, new ArrayList<>(), 0.0, "Doesn't matter");
+    var pat = getStudentNamed(name);
     assertThat(pat.getName(), equalTo(name));
+  }
+
+  private static @NonNull Student getStudentNamed(String name) {
+    return new Student(name, new ArrayList<>(), 0.0, "Doesn't matter");
+  }
+
+  @Test
+  void allStudentsSayThisClassIsTooMuchWork() {
+    var student = getStudentNamed("Any Name");
+    assertThat(student.says(), equalTo("This class is too much work"));
   }
 
 }
