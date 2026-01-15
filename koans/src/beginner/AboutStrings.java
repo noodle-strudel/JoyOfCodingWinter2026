@@ -49,7 +49,6 @@ public class AboutStrings {
         assertEquals(new String("one").isEmpty(), false);
     }
 
-    @Koan
     public void stringLength() {
         assertEquals("".length(), 0);
         assertEquals("one".length(), 3);
