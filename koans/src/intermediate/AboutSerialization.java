@@ -161,7 +161,7 @@ public class AboutSerialization {
         try {
             is = new ObjectInputStream(new FileInputStream("SerializeFile"));
             Dog otherDog = (Dog) is.readObject();
-            assertEquals(otherDog.name, __);
+            assertEquals(otherDog.name, "snoopy");
         } finally {
             closeStream(is);
         }
@@ -199,7 +199,7 @@ public class AboutSerialization {
             is = new ObjectInputStream(new FileInputStream("SerializeFile"));
             MilitaryPlane otherPlane = (MilitaryPlane) is.readObject();
             // Does this surprise you?
-            assertEquals(otherPlane.name, __);
+            assertEquals(otherPlane.name, null);
 
             // Think about how serialization creates objects...
             // It does not use constructors! But if a parent object is not serializable

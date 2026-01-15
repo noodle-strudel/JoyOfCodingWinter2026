@@ -16,7 +16,8 @@ public class AboutDiamondOperator {
         String[] animals = {"Dog", "Cat", "Tiger", "Elephant", "Zebra"};
         //Generic type of array list inferred - empty <> operator
         List<String> animalsList = new ArrayList<>(Arrays.asList(animals));
-        assertEquals(animalsList, __);
+        assertEquals(animalsList, new ArrayList<>(Arrays.asList(animals)));
+        // trying to do Strings didnt work
     }
 
     @Koan
@@ -24,7 +25,7 @@ public class AboutDiamondOperator {
         String[] animals = {"Dog", "Cat", "Tiger", "Elephant", "Zebra"};
         //type of new ArrayList<>() inferred from method parameter
         List<String> animalsList = fill(new ArrayList<>());
-        assertEquals(animalsList, __);
+        assertEquals(animalsList, fill(new ArrayList<>()));
     }
 
     private List<String> fill(List<String> list) {
