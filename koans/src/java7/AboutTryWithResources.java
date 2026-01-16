@@ -47,7 +47,7 @@ public class AboutTryWithResources {
         } catch (IOException e) {
             line = "error";
         }
-        assertEquals(line, __);
+        assertEquals(line, "first line");
     }
 
     @Koan
@@ -60,7 +60,7 @@ public class AboutTryWithResources {
         } catch (FileNotFoundException e) {
             line = "no more leaking!";
         }
-        assertEquals(line, __);
+        assertEquals(line, "no more leaking!");
     }
 
     @Koan
