@@ -1,5 +1,6 @@
 package edu.pdx.cs.joy.yollaine;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -13,9 +14,33 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class PhoneCallTest {
 
+  @VisibleForTesting
+  private static PhoneCall createDefaultPhoneCall() throws IllegalArgumentException {
+    return new PhoneCall("123-456-7890", "098-765-4321", "00/00/00 00:00", "00/00/00 00:00");
+  }
+
   @Test
-  void canCreatePhoneCall() {
-    PhoneCall call = new PhoneCall();
+  void phoneCallWithCorrectArgumentsThrowsNoException() {
+    PhoneCall call = createDefaultPhoneCall();
+  }
+  @Test
+  void phoneCallWithEmptyCallerThrowsExceptionWithMessageMissingCaller() {
+    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("",  "098-765-4321", "00/00/00 00:00", "00/00/00 00:00"));
+  }
+
+  @Test
+  void phoneCallWithEmptyCalleeThrowsExceptionWithMessageMissingCallee() {
+    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("098-765-4321", "", "00/00/00 00:00", "00/00/00 00:00"));
+  }
+
+  @Test
+  void phoneCallWithEmptyBeginTimeThrowsExceptionWithMessageMissingBeginTime() {
+    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("098-765-4321", "908-343-5950", "", "00/00/00 00:00"));
+  }
+
+  @Test
+  void phoneCallWithEmptyEndTimeThrowsExceptionWithMessageMissingEndTime() {
+    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("098-765-4321", "494-494-3403", "00/00/00 00:00", ""));
   }
 
   /**
@@ -24,13 +49,13 @@ public class PhoneCallTest {
    */
   @Test
   void initiallyAllPhoneCallsHaveTheSameCallee() {
-    PhoneCall call = new PhoneCall();
+    PhoneCall call = createDefaultPhoneCall();
     assertThat(call.getCallee(), containsString("not implemented"));
   }
 
   @Test
   void forProject1ItIsOkayIfGetBeginTimeReturnsNull() {
-    PhoneCall call = new PhoneCall();
+    PhoneCall call = createDefaultPhoneCall();
     assertThat(call.getBeginTime(), is(nullValue()));
   }
   
