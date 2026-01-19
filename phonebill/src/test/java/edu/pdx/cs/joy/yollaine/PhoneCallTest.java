@@ -13,14 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class PhoneCallTest {
 
-  /**
-   * This unit test will need to be modified (likely deleted) as you implement
-   * your project.
-   */
   @Test
-  void getBeginTimeStringNeedsToBeImplemented() {
+  void canCreatePhoneCall() {
     PhoneCall call = new PhoneCall();
-    assertThrows(UnsupportedOperationException.class, call::getBeginTimeString);
   }
 
   /**
