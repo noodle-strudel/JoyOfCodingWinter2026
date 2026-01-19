@@ -14,48 +14,44 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class PhoneCallTest {
 
-  @VisibleForTesting
-  private static PhoneCall createDefaultPhoneCall() throws IllegalArgumentException {
-    return new PhoneCall("123-456-7890", "098-765-4321", "00/00/00 00:00", "00/00/00 00:00");
+  private static PhoneCall createPhoneCall(String... params) {
+      return switch (params.length) {
+          case 1 -> new PhoneCall(params[0], "098-765-4321", "00/00/00 00:00", "00/00/00 00:00");
+          case 2 -> new PhoneCall(params[0], params[1], "00/00/00 00:00", "00/00/00 00:00");
+          case 3 -> new PhoneCall(params[0], params[1], params[2], "00/00/00 00:00");
+          case 4 -> new PhoneCall(params[0], params[1], params[2], params[3]);
+          default -> new PhoneCall("123-456-7890", "098-765-4321", "00/00/00 00:00", "00/00/00 00:00");
+      };
   }
 
   @Test
   void phoneCallWithCorrectArgumentsThrowsNoException() {
-    PhoneCall call = createDefaultPhoneCall();
+    PhoneCall call = createPhoneCall();
   }
+
   @Test
   void phoneCallWithEmptyCallerThrowsExceptionWithMessageMissingCaller() {
-    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("",  "098-765-4321", "00/00/00 00:00", "00/00/00 00:00"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall(""));
   }
 
   @Test
   void phoneCallWithEmptyCalleeThrowsExceptionWithMessageMissingCallee() {
-    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("098-765-4321", "", "00/00/00 00:00", "00/00/00 00:00"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", ""));
   }
 
   @Test
   void phoneCallWithEmptyBeginTimeThrowsExceptionWithMessageMissingBeginTime() {
-    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("098-765-4321", "908-343-5950", "", "00/00/00 00:00"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-394-2948", ""));
   }
 
   @Test
   void phoneCallWithEmptyEndTimeThrowsExceptionWithMessageMissingEndTime() {
-    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("098-765-4321", "494-494-3403", "00/00/00 00:00", ""));
-  }
-
-  /**
-   * This unit test will need to be modified (likely deleted) as you implement
-   * your project.
-   */
-  @Test
-  void initiallyAllPhoneCallsHaveTheSameCallee() {
-    PhoneCall call = createDefaultPhoneCall();
-    assertThat(call.getCallee(), containsString("not implemented"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "00/00/00 00:00", ""));
   }
 
   @Test
   void forProject1ItIsOkayIfGetBeginTimeReturnsNull() {
-    PhoneCall call = createDefaultPhoneCall();
+    PhoneCall call = createPhoneCall();
     assertThat(call.getBeginTime(), is(nullValue()));
   }
   
