@@ -9,7 +9,7 @@ public class Project1 {
 
   @VisibleForTesting
   static boolean isValidDateAndTime(String dateAndTime) {
-    return true;
+    return !dateAndTime.isEmpty();
   }
 
   public static void main(String[] args) {
@@ -19,6 +19,24 @@ public class Project1 {
     }
 
     String name = args[0];
+
+    try {
+      String callerNum = args[1];
+      String calleeNum = args[2];
+      String beginTime = args[3];
+      String endTime = args[4];
+    } catch (ArrayIndexOutOfBoundsException e) {
+      if (e.getMessage().contains("Index 1")) {
+        System.err.println("Missing Caller Number");
+      } else if (e.getMessage().contains("Index 2")) {
+        System.err.println("Missing Callee Number");
+      } else if (e.getMessage().contains("Index 3")) {
+        System.err.println("Missing Begin Time");
+      } else if (e.getMessage().contains("Index 4")) {
+        System.err.println("Missing End Time");
+      }
+      return;
+    }
 
 
     for (String arg : args) {

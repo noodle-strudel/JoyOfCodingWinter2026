@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
  * A unit test for code in the <code>Project1</code> class.  This is different
@@ -27,5 +28,22 @@ class Project1Test {
       String line = reader.readLine();
       assertThat(line, containsString("This is a README file!"));
     }
+  }
+  private static boolean isValidDateAndTime(String dateAndTime) {
+    return Project1.isValidDateAndTime(dateAndTime);
+  }
+  @Test
+  void January212026At1PMIsAValidDateAndTime() {
+    assertThat(isValidDateAndTime("1/21/2026 01:00"), equalTo(true));
+  }
+
+  @Test
+  void emptyStringIsAnInvalidDateAndTime() {
+    assertThat(isValidDateAndTime(""), equalTo(false));
+  }
+
+  @Test
+  void February302000At1PMIsAValidDateAndTime() {
+    assertThat(isValidDateAndTime("02/30/2000 01:00"), equalTo(true));
   }
 }
