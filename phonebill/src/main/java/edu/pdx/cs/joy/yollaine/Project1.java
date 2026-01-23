@@ -2,6 +2,8 @@ package edu.pdx.cs.joy.yollaine;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import java.io.*;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -22,6 +24,25 @@ public class Project1 {
         }
 
         ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
+
+        if (argList.contains("-README")) {
+            try (InputStream readme = Project1.class.getResourceAsStream("README.txt")
+            ) {
+                StringBuffer readMeOutput = new StringBuffer();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
+                String line = "";
+
+                while ((line = reader.readLine()) != null) {
+                    readMeOutput.append(line);
+                    readMeOutput.append('\n');
+                }
+
+                System.out.println(readMeOutput);
+                return;
+            } catch (IOException e) {
+                System.err.println("Unable to access README.txt");
+            }
+        }
 
         boolean printFlag = argList.contains("-print");
         if (printFlag) {

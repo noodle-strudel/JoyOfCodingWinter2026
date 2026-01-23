@@ -65,4 +65,16 @@ class Project1IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name" + "'s phone bill with 1 phone calls"));
     }
 
+    @Test
+    void invokingMainWithValidArgumentsWithPrintAnywherePrintsPhoneBillInformation() {
+        MainMethodResult result = invokeMain("-print", "Any Name", "123-456-7890", "-print", "098-765-4321", "4/5/2023 11:34", "-print", "4/5/2023 12:59");
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name" + "'s phone bill with 1 phone calls"));
+    }
+
+    @Test
+    void invokingMainWithValidArgumentsWithReadMePrintsReadMeOnly() {
+        MainMethodResult result = invokeMain("-README", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023 11:34", "-print", "4/5/2023 12:59");
+        assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    }
+
 }
