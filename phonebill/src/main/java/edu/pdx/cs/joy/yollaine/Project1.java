@@ -6,6 +6,7 @@ import java.io.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.NoSuchElementException;
 
 /**
  * The main class for the Phone Bill Project
@@ -18,14 +19,42 @@ public class Project1 {
     }
 
     public static void main(String[] args) {
-        if (args.length == 0) {
+        ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
+
+        boolean printFlag = false;
+        boolean readMeFlag = false;
+        boolean unknownFlag = false;
+        String currentArg = "";
+        try {
+            while ((currentArg = argList.getFirst()).startsWith("-")) {
+                if (currentArg.contains("print")) {
+                    if (!printFlag) {
+                        printFlag = true;
+                    }
+                    argList.removeFirst();
+                    continue;
+                }
+                if (currentArg.contains("README")) {
+                    readMeFlag = true;
+
+                    // Break to immediately print out the README and exit
+                    // Doesn't need to process other arguments
+                    break;
+                }
+                unknownFlag = true;
+                break;
+            }
+        } catch (NoSuchElementException e) {
             System.err.println("Missing phone bill information");
             return;
         }
 
-        ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
+        if (unknownFlag) {
+            System.err.println("Unknown option " + currentArg);
+            return;
+        }
 
-        if (argList.contains("-README")) {
+        if (readMeFlag) {
             try (InputStream readme = Project1.class.getResourceAsStream("README.txt")
             ) {
                 StringBuffer readMeOutput = new StringBuffer();
@@ -36,18 +65,21 @@ public class Project1 {
                     readMeOutput.append(line);
                     readMeOutput.append('\n');
                 }
-
                 System.out.println(readMeOutput);
                 return;
             } catch (IOException e) {
                 System.err.println("Unable to access README.txt");
+                return;
             }
         }
 
-        boolean printFlag = argList.contains("-print");
-        if (printFlag) {
-            argList.removeIf(arg -> arg.equals("-print"));
+        // check if there's too many command line arguments
+        if (argList.size() > 5) {
+            System.err.println("Too many command line arguments");
+            // TODO: add usage stuff
+            return;
         }
+
 
         String name = argList.getFirst();
         String callerNum;
