@@ -34,6 +34,12 @@ class Project1Test {
   private static boolean isValidDateAndTime(String dateAndTime) {
     return Project1.isValidDateAndTime(dateAndTime);
   }
+
+  @Test
+  void canCreateProject1Object() {
+    Project1 prog1 = new Project1();
+  }
+
   @Test
   void January212026At1PMIsAValidDateAndTime() {
     assertThat(isValidDateAndTime("1/21/2026 01:00"), equalTo(true));
@@ -54,11 +60,44 @@ class Project1Test {
     assertThat(isValidDateAndTime(""), equalTo(false));
   }
 
+  @Test
+  void NoDateIsAnInvalidDateAndTime() {
+    assertThat(isValidDateAndTime("19:23"), equalTo(false));
+  }
+
+  @Test
+  void EmptyTimeIsAnInvalidDateAndTime() {
+    assertThat(isValidDateAndTime("02/30/2000"), equalTo(false));
+  }
+
   @ParameterizedTest
-  @ValueSource(strings = {"000/30/2000 00:00", "139/30/2000 00:00", "/30/2000 00:00", "10334/30/2000 00:00"})
+  @ValueSource(strings = {"000/30/2000 00:00", "139/30/2000 00:00", "/30/2000 00:00", "10334/30/2000 00:00", "a20/30/2000 00:00"})
   void InvalidMonthIsAnInvalidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(false));
   }
 
-  // TODO: invalid month, invalid year, invalid time, semantically incorrect is still correct
+  @ParameterizedTest
+  @ValueSource(strings = {"10//2000 00:00", "2/343/2000 00:00", "12/30th/2000 00:00", "10/000/2000 00:00", "10/??/2000 00:00"})
+  void InvalidDayIsAnInvalidDateAndTime(String date) {
+    assertThat(isValidDateAndTime(date), equalTo(false));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"10/01/ 00:00", "10/01/0 00:00", "10/01/23 00:00", "10/01/499 00:00", "10/01/20000 00:00"})
+  void InvalidYearIsAnInvalidDateAndTime(String date) {
+    assertThat(isValidDateAndTime(date), equalTo(false));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"10/01/2004 00:00a", "10/01/2000 :00", "10/01/2000 0:00", "10/01/2000 00:", "10/01/2000 10:", "10/01/2000 10:0", "10/01/2000 q00:00", "10/01/2000 0000"})
+  void InvalidTimeIsAnInvalidDateAndTime(String date) {
+    assertThat(isValidDateAndTime(date), equalTo(false));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"10/01/0000 00:00", "10/40/2000 34:80", "30/01/2000 00:00", "00/01/2000 00:60", "10/01/2000 10:90"})
+  void syntacticallyCorrectButSemanticallyIncorrectIsAValidDateAndTime(String date) {
+    assertThat(isValidDateAndTime(date), equalTo(true));
+  }
+
 }

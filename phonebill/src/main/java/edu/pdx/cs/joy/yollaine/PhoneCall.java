@@ -68,7 +68,7 @@ public class PhoneCall extends AbstractPhoneCall {
   */
   @Override
   public String getBeginTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.beginTime;
   }
 
   /**
@@ -78,6 +78,6 @@ public class PhoneCall extends AbstractPhoneCall {
   */
   @Override
   public String getEndTimeString() {
-    throw new UnsupportedOperationException("This method is not implemented yet");
+    return this.endTime;
   }
 }
