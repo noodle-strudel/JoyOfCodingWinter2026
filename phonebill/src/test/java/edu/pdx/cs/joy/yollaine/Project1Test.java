@@ -35,6 +35,10 @@ class Project1Test {
     return Project1.isValidDateAndTime(dateAndTime);
   }
 
+  private static boolean getValidPhoneNumber(String number) {
+    return Project1.isValidPhoneNumber(number);
+  }
+
   @Test
   void canCreateProject1Object() {
     Project1 prog1 = new Project1();
@@ -56,41 +60,41 @@ class Project1Test {
   }
 
   @Test
-  void EmptyDataIsAnInvalidDateAndTime() {
+  void emptyDataIsAnInvalidDateAndTime() {
     assertThat(isValidDateAndTime(""), equalTo(false));
   }
 
   @Test
-  void NoDateIsAnInvalidDateAndTime() {
+  void noDateIsAnInvalidDateAndTime() {
     assertThat(isValidDateAndTime("19:23"), equalTo(false));
   }
 
   @Test
-  void EmptyTimeIsAnInvalidDateAndTime() {
+  void emptyTimeIsAnInvalidDateAndTime() {
     assertThat(isValidDateAndTime("02/30/2000"), equalTo(false));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"000/30/2000 00:00", "139/30/2000 00:00", "/30/2000 00:00", "10334/30/2000 00:00", "a20/30/2000 00:00"})
-  void InvalidMonthIsAnInvalidDateAndTime(String date) {
+  void invalidMonthIsAnInvalidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(false));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"10//2000 00:00", "2/343/2000 00:00", "12/30th/2000 00:00", "10/000/2000 00:00", "10/??/2000 00:00"})
-  void InvalidDayIsAnInvalidDateAndTime(String date) {
+  void invalidDayIsAnInvalidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(false));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"10/01/ 00:00", "10/01/0 00:00", "10/01/23 00:00", "10/01/499 00:00", "10/01/20000 00:00"})
-  void InvalidYearIsAnInvalidDateAndTime(String date) {
+  void invalidYearIsAnInvalidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(false));
   }
 
   @ParameterizedTest
   @ValueSource(strings = {"10/01/2004 00:00a", "10/01/2000 :00", "10/01/2000 0:00", "10/01/2000 00:", "10/01/2000 10:", "10/01/2000 10:0", "10/01/2000 q00:00", "10/01/2000 0000"})
-  void InvalidTimeIsAnInvalidDateAndTime(String date) {
+  void invalidTimeIsAnInvalidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(false));
   }
 
@@ -98,6 +102,12 @@ class Project1Test {
   @ValueSource(strings = {"10/01/0000 00:00", "10/40/2000 34:80", "30/01/2000 00:00", "00/01/2000 00:60", "10/01/2000 10:90"})
   void syntacticallyCorrectButSemanticallyIncorrectIsAValidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(true));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"+1 345-566-3454", "+81 454-233-4563", "+63 556-454-4453", "434-356-5456", "000-000-0000"})
+  void validPhoneNumberIsAValidPhoneNumber(String number) {
+    assertThat(getValidPhoneNumber(number), equalTo(true));
   }
 
 }

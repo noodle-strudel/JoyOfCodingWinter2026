@@ -29,6 +29,13 @@ public class Project1 {
     return m.find();
   }
 
+  @VisibleForTesting
+  static boolean isValidPhoneNumber(String number) {
+    Pattern p = Pattern.compile("^(\\+([0-9]){1,3} )?([0-9]{3}-){2}[0-9]{4}$");
+    Matcher m = p.matcher(number);
+    return m.find();
+  }
+
   /**
   * The main method of Project1
   * @param args
@@ -40,7 +47,7 @@ public class Project1 {
     boolean printFlag = false;
     boolean readMeFlag = false;
     boolean unknownFlag = false;
-    String currentArg = "";
+    String currentArg;
     try {
       while ((currentArg = argList.getFirst()).startsWith("-")) {
         if (currentArg.contains("print")) {
@@ -73,9 +80,12 @@ public class Project1 {
     if (readMeFlag) {
       try (InputStream readme = Project1.class.getResourceAsStream("README.txt")
     ) {
+      if (readme == null) {
+        throw new IOException("Unable to access README.txt");
+      }
       StringBuffer readMeOutput = new StringBuffer();
       BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
-      String line = "";
+      String line;
 
       while ((line = reader.readLine()) != null) {
         readMeOutput.append(line);
@@ -92,7 +102,7 @@ public class Project1 {
     // check if there's too many command line arguments
     if (argList.size() > 5) {
       System.err.println("Too many command line arguments");
-      // TODO: add usage stuff
+      System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginTime endTime");
       return;
     }
 
@@ -120,6 +130,20 @@ public class Project1 {
       return;
     }
 
+    if (!isValidPhoneNumber(callerNum)) {
+      System.err.println("Invalid Caller Phone Format. Phone format should be +[Country Code] ###-###-####. Country code is optional.");
+      return;
+    } else if (!isValidPhoneNumber(calleeNum)) {
+      System.err.println("Invalid Callee Phone Format. Phone format should be +[Country Code] ###-###-####. Country code is optional.");
+      return;
+    } else if (!isValidDateAndTime(beginTime)) {
+      System.err.println("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm");
+      return;
+    } else if (!isValidDateAndTime(endTime)) {
+      System.err.println("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm");
+      return;
+    }
+
 
     PhoneCall newCall = new PhoneCall(callerNum, calleeNum, beginTime, endTime);
     PhoneBill newBill = new PhoneBill(name);
@@ -128,6 +152,9 @@ public class Project1 {
 
     if (printFlag) {
       System.out.println(newBill);
+      for (PhoneCall call: newBill.getPhoneCalls()) {
+        System.out.println(call);
+      }
     }
   }
 
