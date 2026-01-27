@@ -21,7 +21,6 @@ class StudentIT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing required student information"));
   }
 
-
   @Disabled
   @Test
   void daveStudentIsWrittenToStandardOut() {

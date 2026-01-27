@@ -53,6 +53,7 @@ public class Student extends Human {
   public static void main(String[] args) {
     if (args.length == 0) {
       System.err.println("Missing required student information!!");
+      return;
     }
 
     String name = args[0];
