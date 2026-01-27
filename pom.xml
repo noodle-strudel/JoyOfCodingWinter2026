@@ -11,13 +11,13 @@ accordingly
     <groupId>io.github.davidwhitlock.joy</groupId>
     <version>1.2.4</version>
   </parent>
-  <groupId>edu.pdx.cs.joy.YourUserId</groupId>
+  <groupId>edu.pdx.cs.joy.yollaine</groupId>
   <artifactId>JoyOfCoding</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
   <name>JoyOfCodingWinter2026</name>
   <description>Source code written in the Winter 2026 offering of The Joy of Coding</description>
-  <url>http://YourGitHubUserInLowerCase.github.io/JoyOfCodingWinter2026</url>
+  <url>https://noodle-strudel.github.io/JoyOfCodingWinter2026</url>
   <modules>
     <module>koans</module>
     <module>student</module>
