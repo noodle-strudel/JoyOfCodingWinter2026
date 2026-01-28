@@ -14,13 +14,13 @@ public class PhoneCall extends AbstractPhoneCall {
   /**
   * Constructor for the PhoneCall class.
   * @param newCaller
-  *       Phone number of the caller
+  *       Phone number of the caller.
   * @param newCallee
-  *       Phone number of the callee
+  *       Phone number of the callee.
   * @param newBeginTime
-  *       Date and time of when the phone call began
+  *       Date and time of when the phone call began.
   * @param newEndTime
-  *       Date and time of when the phone call ended
+  *       Date and time of when the phone call ended.
   * @throws IllegalArgumentException
   *       Throws {@link IllegalArgumentException} if the arguments are empty.
   */
@@ -42,9 +42,9 @@ public class PhoneCall extends AbstractPhoneCall {
   }
 
   /**
-  * Get the phone number of the caller
+  * Get the phone number of the caller.
   * @return
-  *      Returns caller's phone number
+  *      Returns caller's phone number.
   */
   @Override
   public String getCaller() {
@@ -52,9 +52,9 @@ public class PhoneCall extends AbstractPhoneCall {
   }
 
   /**
-  * Get the phone number of the callee
+  * Get the phone number of the callee.
   * @return
-  *      Returns the callee's phone number
+  *      Returns the callee's phone number.
   */
   @Override
   public String getCallee() {
@@ -62,9 +62,9 @@ public class PhoneCall extends AbstractPhoneCall {
   }
 
   /**
-  * Get the time the call began
+  * Get the time the call began.
   * @return
-  *      Returns the time the call began
+  *      Returns the time the call began.
   */
   @Override
   public String getBeginTimeString() {
@@ -72,9 +72,9 @@ public class PhoneCall extends AbstractPhoneCall {
   }
 
   /**
-  * Get the time the call ended
+  * Get the time the call ended.
   * @return
-  *      Returns the time the call ended
+  *      Returns the time the call ended.
   */
   @Override
   public String getEndTimeString() {

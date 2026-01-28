@@ -23,9 +23,9 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   }
 
   /**
-  * Get the name of the customer
+  * Get the name of the customer.
   * @return
-  *      Returns the name of the customer
+  *      Returns the name of the customer.
   */
   @Override
   public String getCustomer() {
@@ -35,7 +35,7 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   /**
   * Add a {@link PhoneCall} to the PhoneBill.
   * @param call
-  *      The PhoneCall to add
+  *      The PhoneCall to add.
   */
   @Override
   public void addPhoneCall(PhoneCall call) {
@@ -43,9 +43,9 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   }
 
   /**
-  * Get the phone calls in the phone bill
+  * Get the phone calls in the phone bill.
   * @return
-  *      Returns the collection of PhoneCalls
+  *      Returns the collection of PhoneCalls.
   */
   @Override
   public Collection<PhoneCall> getPhoneCalls() {

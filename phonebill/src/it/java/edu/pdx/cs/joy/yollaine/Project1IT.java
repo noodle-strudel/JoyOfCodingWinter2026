@@ -21,7 +21,7 @@ class Project1IT extends InvokeMainTestCase {
   }
 
   /**
-   * Tests that invoking the main method with no arguments issues an error
+   * Tests that invoking the main method with no arguments issues an error.
    */
   @Test
   void invokingMainWithNoCommandLineArgumentsPrintsMissingPhoneBillToStdErr() {
