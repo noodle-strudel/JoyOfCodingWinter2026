@@ -93,7 +93,7 @@ class Project1Test {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"10/01/2004 00:00a", "10/01/2000 :00", "10/01/2000 0:00", "10/01/2000 00:", "10/01/2000 10:", "10/01/2000 10:0", "10/01/2000 q00:00", "10/01/2000 0000"})
+  @ValueSource(strings = {"10/01/2004 00:00a", "10/01/2000 :00", "10/01/2000 1:00", "10/01/2000 00:", "10/01/2000 10:", "10/01/2000 10:0", "10/01/2000 q00:00", "10/01/2000 0000"})
   void invalidTimeIsAnInvalidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(false));
   }

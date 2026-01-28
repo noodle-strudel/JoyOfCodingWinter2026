@@ -55,38 +55,30 @@ public class Project1 {
     // Process options until a non-option is encountered
     boolean printFlag = false;
     boolean readMeFlag = false;
-    boolean unknownFlag = false;
+    boolean unknownArgFlag = false;
     String currentArg = "";
+    String unknownArg = "";
     try {
       while ((currentArg = argList.getFirst()).startsWith("-")) {
         if (currentArg.contains("print")) {
           printFlag = true;
-          argList.removeFirst();
         } else if (currentArg.contains("README")) {
           readMeFlag = true;
-          argList.removeFirst();
         } else {
-          // Stop processing options if an unknown one is encountered
-          unknownFlag = true;
-          break;
+          unknownArgFlag = true;
+          unknownArg = currentArg;
         }
+        argList.removeFirst();
       }
     } catch (NoSuchElementException e) {
-      // If there's no -README flag, then there's no other arguments for the program to use and will exit.
-      // If there is, the program will only print the README with no problem.
-      if (!readMeFlag) {
+      // If there's no -README flag and no unknown arguments, then the program will try to
+      // store phone bill information without exiting.
+      // But since there's no arguments and only options, it will give an error message.
+      if (!readMeFlag && !unknownArgFlag) {
         System.err.println("Missing phone bill information");
         System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
         return;
       }
-    }
-
-    if (unknownFlag) {
-      System.err.println("Unknown option " + currentArg);
-      System.err.println("options are (options may appear in any order before arguments):");
-      System.err.println("\t-print          Prints a description of the new phone call");
-      System.err.println("\t-README         Prints a README for this project and exits");
-      return;
     }
 
     // Print out the README and exit the program
@@ -110,6 +102,15 @@ public class Project1 {
       System.err.println("Unable to access README.txt");
       return;
       }
+    }
+
+    // Print an error if an unknown argument is found and exit
+    if (unknownArgFlag) {
+      System.err.println("Unknown option " + unknownArg);
+      System.err.println("options are (options may appear in any order before arguments):");
+      System.err.println("\t-print          Prints a description of the new phone call");
+      System.err.println("\t-README         Prints a README for this project and exits");
+      return;
     }
 
     // Check if there's too many command line arguments

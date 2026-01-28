@@ -7,7 +7,7 @@ This program holds information about a phone bill with at least 1 phone call.
 
 usage: java -jar target/phonebill-1.0.0.jar [options] <args>
     args are (in this order):
-        customer        Person whose phone bill we’re modeling
+        customer        Person whose phone bill we're modeling
         callerNumber    Phone number of caller
         calleeNumber    Phone number of person who was called
         begin           Date and time call began (24-hour time)

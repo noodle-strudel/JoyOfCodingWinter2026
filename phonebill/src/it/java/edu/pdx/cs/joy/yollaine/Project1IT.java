@@ -102,6 +102,7 @@ class Project1IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 to 4/5/2023 12:59"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
   }
 
   @Test
@@ -160,19 +161,40 @@ class Project1IT extends InvokeMainTestCase {
   }
 
   @Test
-  void invokingMainWithInvalidOptionAndReadMePrintsUnknownOptionToStdErr() {
-    String unknownOption = "-43fdfd";
-    MainMethodResult result = invokeMain(unknownOption, "-README", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+  void invokingMainWithJustInvalidOptionAndPrintPrintsUnknownOptionToStdErr() {
+    String unknownOption = "-948948539kfdjg";
+    MainMethodResult result = invokeMain(unknownOption, "-print");
     assertThat(result.getTextWrittenToStandardError(), containsString("Unknown option " + unknownOption));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain( "-README", unknownOption, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    result = invokeMain("-print", unknownOption);
     assertThat(result.getTextWrittenToStandardError(), containsString("Unknown option " + unknownOption));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
+  void invokingMainWithInvalidOptionAndReadMeStillPrintsReadMeAndExits() {
+    String unknownOption = "-43fdfd";
+    MainMethodResult result = invokeMain(unknownOption, "-README", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    result = invokeMain( "-README", unknownOption, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+  }
+
+  @Test
   void invokingMainWithOnlyReadMePrintsReadMeOnly() {
     MainMethodResult result = invokeMain("-README");
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+  }
+
+  @Test
+  void invokingMainWithOnlyReadMeAndInvalidOptionPrintsReadMeOnly() {
+    MainMethodResult result = invokeMain("-README", "-iriroere");
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    result = invokeMain("-iriroere", "-README");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
   }
