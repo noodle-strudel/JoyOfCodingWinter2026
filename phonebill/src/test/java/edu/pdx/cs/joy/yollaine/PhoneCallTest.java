@@ -87,5 +87,4 @@ public class PhoneCallTest {
     PhoneCall call = createPhoneCall(caller, callee, begin, end);
     assertThat(call.toString(), equalTo("Phone call from " + caller + " to " + callee + " from " + begin + " to " + end));
   }
-  
 }

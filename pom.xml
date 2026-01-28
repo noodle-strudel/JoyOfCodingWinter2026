@@ -30,7 +30,7 @@ accordingly
   </organization>
   <issueManagement>
     <system>github</system>
-    <url>https://github.com/YourGitHubUser/JoyOfCodingWinter2026/issues</url>
+    <url>https://github.com/noodle-strudel/JoyOfCodingWinter2026/issues</url>
   </issueManagement>
   <licenses>
     <license>
@@ -71,7 +71,7 @@ accordingly
       <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
-          <topSiteURL>scm:git:git@github.com:YourGithubUser/JoyOfCodingWinter2026.git</topSiteURL>
+          <topSiteURL>scm:git:git@github.com:noodle-strudel/JoyOfCodingWinter2026.git</topSiteURL>
         </configuration>
       </plugin>
       <plugin>
@@ -86,7 +86,7 @@ accordingly
     </plugins>
   </build>
   <scm>
-    <connection>scm:git:git@github.com:YourGithubUser/JoyOfCodingWinter2026.git</connection>
+    <connection>scm:git:git@github.com:noodle-strudel/JoyOfCodingWinter2026.git</connection>
   </scm>
   <distributionManagement>
     <snapshotRepository>
@@ -96,7 +96,7 @@ accordingly
     <site>
       <id>gh-pages</id>
       <name>GitHub Pages</name>
-      <url>scm:git:git@github.com:YourGithubUser/JoyOfCodingWinter2026.git</url>
+      <url>scm:git:git@github.com:noodle-strudel/JoyOfCodingWinter2026.git</url>
     </site>
   </distributionManagement>
 </project>

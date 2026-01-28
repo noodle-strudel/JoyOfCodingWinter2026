@@ -11,16 +11,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The main class for the Phone Bill Project
+ * The main class for the Phone Bill Project.
  */
 public class Project1 {
 
   /**
-  * Determines if a date and time is valid
+  * Determines if a date and time is valid.
   * @param dateAndTime
-  *      The data and time combo to validate
+  *      The data and time combo to validate.
   * @return
-  *      Returns true if dataAndTime is valid, false if it isn't
+  *      Returns true if dataAndTime is valid and false if it's invalid.
   */
   @VisibleForTesting
   static boolean isValidDateAndTime(String dateAndTime) {
@@ -29,54 +29,67 @@ public class Project1 {
     return m.find();
   }
 
+  /**
+   * Determines if a phone number is in a valid format.
+   * @param number
+   *      The phone number to validate.
+   * @return
+   *      Returns true if number is valid.
+   */
   @VisibleForTesting
   static boolean isValidPhoneNumber(String number) {
-    Pattern p = Pattern.compile("^(\\+([0-9]){1,3} )?([0-9]{3}-){2}[0-9]{4}$");
+    Pattern p = Pattern.compile("^([0-9]{3}-){2}[0-9]{4}$");
     Matcher m = p.matcher(number);
     return m.find();
   }
 
   /**
-  * The main method of Project1
+  * The main method of Project1.
   * @param args
-  *      The command line arguments fed into the program
+  *      The command line arguments fed into the program.
   */
   public static void main(String[] args) {
+    // Transform args into an ArrayList for easier manipulation
     ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
 
+    // Process options until a non-option is encountered
     boolean printFlag = false;
     boolean readMeFlag = false;
     boolean unknownFlag = false;
-    String currentArg;
+    String currentArg = "";
     try {
       while ((currentArg = argList.getFirst()).startsWith("-")) {
         if (currentArg.contains("print")) {
-        if (!printFlag) {
           printFlag = true;
-        }
-        argList.removeFirst();
-        continue;
-        }
-        if (currentArg.contains("README")) {
+          argList.removeFirst();
+        } else if (currentArg.contains("README")) {
           readMeFlag = true;
-
-          // Break to immediately print out the README and exit
-          // Doesn't need to process other arguments
+          argList.removeFirst();
+        } else {
+          // Stop processing options if an unknown one is encountered
+          unknownFlag = true;
           break;
         }
-        unknownFlag = true;
-        break;
       }
     } catch (NoSuchElementException e) {
-      System.err.println("Missing phone bill information");
-      return;
+      // If there's no -README flag, then there's no other arguments for the program to use and will exit.
+      // If there is, the program will only print the README with no problem.
+      if (!readMeFlag) {
+        System.err.println("Missing phone bill information");
+        System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
+        return;
+      }
     }
 
     if (unknownFlag) {
       System.err.println("Unknown option " + currentArg);
+      System.err.println("options are (options may appear in any order before arguments):");
+      System.err.println("\t-print          Prints a description of the new phone call");
+      System.err.println("\t-README         Prints a README for this project and exits");
       return;
     }
 
+    // Print out the README and exit the program
     if (readMeFlag) {
       try (InputStream readme = Project1.class.getResourceAsStream("README.txt")
     ) {
@@ -99,53 +112,64 @@ public class Project1 {
       }
     }
 
-    // check if there's too many command line arguments
-    if (argList.size() > 5) {
+    // Check if there's too many command line arguments
+    if (argList.size() > 7) {
       System.err.println("Too many command line arguments");
-      System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginTime endTime");
+      System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
       return;
     }
 
-
+    // Parse command line and get required arguments
     String name = argList.getFirst();
     String callerNum;
     String calleeNum;
+    String beginDate;
     String beginTime;
+    String endDate;
     String endTime;
     try {
       callerNum = argList.get(1);
       calleeNum = argList.get(2);
-      beginTime = argList.get(3);
-      endTime = argList.get(4);
+      beginDate = argList.get(3);
+      beginTime = argList.get(4);
+      endDate = argList.get(5);
+      endTime = argList.get(6);
     } catch (IndexOutOfBoundsException e) {
       if (e.getMessage().contains("Index 1")) {
         System.err.println("Missing Caller Number");
       } else if (e.getMessage().contains("Index 2")) {
         System.err.println("Missing Callee Number");
       } else if (e.getMessage().contains("Index 3")) {
-        System.err.println("Missing Begin Time");
+        System.err.println("Missing Begin Date");
       } else if (e.getMessage().contains("Index 4")) {
+        System.err.println("Missing Begin Time");
+      } else if (e.getMessage().contains("Index 5")) {
+        System.err.println("Missing End Date");
+      } else if (e.getMessage().contains("Index 6")) {
         System.err.println("Missing End Time");
       }
       return;
     }
 
+    String begin = beginDate + " " + beginTime;
+    String end = endDate + " " + endTime;
+
     if (!isValidPhoneNumber(callerNum)) {
-      System.err.println("Invalid Caller Phone Format. Phone format should be +[Country Code] ###-###-####. Country code is optional.");
+      System.err.println("Invalid Caller Phone Format. Phone format should be ###-###-####.");
       return;
     } else if (!isValidPhoneNumber(calleeNum)) {
-      System.err.println("Invalid Callee Phone Format. Phone format should be +[Country Code] ###-###-####. Country code is optional.");
+      System.err.println("Invalid Callee Phone Format. Phone format should be ###-###-####.");
       return;
-    } else if (!isValidDateAndTime(beginTime)) {
+    } else if (!isValidDateAndTime(begin)) {
       System.err.println("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm");
       return;
-    } else if (!isValidDateAndTime(endTime)) {
+    } else if (!isValidDateAndTime(end)) {
       System.err.println("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm");
       return;
     }
 
-
-    PhoneCall newCall = new PhoneCall(callerNum, calleeNum, beginTime, endTime);
+    // Create a phone call attached to a phone bill after verification is successful
+    PhoneCall newCall = new PhoneCall(callerNum, calleeNum, begin, end);
     PhoneBill newBill = new PhoneBill(name);
 
     newBill.addPhoneCall(newCall);
@@ -157,5 +181,4 @@ public class Project1 {
       }
     }
   }
-
 }

@@ -105,9 +105,14 @@ class Project1Test {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"+1 345-566-3454", "+81 454-233-4563", "+63 556-454-4453", "434-356-5456", "000-000-0000"})
-  void validPhoneNumberIsAValidPhoneNumber(String number) {
-    assertThat(getValidPhoneNumber(number), equalTo(true));
+  @ValueSource(strings = {"345-566-3454", "454-233-4563", "556-454-4453", "434-356-5456", "000-000-0000"})
+  void validPhoneNumberReturnsTrue(String phoneNumber) {
+    assertThat(getValidPhoneNumber(phoneNumber), equalTo(true));
   }
 
+  @ParameterizedTest
+  @ValueSource(strings = {"4939454554", "dfkdkfdsf", "495-349-a948", "::FD:FSFDSF", "flg-fgk-fmrk", "[[]-==[-````", "a453-554-3240"})
+  void invalidPhoneNumberReturnsFalse(String phoneNumber) {
+    assertThat(getValidPhoneNumber(phoneNumber), equalTo(false));
+  }
 }

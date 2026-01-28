@@ -50,7 +50,5 @@ public class PhoneBillTest {
       bill.addPhoneCall(createDefaultPhoneCall());
     }
     assertThat(bill.getPhoneCalls().size(), equalTo(5));
-
   }
-
 }

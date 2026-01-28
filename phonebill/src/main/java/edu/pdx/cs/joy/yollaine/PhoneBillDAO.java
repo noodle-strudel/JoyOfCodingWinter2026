@@ -81,6 +81,7 @@ public class PhoneBillDAO {
     return null;
   }
 
+  /*
   public static void main(String[] args) throws SQLException {
     if (args.length < 2) {
       System.err.println("Usage: java PhoneBillDAO <db-file> <customer-name>");
@@ -104,5 +105,7 @@ public class PhoneBillDAO {
       }
     }
   }
+
+   */
 }
 
