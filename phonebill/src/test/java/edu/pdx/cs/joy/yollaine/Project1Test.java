@@ -93,13 +93,13 @@ class Project1Test {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"10/01/2004 00:00a", "10/01/2000 :00", "10/01/2000 1:00", "10/01/2000 00:", "10/01/2000 10:", "10/01/2000 10:0", "10/01/2000 q00:00", "10/01/2000 0000"})
+  @ValueSource(strings = {"10/01/2004 00:00a", "10/01/2000 :00", "10/01/2000 sd:00", "10/01/2000 00:", "10/01/2000 10:", "10/01/2000 10:0", "10/01/2000 q00:00", "10/01/2000 0000"})
   void invalidTimeIsAnInvalidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(false));
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"10/01/0000 00:00", "10/40/2000 34:80", "30/01/2000 00:00", "00/01/2000 00:60", "10/01/2000 10:90"})
+  @ValueSource(strings = {"10/01/0000 00:00", "10/40/2000 34:80", "30/01/2000 00:00", "00/01/2000 00:60", "10/01/2000 10:90", "43/23/5565 1:30"})
   void syntacticallyCorrectButSemanticallyIncorrectIsAValidDateAndTime(String date) {
     assertThat(isValidDateAndTime(date), equalTo(true));
   }
