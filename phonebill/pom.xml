@@ -75,7 +75,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>edu.pdx.cs.joy.yollaine.Project1</mainClass>
+              <mainClass>edu.pdx.cs.joy.yollaine.Project2</mainClass>
             </manifest>
           </archive>
         </configuration>
