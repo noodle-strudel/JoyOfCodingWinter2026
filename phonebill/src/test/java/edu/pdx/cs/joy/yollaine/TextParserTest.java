@@ -2,6 +2,7 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,6 +22,21 @@ public class TextParserTest {
     TextParser parser = new TextParser(new InputStreamReader(resource));
     PhoneBill bill = parser.parse();
     assertThat(bill.getCustomer(), equalTo("Test Phone Bill"));
+    assertThat(bill.getPhoneCalls().size(), equalTo(0));
+  }
+
+  @Test
+  void validTextFileWithOnePhoneCallCanBeParsed() throws ParserException {
+    InputStream resource = getClass().getResourceAsStream("valid-phonebill-1-phonecall.txt");
+    assertThat(resource, notNullValue());
+
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    PhoneBill bill = parser.parse();
+    assertThat(bill.getCustomer(), equalTo("Test Phone Bill"));
+    assertThat(bill.getPhoneCalls().size(), equalTo(1));
+
+    PhoneCall o = (PhoneCall) bill.getPhoneCalls().toArray()[0];
+    assertThat(o.getCaller(), equalTo("445-345-3353"));
   }
 
   @Test
