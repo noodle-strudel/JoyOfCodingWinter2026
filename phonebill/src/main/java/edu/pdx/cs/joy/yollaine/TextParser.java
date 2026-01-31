@@ -2,6 +2,7 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.PhoneBillParser;
+import org.jspecify.annotations.NonNull;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,16 +35,11 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
         PhoneBill phoneBill = new PhoneBill(customer);
         String callInfo = br.readLine();
 
-        if (callInfo != null) {
-          // use stringtokenizer thing
-          StringTokenizer st = new StringTokenizer(callInfo, " ");
-          PhoneCall phoneCall;
-          try {
-            phoneCall = new PhoneCall(st.nextToken(), st.nextToken(), st.nextToken(), st.nextToken());
-          } catch (NoSuchElementException e) {
-            throw new NoSuchElementException("Missing essential info from phone call");
-          }
+        while(callInfo != null) {
+          // use string tokenizer thing
+          PhoneCall phoneCall = getPhoneCall(callInfo);
           phoneBill.addPhoneCall(phoneCall);
+          callInfo = br.readLine();
         }
 
         return phoneBill;
@@ -51,5 +47,22 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
     } catch (IOException e) {
       throw new ParserException("While parsing phone bill text", e);
     }
+  }
+
+  private static @NonNull PhoneCall getPhoneCall(String callInfo) throws ParserException {
+    StringTokenizer st = new StringTokenizer(callInfo, " ");
+    PhoneCall phoneCall;
+    try {
+      String newCaller = st.nextToken();
+      String newCallee = st.nextToken();
+      String newBeginDate = st.nextToken();
+      String newBeginTime = st.nextToken();
+      String newEndDate = st.nextToken();
+      String newEndTime = st.nextToken();
+      phoneCall = new PhoneCall(newCaller, newCallee, newBeginDate + " " + newBeginTime, newEndDate + " " + newEndTime);
+    } catch (NoSuchElementException e) {
+      throw new ParserException("Missing essential info from phone call");
+    }
+    return phoneCall;
   }
 }
