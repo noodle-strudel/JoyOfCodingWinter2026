@@ -1,11 +1,18 @@
 package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.InvokeMainTestCase;
+import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the functionality in the {@link Project2} main class.
@@ -226,4 +233,36 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
   }
+
+  @Test
+  void validPhoneNumberWithTextFileOptionCreatesFileInSystem() {
+    String fileName = "it-test.txt";
+    File f = new File(fileName);
+    f.delete();
+    MainMethodResult result = invokeMain("-textFile", fileName, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertTrue(f.exists());
+  }
+
+  @Test
+  void validPhoneNumberWithTextFileOptionCreatesFileInSystemWithContentsInIt() throws FileNotFoundException, ParserException {
+    String fileName = "it-test.txt";
+    File f = new File(fileName);
+    f.delete();
+    MainMethodResult result = invokeMain("-textFile", fileName, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertTrue(f.exists());
+
+    TextParser parser = new TextParser(new FileReader(fileName));
+    PhoneBill read = parser.parse();
+    assertThat(read.getCustomer(), equalTo("Any Name"));
+    PhoneCall o = (PhoneCall) read.getPhoneCalls().toArray()[0];
+    assertThat(o.getCaller(), equalTo("123-456-7890"));
+    assertThat(o.getCallee(), equalTo("098-765-4321"));
+    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34"));
+    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59"));
+  }
+
 }

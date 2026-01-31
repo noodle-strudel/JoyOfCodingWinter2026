@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
- * A unit test for code in the <code>Project1</code> class.  This is different
+ * A unit test for code in the <code>Project2</code> class.  This is different
  * from <code>Project1IT</code> which is an integration test and can capture data
  * written to {@link System#out} and the like.
  */
@@ -115,4 +115,5 @@ class Project2Test {
   void invalidPhoneNumberReturnsFalse(String phoneNumber) {
     assertThat(getValidPhoneNumber(phoneNumber), equalTo(false));
   }
+
 }

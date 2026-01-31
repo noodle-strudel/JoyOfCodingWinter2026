@@ -2,6 +2,7 @@ package edu.pdx.cs.joy.yollaine;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import javax.imageio.IIOException;
 import java.io.*;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class Project2 {
     boolean printFlag = false;
     boolean readMeFlag = false;
     boolean unknownArgFlag = false;
+    boolean textFileFlag = false;
     String currentArg = "";
     String unknownArg = "";
     try {
@@ -64,6 +66,8 @@ public class Project2 {
           printFlag = true;
         } else if (currentArg.contains("README")) {
           readMeFlag = true;
+        } else if (currentArg.contains("textFile")) {
+          textFileFlag = true;
         } else {
           unknownArgFlag = true;
           unknownArg = currentArg;
@@ -113,12 +117,25 @@ public class Project2 {
       return;
     }
 
+    // Check if the phone bill will be read to a text file
+    File phoneBillFile = null;
+    if (textFileFlag) {
+      phoneBillFile = new File(argList.removeFirst());
+      try {
+        phoneBillFile.createNewFile();
+      } catch (IOException e) {
+        System.err.println(e.getMessage());
+        return;
+      }
+    }
+
     // Check if there's too many command line arguments
     if (argList.size() > 7) {
       System.err.println("Too many command line arguments");
       System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
       return;
     }
+
 
     // Parse command line and get required arguments
     String name = argList.getFirst();
@@ -174,6 +191,16 @@ public class Project2 {
     PhoneBill newBill = new PhoneBill(name);
 
     newBill.addPhoneCall(newCall);
+    if (textFileFlag) {
+      try {
+        TextDumper textDumper = new TextDumper(new FileWriter(phoneBillFile));
+        textDumper.dump(newBill);
+      } catch (IOException e) {
+        System.err.println(e.getMessage());
+        return;
+      }
+
+    }
 
     if (printFlag) {
       System.out.println(newBill);
