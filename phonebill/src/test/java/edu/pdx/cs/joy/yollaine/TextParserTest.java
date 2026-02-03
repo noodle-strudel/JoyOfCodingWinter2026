@@ -70,4 +70,13 @@ public class TextParserTest {
     TextParser parser = new TextParser(new InputStreamReader(resource));
     assertThrows(ParserException.class, parser::parse);
   }
+
+  @Test
+  void invalidTextFileWithCrazyTextThrowsParserException() {
+    InputStream resource = getClass().getResourceAsStream("invalid-phonebill-crazy.txt");
+    assertThat(resource, notNullValue());
+
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    assertThrows(ParserException.class, parser::parse);
+  }
 }

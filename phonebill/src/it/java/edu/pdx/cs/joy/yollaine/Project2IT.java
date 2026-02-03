@@ -1,15 +1,14 @@
 package edu.pdx.cs.joy.yollaine;
 
+import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -263,6 +262,73 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(o.getCallee(), equalTo("098-765-4321"));
     assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34"));
     assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59"));
+  }
+
+  @Test
+  void validPhoneNumberWithTextFileOptionAndPrintCreatesFileInSystemWithContentsInItAndPrintsIt() throws FileNotFoundException, ParserException {
+    String fileName = "it-test.txt";
+    File f = new File(fileName);
+    f.delete();
+    MainMethodResult result = invokeMain("-textFile", fileName, "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 to 4/5/2023 12:59"));
+    assertTrue(f.exists());
+
+    TextParser parser = new TextParser(new FileReader(fileName));
+    PhoneBill read = parser.parse();
+    assertThat(read.getCustomer(), equalTo("Any Name"));
+    PhoneCall o = (PhoneCall) read.getPhoneCalls().toArray()[0];
+    assertThat(o.getCaller(), equalTo("123-456-7890"));
+    assertThat(o.getCallee(), equalTo("098-765-4321"));
+    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34"));
+    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59"));
+  }
+
+  @Test
+  void matchingCustomerNameInFileAddsPhoneCallToIt() throws FileNotFoundException, ParserException {
+    String fileName = "carlPhoneBill.txt";
+    File f = new File(fileName);
+    PhoneCall tempCall = new PhoneCall("998-433-4345", "343-343-5445", "3/4/2024 20:55", "12/12/2043 12:20");
+    PhoneBill tempBill = new PhoneBill("Carl Jones");
+    tempBill.addPhoneCall(tempCall);
+
+    try (PrintWriter pw = new PrintWriter(new FileWriter(fileName));
+    ) {
+      pw.println("Carl Jones");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", fileName, "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024 20:55", "12/12/2043 12:20");
+    TextParser p = new TextParser(new FileReader(f));
+    PhoneBill bill = p.parse();
+    assertEquals(tempBill.toString(), bill.toString());
+
+    PhoneCall call2 = (PhoneCall) bill.getPhoneCalls().toArray()[1];
+    assertEquals(call2, notNullValue());
+  }
+
+  //TODO: the above test but with a print statement too
+  // Also with readme
+  // with invalid arguments
+  // with README and print before text file
+
+  @Disabled
+  @Test
+  void invalidFileArgumentDoesItsThingAndThrowsException() {
+
+  }
+
+  @Test
+  void textFileOptionOnlyWithNoArgsPrintsToStdError() {
+    String fileName = "it-test.txt";
+    File f = new File(fileName);
+    f.delete();
+    MainMethodResult result = invokeMain("-textFile");
+    assertThat(result.getTextWrittenToStandardError(), containsString("-textFile argument requires file path"));
+
   }
 
 }

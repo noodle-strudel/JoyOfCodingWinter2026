@@ -1,8 +1,8 @@
 package edu.pdx.cs.joy.yollaine;
 
 import com.google.common.annotations.VisibleForTesting;
+import org.jspecify.annotations.Nullable;
 
-import javax.imageio.IIOException;
 import java.io.*;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -53,40 +53,12 @@ public class Project2 {
     // Transform args into an ArrayList for easier manipulation
     ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
 
-    // Process options until a non-option is encountered
-    boolean printFlag = false;
-    boolean readMeFlag = false;
-    boolean unknownArgFlag = false;
-    boolean textFileFlag = false;
-    String currentArg = "";
-    String unknownArg = "";
-    try {
-      while ((currentArg = argList.getFirst()).startsWith("-")) {
-        if (currentArg.contains("print")) {
-          printFlag = true;
-        } else if (currentArg.contains("README")) {
-          readMeFlag = true;
-        } else if (currentArg.contains("textFile")) {
-          textFileFlag = true;
-        } else {
-          unknownArgFlag = true;
-          unknownArg = currentArg;
-        }
-        argList.removeFirst();
-      }
-    } catch (NoSuchElementException e) {
-      // If there's no -README flag and no unknown arguments, then the program will try to
-      // store phone bill information without exiting.
-      // But since there's no arguments and only options, it will give an error message.
-      if (!readMeFlag && !unknownArgFlag) {
-        System.err.println("Missing phone bill information");
-        System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
-        return;
-      }
-    }
+    progFlags flags = getProgFlags(argList);
+    // An exception or error occurred
+    if (flags == null) return;
 
     // Print out the README and exit the program
-    if (readMeFlag) {
+    if (flags.readMeFlag()) {
       try (InputStream readme = Project2.class.getResourceAsStream("README.txt")
     ) {
       if (readme == null) {
@@ -109,18 +81,26 @@ public class Project2 {
     }
 
     // Print an error if an unknown argument is found and exit
-    if (unknownArgFlag) {
-      System.err.println("Unknown option " + unknownArg);
+    if (flags.unknownArgFlag()) {
+      System.err.println("Unknown option " + flags.unknownArg());
       System.err.println("options are (options may appear in any order before arguments):");
       System.err.println("\t-print          Prints a description of the new phone call");
       System.err.println("\t-README         Prints a README for this project and exits");
       return;
     }
 
+    // TODO:
+    //  if the file exists
+    //  try to parse it.
+    //  put that parsed stuff into the phonebill
+    //  if it doesnt exist
+    //  then create a phonebill from scratch
+    //  either way, overwrite the new phonebill into the file
+
     // Check if the phone bill will be read to a text file
     File phoneBillFile = null;
-    if (textFileFlag) {
-      phoneBillFile = new File(argList.removeFirst());
+    if (flags.textFileFlag()) {
+      phoneBillFile = new File(flags.textFileArg());
       try {
         phoneBillFile.createNewFile();
       } catch (IOException e) {
@@ -191,7 +171,7 @@ public class Project2 {
     PhoneBill newBill = new PhoneBill(name);
 
     newBill.addPhoneCall(newCall);
-    if (textFileFlag) {
+    if (flags.textFileFlag()) {
       try {
         TextDumper textDumper = new TextDumper(new FileWriter(phoneBillFile));
         textDumper.dump(newBill);
@@ -202,11 +182,80 @@ public class Project2 {
 
     }
 
-    if (printFlag) {
+    if (flags.printFlag()) {
       System.out.println(newBill);
       for (PhoneCall call: newBill.getPhoneCalls()) {
         System.out.println(call);
       }
     }
+  }
+
+  /**
+   * Helper function to process options on the command line.
+   * @param argList
+   *    The list of arguments given on the command line.
+   * @return
+   *    Returns a record of program flags and an unknown argument if flagged.
+   */
+  private static @Nullable progFlags getProgFlags(ArrayList<String> argList) {
+    // Process options until a non-option is encountered
+    boolean printFlag = false;
+    boolean readMeFlag = false;
+    boolean unknownArgFlag = false;
+    boolean textFileFlag = false;
+    String textFileArg = "";
+    String unknownArg = "";
+    String currentArg;
+    try {
+      while ((currentArg = argList.getFirst()).startsWith("-")) {
+        if (currentArg.contains("textFile")) {
+          argList.removeFirst();
+          textFileFlag = true;
+          textFileArg = argList.removeFirst();
+        } else {
+          if (currentArg.contains("print")) {
+            printFlag = true;
+          } else if (currentArg.contains("README")) {
+            readMeFlag = true;
+          } else if (currentArg.contains("textFile")) {
+            textFileFlag = true;
+            textFileArg = argList.removeFirst();
+          } else {
+            unknownArgFlag = true;
+            unknownArg = currentArg;
+          }
+          argList.removeFirst();
+        }
+      }
+    } catch (NoSuchElementException e) {
+      // An exception was thrown because there was no argument for the textFile option.
+      if (textFileFlag) {
+        System.err.println("-textFile argument requires file path");
+        return null;
+      }
+      // If there's no -README flag and no unknown arguments, then the program will try to
+      // store phone bill information without exiting.
+      // But since there's no arguments and only options, it will give an error message.
+      if (!readMeFlag && !unknownArgFlag) {
+        System.err.println("Missing phone bill information");
+        System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
+        return null;
+      }
+    }
+    return new progFlags(printFlag, readMeFlag, unknownArgFlag, textFileFlag, unknownArg, textFileArg);
+  }
+
+  /**
+   * A record of all the flags for the Project2 program.
+   *
+   * @param printFlag      Prints the {@link PhoneBill} to standard out.
+   * @param readMeFlag     Prints the README and exits the program.
+   * @param unknownArgFlag Prints the unknown argument error to standard error and exits the program.
+   * @param textFileFlag   Reads and possibly creates a given text file to parse and write a PhoneBill to.
+   * @param unknownArg     The unknown argument detected.
+   * @param textFileArg    The argument for the text file to perform I/O on.
+   */
+  private record progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, String unknownArg,
+                           String textFileArg) {
   }
 }
