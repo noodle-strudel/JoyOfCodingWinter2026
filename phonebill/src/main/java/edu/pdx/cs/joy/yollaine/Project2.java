@@ -229,9 +229,6 @@ public class Project2 {
             printFlag = true;
           } else if (currentArg.contains("README")) {
             readMeFlag = true;
-          } else if (currentArg.contains("textFile")) {
-            textFileFlag = true;
-            textFileArg = argList.removeFirst();
           } else {
             unknownArgFlag = true;
             unknownArg = currentArg;
