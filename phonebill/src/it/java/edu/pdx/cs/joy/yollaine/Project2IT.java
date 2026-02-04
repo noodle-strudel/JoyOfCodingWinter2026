@@ -5,6 +5,11 @@ import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.*;
 
@@ -286,14 +291,12 @@ class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  void matchingCustomerNameInFileAddsPhoneCallToIt() throws FileNotFoundException, ParserException {
+  void matchingCustomerNameInFileAddsPhoneCallToIt(@TempDir File tempDir) throws IOException, ParserException {
     String fileName = "carlPhoneBill.txt";
-    File f = new File(fileName);
-    PhoneCall tempCall = new PhoneCall("998-433-4345", "343-343-5445", "3/4/2024 20:55", "12/12/2043 12:20");
-    PhoneBill tempBill = new PhoneBill("Carl Jones");
-    tempBill.addPhoneCall(tempCall);
+    File f = new File(tempDir, fileName);
 
-    try (PrintWriter pw = new PrintWriter(new FileWriter(fileName));
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
     ) {
       pw.println("Carl Jones");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -301,19 +304,33 @@ class Project2IT extends InvokeMainTestCase {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", fileName, "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024 20:55", "12/12/2043 12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
     TextParser p = new TextParser(new FileReader(f));
     PhoneBill bill = p.parse();
-    assertEquals(tempBill.toString(), bill.toString());
+    assertEquals("Carl Jones's phone bill with 2 phone calls", bill.toString());
 
     PhoneCall call2 = (PhoneCall) bill.getPhoneCalls().toArray()[1];
-    assertEquals(call2, notNullValue());
+    assertThat(call2.toString(), containsString("998-433-4345"));
   }
 
-  //TODO: the above test but with a print statement too
-  // Also with readme
-  // with invalid arguments
-  // with README and print before text file
+  @ParameterizedTest
+  @CsvSource({"Carl Jones,Cameron Jones", "Jane Doe,John Doe", "Linda,Polly"})
+  void unmatchingCustomerNameInFilePrintsUnmatchingCustomerNameInFileToStdError(String fileCustomer, String givenCustomer, @TempDir File tempDir) throws IOException {
+    String fileName = "myPhoneBill.txt";
+    File f = new File(tempDir, fileName);
+
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    ) {
+      pw.println(fileCustomer);
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), givenCustomer, "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Unmatching customer names in provided file: Expected " + givenCustomer + " but found " + fileCustomer + "."));
+  }
 
   @Disabled
   @Test
@@ -322,9 +339,9 @@ class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  void textFileOptionOnlyWithNoArgsPrintsToStdError() {
+  void textFileOptionOnlyWithNoArgsPrintsToStdError(@TempDir File tempDir) {
     String fileName = "it-test.txt";
-    File f = new File(fileName);
+    File f = new File(tempDir, fileName);
     f.delete();
     MainMethodResult result = invokeMain("-textFile");
     assertThat(result.getTextWrittenToStandardError(), containsString("-textFile argument requires file path"));
