@@ -2,6 +2,8 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.AbstractPhoneCall;
 
+import java.util.Objects;
+
 /**
 * Represents a phone call that extends the {@link AbstractPhoneCall} class.
 */
@@ -79,5 +81,28 @@ public class PhoneCall extends AbstractPhoneCall {
   @Override
   public String getEndTimeString() {
     return this.endTime;
+  }
+
+  /**
+   * Overridden equals() function for PhoneCall to be based on PhoneCall fields.
+   * @param o   the reference object with which to compare.
+   * @return
+   *    Returns true if the PhoneCalls are equal and false if they are not equal.
+   */
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+    PhoneCall phoneCall = (PhoneCall) o;
+    return Objects.equals(caller, phoneCall.caller) && Objects.equals(callee, phoneCall.callee) && Objects.equals(beginTime, phoneCall.beginTime) && Objects.equals(endTime, phoneCall.endTime);
+  }
+
+  /**
+   * Overridden {@link Object#hashCode() hashcode()} function to utilize PhoneCall fields.
+   * @return
+   *    Returns the hash code of the PhoneCall.
+   */
+  @Override
+  public int hashCode() {
+    return Objects.hash(caller, callee, beginTime, endTime);
   }
 }

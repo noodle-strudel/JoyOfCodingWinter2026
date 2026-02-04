@@ -64,10 +64,6 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
     }
   }
 
-  // TODO:
-  //  validate each part of the phone call
-  //  figure out what part of the exception is unique so i can have special comments
-
   /**
    * A helper function to parse a PhoneCall given a line from the text file.
    * @param callInfo

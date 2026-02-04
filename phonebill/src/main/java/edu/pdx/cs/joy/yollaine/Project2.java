@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  * The main class for the Phone Bill in Project 2.
  */
 public class Project2 {
-
+  private static final int MAX_ARGS = 7;
   /**
   * Determines if a date and time is valid.
   * @param dateAndTime
@@ -57,7 +57,7 @@ public class Project2 {
     ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
 
     progFlags flags = getProgFlags(argList);
-    // An exception or error occurred
+    // An exception or error occurred while getting flags for the program
     if (flags == null) return;
 
     // Print out the README and exit the program
@@ -99,12 +99,13 @@ public class Project2 {
     if (flags.textFileFlag()) {
       phoneBillFile = new File(flags.textFileArg());
 
-      // check if given file is directory and exit
+      // check if given file is directory; error and exit if so
       if (phoneBillFile.isDirectory()) {
         System.err.println("Unable to process file: Given file is a directory.");
         return;
       }
 
+      // otherwise, either create a new file or extract a PhoneBill from it.
       try {
         newFile = phoneBillFile.createNewFile();
         if (!newFile) {
@@ -117,8 +118,7 @@ public class Project2 {
       }
     }
 
-      // Check if there's too many command line arguments
-    if (argList.size() > 7) {
+    if (argList.size() > MAX_ARGS) {
       System.err.println("Too many command line arguments");
       System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
       return;
@@ -181,14 +181,29 @@ public class Project2 {
     if (!flags.textFileFlag() || newFile) {
       newBill = new PhoneBill(name);
 
-      // otherwise, check if the name in the file matches the one on the command line
-    } else if (!Objects.equals(newBill.getCustomer(), name)) {
+    } else { // otherwise, there is a valid phone bill with at least a customer name
+      if (!Objects.equals(newBill.getCustomer(), name)) {
 
-      System.err.println("Unmatching customer names in provided file: Expected " + name + " but found " + newBill.getCustomer() + ".");
-      return;
+        System.err.println("Unmatching customer names in provided file: Expected " + name + " but found " + newBill.getCustomer() + ".");
+        return;
+      }
+
+      // ensure the new phone call is not a duplicate
+      boolean detectedDup = false;
+      for (PhoneCall call : newBill.getPhoneCalls()) {
+        if (call.equals(newCall)) {
+          detectedDup = true;
+          break;
+        }
+      }
+
+      if (detectedDup) {
+        System.err.println("Unable to add new phone call to file: Exact phone call already recorded.");
+        return;
+      }
+
     }
 
-    // If the names dont
     newBill.addPhoneCall(newCall);
     if (flags.textFileFlag()) {
       try {
