@@ -101,7 +101,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
       validateDateAndTime(newEndDate + " " + newEndTime);
       phoneCall = new PhoneCall(newCaller, newCallee, newBeginDate + " " + newBeginTime, newEndDate + " " + newEndTime);
     } catch (NoSuchElementException e) {
-      throw new ParserException("Missing " + field[fieldIdx] + " from phone call.");
+      throw new ParserException("Missing " + field[fieldIdx] + " from phone call in the given file.");
     } catch (IllegalArgumentException e) {
       throw new ParserException(e.getMessage());
     }
