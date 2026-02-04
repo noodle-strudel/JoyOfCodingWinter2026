@@ -13,7 +13,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TextParserTest {
-
   @Test
   void validTextFileCanBeParsed() throws ParserException {
     InputStream resource = getClass().getResourceAsStream("valid-phonebill.txt");
@@ -73,6 +72,15 @@ public class TextParserTest {
 
   @Test
   void invalidTextFileWithCrazyTextThrowsParserException() {
+    InputStream resource = getClass().getResourceAsStream("invalid-phonebill-crazy.txt");
+    assertThat(resource, notNullValue());
+
+    TextParser parser = new TextParser(new InputStreamReader(resource));
+    assertThrows(ParserException.class, parser::parse);
+  }
+
+  @Test
+  void invalidTextFilesWithMissingInfoThrowsParserExceptionWithSpecificErrors() {
     InputStream resource = getClass().getResourceAsStream("invalid-phonebill-crazy.txt");
     assertThat(resource, notNullValue());
 

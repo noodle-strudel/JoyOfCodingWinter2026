@@ -6,15 +6,25 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 /**
- * A skeletal implementation of the <code>TextDumper</code> class for Project 2.
+ * Write a {@link PhoneBill} to a text file along with its associated {@link PhoneCall}s.
  */
 public class TextDumper implements PhoneBillDumper<PhoneBill> {
   private final Writer writer;
 
+  /**
+   * The constructor for the TextDumper class.
+   * @param writer
+   *    A writer to a text file for the TextDumper to use.
+   */
   public TextDumper(Writer writer) {
     this.writer = writer;
   }
 
+  /**
+   * Dump a given PhoneBill into the given text file.
+   * @param bill
+   *    The PhoneBill to write to the given file.
+   */
   @Override
   public void dump(PhoneBill bill) {
     try (

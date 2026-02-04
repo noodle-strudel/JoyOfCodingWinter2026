@@ -241,7 +241,7 @@ public class Project2 {
       }
     } catch (NoSuchElementException e) {
       // An exception was thrown because there was no argument for the textFile option.
-      if (textFileFlag) {
+      if (textFileFlag && textFileArg.isEmpty()) {
         System.err.println("-textFile argument requires file path");
         return null;
       }
