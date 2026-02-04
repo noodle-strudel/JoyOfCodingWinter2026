@@ -98,6 +98,13 @@ public class Project2 {
     File phoneBillFile = null;
     if (flags.textFileFlag()) {
       phoneBillFile = new File(flags.textFileArg());
+
+      // check if given file is directory and exit
+      if (phoneBillFile.isDirectory()) {
+        System.err.println("Unable to process file: Given file is a directory.");
+        return;
+      }
+
       try {
         newFile = phoneBillFile.createNewFile();
         if (!newFile) {

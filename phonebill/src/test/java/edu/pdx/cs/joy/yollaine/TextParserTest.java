@@ -107,6 +107,7 @@ public class TextParserTest {
     assertThat(exception.getMessage(), containsString(msg));
   }
 
+
   private static Stream<Arguments> missingArguments() {
     return Stream.of (
       Arguments.of("invalid-phonebill-1-phonecall.txt", "Missing End Time from phone call in the given file."),

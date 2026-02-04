@@ -1,5 +1,6 @@
 package edu.pdx.cs.joy.yollaine;
 
+import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Disabled;
@@ -528,6 +529,12 @@ class Project2IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void supplyingDirectoryToTextFilePrintsErrorToStdErr(@TempDir File tempDir) {
+    MainMethodResult result = invokeMain("-textFile", tempDir.getAbsolutePath(), "aa", "456-335-2353", "234-434-4535", "4/5/5004", "03:45", "2/4/4234", "05:34");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Unable to process file: Given file is a directory."));
   }
 
   // TODO:
