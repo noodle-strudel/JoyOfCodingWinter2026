@@ -1,13 +1,16 @@
 package edu.pdx.cs.joy.yollaine;
 
 import com.google.common.annotations.VisibleForTesting;
+import edu.pdx.cs.joy.ParserException;
 import org.jspecify.annotations.Nullable;
+import org.w3c.dom.Text;
 
 import java.io.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,27 +92,25 @@ public class Project2 {
       return;
     }
 
-    // TODO:
-    //  if the file exists
-    //  try to parse it.
-    //  put that parsed stuff into the phonebill
-    //  if it doesnt exist
-    //  then create a phonebill from scratch
-    //  either way, overwrite the new phonebill into the file
-
     // Check if the phone bill will be read to a text file
+    boolean newFile = false;
+    PhoneBill newBill = null;
     File phoneBillFile = null;
     if (flags.textFileFlag()) {
       phoneBillFile = new File(flags.textFileArg());
       try {
-        phoneBillFile.createNewFile();
-      } catch (IOException e) {
+        newFile = phoneBillFile.createNewFile();
+        if (!newFile) {
+          TextParser parser = new TextParser(new FileReader(phoneBillFile));
+          newBill = parser.parse();
+        }
+      } catch (IOException | ParserException e) {
         System.err.println(e.getMessage());
         return;
       }
     }
 
-    // Check if there's too many command line arguments
+      // Check if there's too many command line arguments
     if (argList.size() > 7) {
       System.err.println("Too many command line arguments");
       System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
@@ -166,10 +167,21 @@ public class Project2 {
       return;
     }
 
+
     // Create a phone call attached to a phone bill after verification is successful
     PhoneCall newCall = new PhoneCall(callerNum, calleeNum, begin, end);
-    PhoneBill newBill = new PhoneBill(name);
+    // either you have the textFile flag and a new file was created, or you didn't put a textFile option
+    if (!flags.textFileFlag() || newFile) {
+      newBill = new PhoneBill(name);
 
+      // otherwise, check if the name in the file matches the one on the command line
+    } else if (!Objects.equals(newBill.getCustomer(), name)) {
+
+      System.err.println("Unmatching customer names in provided file: Expected " + name + " but found " + newBill.getCustomer() + ".");
+      return;
+    }
+
+    // If the names dont
     newBill.addPhoneCall(newCall);
     if (flags.textFileFlag()) {
       try {
