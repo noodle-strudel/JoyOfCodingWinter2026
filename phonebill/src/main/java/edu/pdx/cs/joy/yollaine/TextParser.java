@@ -79,34 +79,56 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
    */
   private static @NonNull PhoneCall getPhoneCall(String callInfo) throws ParserException {
     StringTokenizer st = new StringTokenizer(callInfo, " ");
+    String[] field = {"Caller Number", "Callee Number", "Begin Date", "Begin Time", "End Date", "End Time"};
+    int fieldIdx = 0;
     PhoneCall phoneCall;
     try {
       String newCaller = st.nextToken();
+      ++fieldIdx;
       validatePhoneNumber(newCaller);
       String newCallee = st.nextToken();
+      ++fieldIdx;
       validatePhoneNumber(newCallee);
       String newBeginDate = st.nextToken();
+      ++fieldIdx;
       String newBeginTime = st.nextToken();
+      ++fieldIdx;
       validateDateAndTime(newBeginDate + " " + newBeginTime);
       String newEndDate = st.nextToken();
+      ++fieldIdx;
       String newEndTime = st.nextToken();
+      ++fieldIdx;
       validateDateAndTime(newEndDate + " " + newEndTime);
       phoneCall = new PhoneCall(newCaller, newCallee, newBeginDate + " " + newBeginTime, newEndDate + " " + newEndTime);
     } catch (NoSuchElementException e) {
-      throw new ParserException("Missing essential info from phone call");
+      throw new ParserException("Missing " + field[fieldIdx] + " from phone call.");
     } catch (IllegalArgumentException e) {
       throw new ParserException(e.getMessage());
     }
     return phoneCall;
   }
 
-  static void validateDateAndTime(String dateAndTime) {
+  /**
+   * Ensures the parsed date and time is valid based off of {@link Project2#isValidDateAndTime(String) Project2's isValidDateAndTime} method.
+   * @param dateAndTime
+   *    The date and time string to validate.
+   * @throws IllegalArgumentException
+   *    Throws an IllegalArgumentException if the date and time is invalid.
+   */
+  static void validateDateAndTime(String dateAndTime) throws IllegalArgumentException {
     if (!Project2.isValidDateAndTime(dateAndTime)) {
-      throw new IllegalArgumentException("Invalid data and time format.");
+      throw new IllegalArgumentException("Invalid date and time format.");
     }
   }
 
-  static void validatePhoneNumber(String number) {
+  /**
+   * Ensures the parsed date and time is valid based off of {@link Project2#isValidPhoneNumber(String)} Project2's isValidPhoneNumber} method.
+   * @param number
+   *    The phone number to validate.
+   * @throws IllegalArgumentException
+   *    Throws an IllegalArgumentException if the phone number is invalid.
+   */
+  static void validatePhoneNumber(String number) throws IllegalArgumentException {
     if (!Project2.isValidPhoneNumber(number)) {
       throw new IllegalArgumentException("Invalid phone number format.");
     }

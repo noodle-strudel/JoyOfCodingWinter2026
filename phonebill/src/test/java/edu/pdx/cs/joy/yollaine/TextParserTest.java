@@ -2,14 +2,18 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TextParserTest {
@@ -79,12 +83,48 @@ public class TextParserTest {
     assertThrows(ParserException.class, parser::parse);
   }
 
-  @Test
-  void invalidTextFilesWithMissingInfoThrowsParserExceptionWithSpecificErrors() {
-    InputStream resource = getClass().getResourceAsStream("invalid-phonebill-crazy.txt");
+  @ParameterizedTest
+  @MethodSource("missingArguments")
+  void textfilesWithMissingInfoThrowsParserExceptionWithSpecificErrors(String fileName, String msg) {
+    InputStream resource = getClass().getResourceAsStream(fileName);
     assertThat(resource, notNullValue());
+    ParserException exception = assertThrows(ParserException.class, () -> {
+      TextParser parser = new TextParser(new InputStreamReader(resource));
+      PhoneBill parsedBill = parser.parse();
+    });
+    assertThat(exception.getMessage(), containsString(msg));
+  }
 
-    TextParser parser = new TextParser(new InputStreamReader(resource));
-    assertThrows(ParserException.class, parser::parse);
+  @ParameterizedTest
+  @MethodSource("invalidArguments")
+  void textFilesWithInvalidPhoneCallInfoThrowsParserExceptionWithSpecificErrors(String fileName, String msg) {
+    InputStream resource = getClass().getResourceAsStream(fileName);
+    assertThat(resource, notNullValue());
+    ParserException exception = assertThrows(ParserException.class, () -> {
+      TextParser parser = new TextParser(new InputStreamReader(resource));
+      PhoneBill parsedBill = parser.parse();
+    });
+    assertThat(exception.getMessage(), containsString(msg));
+  }
+
+  private static Stream<Arguments> missingArguments() {
+    return Stream.of (
+      Arguments.of("invalid-phonebill-1-phonecall.txt", "Missing End Time from phone call."),
+      Arguments.of("invalid-phonebill-1-phonecall-2.txt", "Missing End Date from phone call."),
+      Arguments.of("invalid-phonebill-1-phonecall-3.txt", "Missing Begin Time from phone call."),
+      Arguments.of("invalid-phonebill-1-phonecall-4.txt", "Missing Begin Date from phone call."),
+      Arguments.of("invalid-phonebill-1-phonecall-5.txt", "Missing Callee Number from phone call.")
+    );
+  }
+
+  private static Stream<Arguments> invalidArguments() {
+    return Stream.of (
+      Arguments.of("invalid-phonebill-format-phonecall.txt", "Invalid phone number format."),
+      Arguments.of("invalid-phonebill-format-phonecall-2.txt", "Invalid phone number format."),
+      Arguments.of("invalid-phonebill-format-phonecall-3.txt", "Invalid date and time format."),
+      Arguments.of("invalid-phonebill-format-phonecall-4.txt", "Invalid date and time format."),
+      Arguments.of("invalid-phonebill-format-phonecall-5.txt", "Invalid date and time format."),
+      Arguments.of("invalid-phonebill-format-phonecall-6.txt", "Invalid date and time format.")
+    );
   }
 }
