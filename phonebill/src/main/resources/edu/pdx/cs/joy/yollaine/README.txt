@@ -13,6 +13,7 @@ usage: java -jar target/phonebill-1.0.0.jar [options] <args>
         begin           Date and time call began (24-hour time)
         end             Date and time call ended (24-hour time)
     options are (options may appear in any order):
+        -textFile file Where to read/write the phone bill
         -print          Prints a description of the new phone call
         -README         Prints a README for this project and exits
     Date and time should be in the format: mm/dd/yyyy hh:mm
