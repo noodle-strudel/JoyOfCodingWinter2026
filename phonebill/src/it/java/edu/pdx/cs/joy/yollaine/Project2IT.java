@@ -416,24 +416,128 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
-  // TODO:
-  //  not allowing duplicate phone calls in the text file
-  //  invalid formats for text
-
-  @Disabled
   @Test
-  void invalidFileArgumentDoesItsThingAndThrowsException() {
+  void parsingFileWithInvalidCallerNumberPrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
+    String fileName = "myPhoneBill.txt";
+    File f = new File(tempDir, fileName);
 
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    ) {
+      pw.println("Carl");
+      pw.println("923-456-7890a 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number format in the given file."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
-  void textFileOptionOnlyWithNoArgsPrintsToStdError(@TempDir File tempDir) {
-    String fileName = "it-test.txt";
+  void parsingFileWithInvalidCalleeNumberPrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
+    String fileName = "myPhoneBill.txt";
     File f = new File(tempDir, fileName);
-    f.delete();
+
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    ) {
+      pw.println("Carl");
+      pw.println("923-456-7890 098--765-4321 4/5/2023 11:34 4/5/2023 12:59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number format in the given file."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void parsingFileWithInvalidBeginDatePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
+    String fileName = "myPhoneBill.txt";
+    File f = new File(tempDir, fileName);
+
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    ) {
+      pw.println("Carl");
+      pw.println("923-456-7890 098-765-4321 4//5/2023 11:34 4/5/2023 12:59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void parsingFileWithInvalidBeginTimePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
+    String fileName = "myPhoneBill.txt";
+    File f = new File(tempDir, fileName);
+
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    ) {
+      pw.println("Carl");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34[ 4/5/2023 12:59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void parsingFileWithInvalidEndDatePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
+    String fileName = "myPhoneBill.txt";
+    File f = new File(tempDir, fileName);
+
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    ) {
+      pw.println("Carl");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5wq/2023 12:59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void parsingFileWithInvalidEndTimePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
+    String fileName = "myPhoneBill.txt";
+    File f = new File(tempDir, fileName);
+
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    ) {
+      pw.println("Carl");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12::59");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  // TODO:
+  //  not allowing duplicate phone calls in the text file
+  //  missing format for text files? test them in here??
+
+  @Test
+  void textFileOptionOnlyWithNoArgsPrintsToStdError(@TempDir File tempDir) {
     MainMethodResult result = invokeMain("-textFile");
     assertThat(result.getTextWrittenToStandardError(), containsString("-textFile argument requires file path"));
-
   }
 
 }

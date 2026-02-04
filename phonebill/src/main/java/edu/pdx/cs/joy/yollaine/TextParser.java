@@ -117,7 +117,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
    */
   static void validateDateAndTime(String dateAndTime) throws IllegalArgumentException {
     if (!Project2.isValidDateAndTime(dateAndTime)) {
-      throw new IllegalArgumentException("Invalid date and time format.");
+      throw new IllegalArgumentException("Invalid date and time format in the given file.");
     }
   }
 
@@ -130,7 +130,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
    */
   static void validatePhoneNumber(String number) throws IllegalArgumentException {
     if (!Project2.isValidPhoneNumber(number)) {
-      throw new IllegalArgumentException("Invalid phone number format.");
+      throw new IllegalArgumentException("Invalid phone number format in the given file.");
     }
   }
 }

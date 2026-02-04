@@ -109,22 +109,22 @@ public class TextParserTest {
 
   private static Stream<Arguments> missingArguments() {
     return Stream.of (
-      Arguments.of("invalid-phonebill-1-phonecall.txt", "Missing End Time from phone call."),
-      Arguments.of("invalid-phonebill-1-phonecall-2.txt", "Missing End Date from phone call."),
-      Arguments.of("invalid-phonebill-1-phonecall-3.txt", "Missing Begin Time from phone call."),
-      Arguments.of("invalid-phonebill-1-phonecall-4.txt", "Missing Begin Date from phone call."),
-      Arguments.of("invalid-phonebill-1-phonecall-5.txt", "Missing Callee Number from phone call.")
+      Arguments.of("invalid-phonebill-1-phonecall.txt", "Missing End Time from phone call in the given file."),
+      Arguments.of("invalid-phonebill-1-phonecall-2.txt", "Missing End Date from phone call in the given file."),
+      Arguments.of("invalid-phonebill-1-phonecall-3.txt", "Missing Begin Time from phone call in the given file."),
+      Arguments.of("invalid-phonebill-1-phonecall-4.txt", "Missing Begin Date from phone call in the given file."),
+      Arguments.of("invalid-phonebill-1-phonecall-5.txt", "Missing Callee Number from phone call in the given file.")
     );
   }
 
   private static Stream<Arguments> invalidArguments() {
     return Stream.of (
-      Arguments.of("invalid-phonebill-format-phonecall.txt", "Invalid phone number format."),
-      Arguments.of("invalid-phonebill-format-phonecall-2.txt", "Invalid phone number format."),
-      Arguments.of("invalid-phonebill-format-phonecall-3.txt", "Invalid date and time format."),
-      Arguments.of("invalid-phonebill-format-phonecall-4.txt", "Invalid date and time format."),
-      Arguments.of("invalid-phonebill-format-phonecall-5.txt", "Invalid date and time format."),
-      Arguments.of("invalid-phonebill-format-phonecall-6.txt", "Invalid date and time format.")
+      Arguments.of("invalid-phonebill-format-phonecall.txt", "Invalid phone number format in the given file."),
+      Arguments.of("invalid-phonebill-format-phonecall-2.txt", "Invalid phone number format in the given file."),
+      Arguments.of("invalid-phonebill-format-phonecall-3.txt", "Invalid date and time format in the given file."),
+      Arguments.of("invalid-phonebill-format-phonecall-4.txt", "Invalid date and time format in the given file."),
+      Arguments.of("invalid-phonebill-format-phonecall-5.txt", "Invalid date and time format in the given file."),
+      Arguments.of("invalid-phonebill-format-phonecall-6.txt", "Invalid date and time format in the given file.")
     );
   }
 }
