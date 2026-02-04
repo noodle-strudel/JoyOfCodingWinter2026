@@ -1,9 +1,7 @@
 package edu.pdx.cs.joy.yollaine;
 
-import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -294,7 +292,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -302,7 +300,7 @@ class Project2IT extends InvokeMainTestCase {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
     TextParser p = new TextParser(new FileReader(f));
     PhoneBill bill = p.parse();
     assertEquals("Carl Jones's phone bill with 2 phone calls", bill.toString());
@@ -312,12 +310,12 @@ class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  void matchingCustomerNameInFileWithPrintOptionAddsPhoneCallToItAndPrintsOutUpdatedPhoneBill(@TempDir File tempDir) throws IOException, ParserException {
+  void matchingCustomerNameInFileWithPrintOptionAddsPhoneCallToItAndPrintsOutUpdatedPhoneBill(@TempDir File tempDir) throws IOException {
     String fileName = "carlPhoneBill.txt";
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -337,12 +335,12 @@ class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  void matchingCustomerNameInFileWithREADMEOptionPrintsReadMeOnly(@TempDir File tempDir) throws IOException, ParserException {
+  void matchingCustomerNameInFileWithREADMEOptionPrintsReadMeOnly(@TempDir File tempDir) throws IOException {
     String fileName = "carlPhoneBill.txt";
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -360,12 +358,12 @@ class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  void matchingCustomerNameInFileWithInvalidArgumentsPrintsCorrectErrorMessagesToStdErr(@TempDir File tempDir) throws IOException, ParserException {
+  void matchingCustomerNameInFileWithInvalidArgumentsPrintsCorrectErrorMessagesToStdErr(@TempDir File tempDir) throws IOException {
     String fileName = "carlPhoneBill.txt";
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -404,7 +402,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println(fileCustomer);
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -423,7 +421,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
       pw.println("923-456-7890a 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -442,7 +440,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
       pw.println("923-456-7890 098--765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -461,7 +459,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
       pw.println("923-456-7890 098-765-4321 4//5/2023 11:34 4/5/2023 12:59");
@@ -480,7 +478,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34[ 4/5/2023 12:59");
@@ -499,7 +497,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5wq/2023 12:59");
@@ -518,7 +516,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12::59");
@@ -543,7 +541,7 @@ class Project2IT extends InvokeMainTestCase {
     File f = new File(tempDir, fileName);
 
     f.createNewFile();
-    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()));
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
       pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
@@ -556,11 +554,8 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("Unable to add new phone call to file: Exact phone call already recorded."));
   }
 
-  // TODO:
-  //  missing format for text files? test them in here??
-
   @Test
-  void textFileOptionOnlyWithNoArgsPrintsToStdError(@TempDir File tempDir) {
+  void textFileOptionOnlyWithNoArgsPrintsToStdError() {
     MainMethodResult result = invokeMain("-textFile");
     assertThat(result.getTextWrittenToStandardError(), containsString("-textFile argument requires file path"));
   }
