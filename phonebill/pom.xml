@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>joy</artifactId>
-    <groupId>io.github.davidwhitlock.joy</groupId>
-    <version>1.2.4</version>
+    <artifactId>JoyOfCoding</artifactId>
+    <groupId>edu.pdx.cs.joy.yollaine</groupId>
+    <version>1.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.pdx.cs.joy.yollaine</groupId>
   <artifactId>phonebill</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
   <name>Phone Bill Project</name>
   <description>A Phone Bill application for The Joy of Coding at Portland State University</description>
   <inceptionYear>2000</inceptionYear>

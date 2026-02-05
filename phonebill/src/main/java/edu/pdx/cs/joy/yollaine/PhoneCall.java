@@ -24,7 +24,7 @@ public class PhoneCall extends AbstractPhoneCall {
   * @param newEndTime
   *       Date and time of when the phone call ended.
   * @throws IllegalArgumentException
-  *       Throws {@link IllegalArgumentException} if the arguments are empty.
+  *       Throws IllegalArgumentException if the arguments are empty.
   */
   public PhoneCall (String newCaller, String newCallee, String newBeginTime, String newEndTime) throws IllegalArgumentException {
     if (newCaller.isEmpty()) {

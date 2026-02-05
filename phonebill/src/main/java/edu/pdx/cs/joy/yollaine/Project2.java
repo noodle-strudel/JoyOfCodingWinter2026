@@ -279,14 +279,45 @@ public class Project2 {
   /**
    * A record of all the flags for the Project2 program.
    *
-   * @param printFlag      Prints the {@link PhoneBill} to standard out.
-   * @param readMeFlag     Prints the README and exits the program.
-   * @param unknownArgFlag Prints the unknown argument error to standard error and exits the program.
-   * @param textFileFlag   Reads and possibly creates a given text file to parse and write a PhoneBill to.
-   * @param unknownArg     The unknown argument detected.
-   * @param textFileArg    The argument for the text file to perform I/O on.
+   * @param printFlag
+   *    Prints the {@link PhoneBill} to standard out.
+   * @param readMeFlag
+   *    Prints the README and exits the program.
+   * @param unknownArgFlag
+   *    Prints the unknown argument error to standard error and exits the program.
+   * @param textFileFlag
+   *    Reads and possibly creates a given text file to parse and write a PhoneBill to.
+   * @param unknownArg
+   *    The unknown argument detected.
+   * @param textFileArg
+   *    The argument for the text file to perform I/O on.
    */
   private record progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, String unknownArg,
                            String textFileArg) {
+    /**
+     * The constructor for the progFlag record.
+     *
+     * @param printFlag
+     *    Prints the {@link PhoneBill} to standard out.
+     * @param readMeFlag
+     *    Prints the README and exits the program.
+     * @param unknownArgFlag
+     *    Prints the unknown argument error to standard error and exits the program.
+     * @param textFileFlag
+     *    Reads and possibly creates a given text file to parse and write a PhoneBill to.
+     * @param unknownArg
+     *    The unknown argument detected.
+     * @param textFileArg
+     *    The argument for the text file to perform I/O on.
+     */
+    private progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, String unknownArg,
+                           String textFileArg) {
+      this.printFlag = printFlag;
+      this.readMeFlag = readMeFlag;
+      this.unknownArgFlag = unknownArgFlag;
+      this.textFileFlag = textFileFlag;
+      this.unknownArg = unknownArg;
+      this.textFileArg = textFileArg;
+    }
   }
 }
