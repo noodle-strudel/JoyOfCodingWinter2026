@@ -1,9 +1,10 @@
 Yollaine Brooks
 CS410P: Joy of Coding
 January 2026
-Project 1
+Project 2
 
-This program holds information about a phone bill with at least 1 phone call.
+This program holds information about a phone bill with at least 1 phone call and can print phone bills to
+text files.
 
 usage: java -jar target/phonebill-1.0.0.jar [options] <args>
     args are (in this order):
