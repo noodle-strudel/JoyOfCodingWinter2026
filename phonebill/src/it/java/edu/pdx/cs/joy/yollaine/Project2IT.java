@@ -255,7 +255,7 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertTrue(f.exists());
 
-    TextParser parser = new TextParser(new FileReader(fileName));
+    TextParser parser = new TextParser(new FileReader(f.getAbsoluteFile()));
     PhoneBill read = parser.parse();
     assertThat(read.getCustomer(), equalTo("Any Name"));
     PhoneCall o = (PhoneCall) read.getPhoneCalls().toArray()[0];
