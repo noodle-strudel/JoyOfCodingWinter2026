@@ -92,31 +92,6 @@ public class Project2 {
       return;
     }
 
-    // Check if the phone bill will be read to a text file
-    boolean newFile = false;
-    PhoneBill newBill = null;
-    File phoneBillFile = null;
-    if (flags.textFileFlag()) {
-      phoneBillFile = new File(flags.textFileArg());
-
-      // check if given file is directory; error and exit if so
-      if (phoneBillFile.isDirectory()) {
-        System.err.println("Unable to process file: Given file is a directory.");
-        return;
-      }
-
-      // otherwise, either create a new file or extract a PhoneBill from it.
-      try {
-        newFile = phoneBillFile.createNewFile();
-        if (!newFile) {
-          TextParser parser = new TextParser(new FileReader(phoneBillFile));
-          newBill = parser.parse();
-        }
-      } catch (IOException | ParserException e) {
-        System.err.println(e.getMessage());
-        return;
-      }
-    }
 
     if (argList.size() > MAX_ARGS) {
       System.err.println("Too many command line arguments");
@@ -174,6 +149,32 @@ public class Project2 {
       return;
     }
 
+
+    // Check if the phone bill will be read to a text file
+    boolean newFile = false;
+    PhoneBill newBill = null;
+    File phoneBillFile = null;
+    if (flags.textFileFlag()) {
+      phoneBillFile = new File(flags.textFileArg());
+
+      // check if given file is directory; error and exit if so
+      if (phoneBillFile.isDirectory()) {
+        System.err.println("Unable to process file: Given file is a directory.");
+        return;
+      }
+
+      // otherwise, either create a new file or extract a PhoneBill from it.
+      try {
+        newFile = phoneBillFile.createNewFile();
+        if (!newFile) {
+          TextParser parser = new TextParser(new FileReader(phoneBillFile));
+          newBill = parser.parse();
+        }
+      } catch (IOException | ParserException e) {
+        System.err.println(e.getMessage());
+        return;
+      }
+    }
 
     // Create a phone call attached to a phone bill after verification is successful
     PhoneCall newCall = new PhoneCall(callerNum, calleeNum, begin, end);
