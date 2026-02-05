@@ -235,22 +235,22 @@ class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
-  void validPhoneNumberWithTextFileOptionCreatesFileInSystem() {
+  void validPhoneNumberWithTextFileOptionCreatesFileInSystem(@TempDir File tempDir) {
     String fileName = "it-test.txt";
-    File f = new File(fileName);
+    File f = new File(tempDir, fileName);
     f.delete();
-    MainMethodResult result = invokeMain("-textFile", fileName, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertTrue(f.exists());
   }
 
   @Test
-  void validPhoneNumberWithTextFileOptionCreatesFileInSystemWithContentsInIt() throws FileNotFoundException, ParserException {
+  void validPhoneNumberWithTextFileOptionCreatesFileInSystemWithContentsInIt(@TempDir File tempDir) throws FileNotFoundException, ParserException {
     String fileName = "it-test.txt";
     File f = new File(fileName);
     f.delete();
-    MainMethodResult result = invokeMain("-textFile", fileName, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertTrue(f.exists());

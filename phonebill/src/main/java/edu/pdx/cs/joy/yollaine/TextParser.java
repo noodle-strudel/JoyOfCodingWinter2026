@@ -44,7 +44,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
         String customer = br.readLine();
 
         if (customer == null) {
-            throw new ParserException("Missing customer");
+            throw new ParserException("Missing customer name in given text file.");
         }
 
         PhoneBill phoneBill = new PhoneBill(customer);
