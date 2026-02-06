@@ -40,12 +40,12 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void invokingMainWithAllValidCommandLineArgumentsPrintsNothingToStdErrOrStdOut() {
-    MainMethodResult result = invokeMainResult();
+    MainMethodResult result = invokeMainCustom();
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
-  private MainMethodResult invokeMainResult(String... args) {
+  private MainMethodResult invokeMainCustom(String... args) {
     String[] options = {"", "", "", ""};
     HashMap<String, String> cmdLineArgs = new HashMap<>();
     cmdLineArgs.put("name", "Any Name");
@@ -90,26 +90,28 @@ class Project2IT extends InvokeMainTestCase {
         cmdLineArgs.get("callee"),
         cmdLineArgs.get("beginDate"),
         cmdLineArgs.get("beginTime"),
+        cmdLineArgs.get("beginAMPM"),
         cmdLineArgs.get("endDate"),
-        cmdLineArgs.get("endTime"));
+        cmdLineArgs.get("endTime"),
+        cmdLineArgs.get("endAMPM"));
   }
 
   @Test
   void invokingMainWithJustNamePrintsMissingCallerNumberToStdErr() {
-    MainMethodResult result = invokeMainResult("empty", "repl", "name", "Koan");
+    MainMethodResult result = invokeMainCustom("empty", "repl", "name", "Koan");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Caller Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMainResult("empty", "op", "-print", "repl", "name", "Koan");
+    result = invokeMainCustom("empty", "op", "-print", "repl", "name", "Koan");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Caller Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithNameCallerNumPrintsMissingCalleeNumberToStdErr() {
-    MainMethodResult result = invokeMainResult("empty", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
+    MainMethodResult result = invokeMainCustom("empty", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Callee Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMainResult( "empty", "op", "-print", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
+    result = invokeMainCustom( "empty", "op", "-print", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Callee Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -130,13 +132,23 @@ class Project2IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Date"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
-  void invokingMainWithNameCallerNumCalleeNumBeginDateBeginTimePrintsMissingEndDateToStdErr() {
+  void invokingMainWithNameCallerNumCalleeNumBeginDateBeginTimeBeginDatePrintsMissingBeginAMPMToStdErr() {
     MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for Begin Time"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for Begin Time"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void invokingMainWithNameCallerNumCalleeNumBeginDateBeginTimeBeginAMPMPrintsMissingEndDateToStdErr() {
+    MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Date"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34");
@@ -146,7 +158,7 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void invokingMainWithNameCallerNumCalleeNumBeginDateBeginTimeEndDatePrintsMissingEndTimeToStdErr() {
-    MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "02/31/3498");
+    MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM", "02/31/3498");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Time"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "02/31/3498");
@@ -155,53 +167,75 @@ class Project2IT extends InvokeMainTestCase {
   }
 
   @Test
+  void invokingMainWithNameCallerNumCalleeNumBeginDateBeginTimeEndDateEndTimePrintsMissingEndAMPMToStdErr() {
+    MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM", "02/31/3498", "12:34");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for End time"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "02/31/3498");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for End Time"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
   void invokingMainWithValidArgumentsWithPrintPrintsPhoneBillInformation() {
-    MainMethodResult result = invokeMain("-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMainCustom("op", "-print");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 to 4/5/2023 12:59"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 AM to 4/5/2023 12:59 PM"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
   }
 
   @Test
   void invokingMainWithValidArgumentsWithMultiplePrintsPrintsTooManyCommandLineArguments() {
-    MainMethodResult result = invokeMain("-print", "Any Name", "123-456-7890", "-print", "098-765-4321", "4/5/2023", "11:34", "-print", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-print", "Any Name", "123-456-7890", "-print", "098-765-4321", "4/5/2023", "11:34", "AM", "-print", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
-    assertThat(result.getTextWrittenToStandardError(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/P<"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithInvalidCallerPhonePrintsInvalidPhoneFormat() {
-    MainMethodResult result = invokeMain("Any Name", "totally a number", "445-234-343", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMainCustom("repl", "caller", "totally a number");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Caller Phone Format. Phone format should be ###-###-####."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithInvalidCalleePhonePrintsInvalidPhoneFormat() {
-    MainMethodResult result = invokeMain("Any Name", "445-234-3433", "totally a number", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMainCustom("repl", "callee", "totally a number");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Callee Phone Format. Phone format should be ###-###-####"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithInvalidBeginTimePrintsInvalidDateAndTime() {
-    MainMethodResult result = invokeMain("Any Name", "445-234-3433", "123-456-7890", "4/5/2023", "11r:34", "4/5/2023", "12:59");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm"));
+    MainMethodResult result = invokeMainCustom("repl", "beginDate", "totally a date");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    result = invokeMainCustom("repl", "beginTime", "totally a time");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    result = invokeMainCustom("repl", "beginAMPM", "totally aMPM");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithInvalidEndTimePrintsInvalidDateAndTime() {
-    MainMethodResult result = invokeMain("Any Name", "445-234-3433", "123-456-7890", "4/5/2023", "11:34", "4/5/2023", "12:f59");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm"));
+    MainMethodResult result = invokeMainCustom("repl", "endDate", "totally a date");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    result = invokeMainCustom("repl", "endTime", "totally a time");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    result = invokeMainCustom("repl", "endAMPM", "totally aMPM");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithValidArgumentsWithInvalidOptionPrintsUnknownOption() {
     String unknownOption = "-43fdfd";
-    MainMethodResult result = invokeMain(unknownOption, "Any Name", "123-456-7890", "-print", "098-765-4321", "4/5/2023", "11:34", "-print", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain(unknownOption, "Any Name", "123-456-7890", "-print", "098-765-4321", "4/5/2023", "11:34", "AM", "-print", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Unknown option " + unknownOption));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -209,10 +243,10 @@ class Project2IT extends InvokeMainTestCase {
   @Test
   void invokingMainWithInvalidOptionAndPrintPrintsUnknownOptionToStdErr() {
     String unknownOption = "-43fdfd";
-    MainMethodResult result = invokeMain(unknownOption, "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain(unknownOption, "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Unknown option " + unknownOption));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain( "-print", unknownOption, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    result = invokeMain( "-print", unknownOption, "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "PM", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Unknown option " + unknownOption));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
