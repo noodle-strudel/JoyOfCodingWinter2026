@@ -8,6 +8,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -38,27 +40,76 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void invokingMainWithAllValidCommandLineArgumentsPrintsNothingToStdErrOrStdOut() {
-    MainMethodResult result = invokeMain("Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMainResult();
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
+  private MainMethodResult invokeMainResult(String... args) {
+    String[] options = {"", "", "", ""};
+    HashMap<String, String> cmdLineArgs = new HashMap<>();
+    cmdLineArgs.put("name", "Any Name");
+    cmdLineArgs.put("caller", "123-456-7890");
+    cmdLineArgs.put("callee", "098-765-4321");
+    cmdLineArgs.put("beginDate", "4/5/2023");
+    cmdLineArgs.put("beginTime", "11:34");
+    cmdLineArgs.put("beginAMPM", "AM");
+    cmdLineArgs.put("endDate", "4/5/2023");
+    cmdLineArgs.put("endTime", "12:59");
+    cmdLineArgs.put("endAMPM", "PM");
+
+    /*
+     * Parse the args based on my own specification
+     * repl - replace the default value of command line options with the given one
+     * empty - wipe out values from the hashmap
+     * opt - specify an option and supply its needed argument
+     */
+
+    int i = 0;
+    int iOpt = 0;
+    while (i < args.length) {
+      switch (args[i]) {
+        case "repl" -> cmdLineArgs.put(args[++i], args[++i]);
+        case "empty" -> cmdLineArgs.replaceAll((k, v) -> "");
+        case "opt" -> {
+          args[++i] = options[iOpt++];
+          if (args[i].equals("-textFile")) {
+            args[++i] = options[iOpt++];
+          }
+        }
+      }
+      ++i;
+    }
+
+    return invokeMain(options[0],
+        options[1],
+        options[2],
+        options[3],
+        cmdLineArgs.get("name"),
+        cmdLineArgs.get("caller"),
+        cmdLineArgs.get("callee"),
+        cmdLineArgs.get("beginDate"),
+        cmdLineArgs.get("beginTime"),
+        cmdLineArgs.get("endDate"),
+        cmdLineArgs.get("endTime"));
+  }
+
   @Test
   void invokingMainWithJustNamePrintsMissingCallerNumberToStdErr() {
-    MainMethodResult result = invokeMain("Koan");
+    MainMethodResult result = invokeMainResult("empty", "repl", "name", "Koan");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Caller Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain("-print", "Koan");
+    result = invokeMainResult("empty", "op", "-print", "repl", "name", "Koan");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Caller Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithNameCallerNumPrintsMissingCalleeNumberToStdErr() {
-    MainMethodResult result = invokeMain("Koan", "123-456-3984");
+    MainMethodResult result = invokeMainResult("empty", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Callee Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain("-print", "Koan", "123-456-3984");
+    result = invokeMainResult( "empty", "op", "-print", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Callee Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }

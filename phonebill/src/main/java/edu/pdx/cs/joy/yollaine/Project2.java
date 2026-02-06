@@ -56,6 +56,8 @@ public class Project2 {
     // Transform args into an ArrayList for easier manipulation
     ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
 
+    // remove any empty arguments
+    argList.removeIf(String::isEmpty);
     progFlags flags = getProgFlags(argList);
     // An exception or error occurred while getting flags for the program
     if (flags == null) return;
