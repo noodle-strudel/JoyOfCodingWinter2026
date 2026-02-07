@@ -1,6 +1,5 @@
 package edu.pdx.cs.joy.yollaine;
 
-import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.PhoneBillParser;
 import org.jspecify.annotations.NonNull;
@@ -10,8 +9,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Parses a text file to create a {@link PhoneBill} with its associated {@link PhoneCall}s.
@@ -111,27 +108,27 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
   }
 
   /**
-   * Ensures the parsed date and time is valid based off of {@link Project2#isValidDateAndTime(String) Project2's isValidDateAndTime} method.
+   * Ensures the parsed date and time is valid based off of {@link Project3#isValidDateAndTime(String) Project3's isValidDateAndTime} method.
    * @param dateAndTime
    *    The date and time string to validate.
    * @throws IllegalArgumentException
    *    Throws an IllegalArgumentException if the date and time is invalid.
    */
   static void validateDateAndTime(String dateAndTime) throws IllegalArgumentException {
-    if (!Project2.isValidDateAndTime(dateAndTime)) {
+    if (!Project3.isValidDateAndTime(dateAndTime)) {
       throw new IllegalArgumentException("Invalid date and time format in the given file.");
     }
   }
 
   /**
-   * Ensures the parsed date and time is valid based off of {@link Project2#isValidPhoneNumber(String)} Project2's isValidPhoneNumber} method.
+   * Ensures the parsed date and time is valid based off of {@link Project3#isValidPhoneNumber(String)} Project3's isValidPhoneNumber} method.
    * @param number
    *    The phone number to validate.
    * @throws IllegalArgumentException
    *    Throws an IllegalArgumentException if the phone number is invalid.
    */
   static void validatePhoneNumber(String number) throws IllegalArgumentException {
-    if (!Project2.isValidPhoneNumber(number)) {
+    if (!Project3.isValidPhoneNumber(number)) {
       throw new IllegalArgumentException("Invalid phone number format in the given file.");
     }
   }

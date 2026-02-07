@@ -3,7 +3,6 @@ package edu.pdx.cs.joy.yollaine;
 import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs.joy.ParserException;
 import org.jspecify.annotations.Nullable;
-import org.w3c.dom.Text;
 
 import java.io.*;
 import java.io.InputStream;
@@ -17,7 +16,7 @@ import java.util.regex.Pattern;
 /**
  * The main class for the Phone Bill in Project 2.
  */
-public class Project2 {
+public class Project3 {
 
   /**
    * Maximum amount of arguments allowed on the command line.
@@ -69,7 +68,7 @@ public class Project2 {
 
     // Print out the README and exit the program
     if (flags.readMeFlag()) {
-      try (InputStream readme = Project2.class.getResourceAsStream("README.txt")
+      try (InputStream readme = Project3.class.getResourceAsStream("README.txt")
     ) {
       if (readme == null) {
         throw new IOException("Unable to access README.txt");
@@ -293,7 +292,7 @@ public class Project2 {
   }
 
   /**
-   * A record of all the flags for the Project2 program.
+   * A record of all the flags for the Project3 program.
    *
    * @param printFlag
    *    Prints the {@link PhoneBill} to standard out.

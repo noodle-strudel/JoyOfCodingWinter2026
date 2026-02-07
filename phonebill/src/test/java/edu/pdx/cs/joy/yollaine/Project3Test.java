@@ -14,16 +14,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
- * A unit test for code in the <code>Project2</code> class.  This is different
+ * A unit test for code in the <code>Project3</code> class.  This is different
  * from <code>Project1IT</code> which is an integration test and can capture data
  * written to {@link System#out} and the like.
  */
-class Project2Test {
+class Project3Test {
 
   @Test
   void readmeCanBeReadAsResource() throws IOException {
     try (
-      InputStream readme = Project2.class.getResourceAsStream("README.txt")
+      InputStream readme = Project3.class.getResourceAsStream("README.txt")
     ) {
       assertThat(readme, not(nullValue()));
       BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
@@ -32,16 +32,16 @@ class Project2Test {
     }
   }
   private static boolean isValidDateAndTime(String dateAndTime) {
-    return Project2.isValidDateAndTime(dateAndTime);
+    return Project3.isValidDateAndTime(dateAndTime);
   }
 
   private static boolean getValidPhoneNumber(String number) {
-    return Project2.isValidPhoneNumber(number);
+    return Project3.isValidPhoneNumber(number);
   }
 
   @Test
   void canCreateProject2Object() {
-    Project2 prog2 = new Project2();
+    Project3 prog2 = new Project3();
   }
 
   @Test
