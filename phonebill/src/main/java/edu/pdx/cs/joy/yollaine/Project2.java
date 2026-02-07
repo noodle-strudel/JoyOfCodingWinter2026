@@ -18,7 +18,12 @@ import java.util.regex.Pattern;
  * The main class for the Phone Bill in Project 2.
  */
 public class Project2 {
-  private static final int MAX_ARGS = 7;
+
+  /**
+   * Maximum amount of arguments allowed on the command line.
+   */
+  private static final int MAX_ARGS = 9;
+
   /**
   * Determines if a date and time is valid.
   * @param dateAndTime
@@ -28,7 +33,7 @@ public class Project2 {
   */
   @VisibleForTesting
   static boolean isValidDateAndTime(String dateAndTime) {
-    Pattern p = Pattern.compile("^([0-9]|[0-9]{2})/([0-9]|[0-9]{2})/[0-9]{4} [0-9]?[0-9]:[0-9]{2}$");
+    Pattern p = Pattern.compile("^([0-9]|[0-9]{2})/([0-9]|[0-9]{2})/[0-9]{4} [0-9]?[0-9]:[0-9]{2} [AP]M$");
     Matcher m = p.matcher(dateAndTime);
     return m.find();
   }
@@ -97,7 +102,7 @@ public class Project2 {
 
     if (argList.size() > MAX_ARGS) {
       System.err.println("Too many command line arguments");
-      System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
+      System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM");
       return;
     }
 
@@ -106,17 +111,21 @@ public class Project2 {
     String name = argList.getFirst();
     String callerNum;
     String calleeNum;
-    String beginDate;
+    String beginDate = "";
     String beginTime;
+    String beginAMPM;
     String endDate;
     String endTime;
+    String endAMPM;
     try {
       callerNum = argList.get(1);
       calleeNum = argList.get(2);
       beginDate = argList.get(3);
       beginTime = argList.get(4);
-      endDate = argList.get(5);
-      endTime = argList.get(6);
+      beginAMPM = argList.get(5);
+      endDate = argList.get(6);
+      endTime = argList.get(7);
+      endAMPM = argList.get(8);
     } catch (IndexOutOfBoundsException e) {
       if (e.getMessage().contains("Index 1")) {
         System.err.println("Missing Caller Number");
@@ -127,15 +136,19 @@ public class Project2 {
       } else if (e.getMessage().contains("Index 4")) {
         System.err.println("Missing Begin Time");
       } else if (e.getMessage().contains("Index 5")) {
-        System.err.println("Missing End Date");
+        System.err.println("Missing Begin Time AM/PM");
       } else if (e.getMessage().contains("Index 6")) {
+        System.err.println("Missing End Date");
+      } else if (e.getMessage().contains("Index 7")) {
         System.err.println("Missing End Time");
+      } else if (e.getMessage().contains("Index 8")) {
+        System.err.println("Missing End Time AM/PM");
       }
       return;
     }
 
-    String begin = beginDate + " " + beginTime;
-    String end = endDate + " " + endTime;
+    String begin = beginDate + " " + beginTime + " " + beginAMPM;
+    String end = endDate + " " + endTime + " " + endAMPM;
 
     if (!isValidPhoneNumber(callerNum)) {
       System.err.println("Invalid Caller Phone Format. Phone format should be ###-###-####.");
@@ -144,10 +157,10 @@ public class Project2 {
       System.err.println("Invalid Callee Phone Format. Phone format should be ###-###-####.");
       return;
     } else if (!isValidDateAndTime(begin)) {
-      System.err.println("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm");
+      System.err.println("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)");
       return;
     } else if (!isValidDateAndTime(end)) {
-      System.err.println("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm");
+      System.err.println("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)");
       return;
     }
 
@@ -272,7 +285,7 @@ public class Project2 {
       // But since there's no arguments and only options, it will give an error message.
       if (!readMeFlag && !unknownArgFlag) {
         System.err.println("Missing phone bill information");
-        System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime endDate endTime");
+        System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM");
         return null;
       }
     }

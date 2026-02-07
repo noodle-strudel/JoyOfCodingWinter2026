@@ -46,7 +46,7 @@ class Project2Test {
 
   @Test
   void January212026At1PMIsAValidDateAndTime() {
-    assertThat(isValidDateAndTime("1/21/2026 01:00"), equalTo(true));
+    assertThat(isValidDateAndTime("1/21/2026 01:00 PM"), equalTo(true));
   }
 
   @Test
@@ -56,7 +56,7 @@ class Project2Test {
 
   @Test
   void February302000At1PMIsAValidDateAndTime() {
-    assertThat(isValidDateAndTime("02/30/2000 01:00"), equalTo(true));
+    assertThat(isValidDateAndTime("02/30/2000 01:00 PM"), equalTo(true));
   }
 
   @Test

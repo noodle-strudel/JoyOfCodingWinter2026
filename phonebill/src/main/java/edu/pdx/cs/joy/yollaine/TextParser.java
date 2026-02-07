@@ -75,7 +75,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
    */
   private static @NonNull PhoneCall getPhoneCall(String callInfo) throws ParserException {
     StringTokenizer st = new StringTokenizer(callInfo, " ");
-    String[] field = {"Caller Number", "Callee Number", "Begin Date", "Begin Time", "End Date", "End Time"};
+    String[] field = {"Caller Number", "Callee Number", "Begin Date", "Begin Time", "Begin Time AM/PM", "End Date", "End Time", "End Time AM/PM"};
     int fieldIdx = 0;
     PhoneCall phoneCall;
     try {
@@ -89,13 +89,19 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
       ++fieldIdx;
       String newBeginTime = st.nextToken();
       ++fieldIdx;
-      validateDateAndTime(newBeginDate + " " + newBeginTime);
+      String newBeginAMPM = st.nextToken();
+      ++fieldIdx;
+      String newBeginTimeStamp = newBeginDate+" "+newBeginTime+" "+newBeginAMPM;
+      validateDateAndTime(newBeginTimeStamp);
+
       String newEndDate = st.nextToken();
       ++fieldIdx;
       String newEndTime = st.nextToken();
       ++fieldIdx;
-      validateDateAndTime(newEndDate + " " + newEndTime);
-      phoneCall = new PhoneCall(newCaller, newCallee, newBeginDate + " " + newBeginTime, newEndDate + " " + newEndTime);
+      String newEndAMPM = st.nextToken();
+      String newEndTimeStamp = newEndDate+" "+newEndTime+" "+newEndAMPM;
+      validateDateAndTime(newEndTimeStamp);
+      phoneCall = new PhoneCall(newCaller, newCallee, newBeginTimeStamp, newEndTimeStamp);
     } catch (NoSuchElementException e) {
       throw new ParserException("Missing " + field[fieldIdx] + " from phone call in the given file.");
     } catch (IllegalArgumentException e) {

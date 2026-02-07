@@ -8,7 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -72,9 +71,9 @@ class Project2IT extends InvokeMainTestCase {
         case "repl" -> cmdLineArgs.put(args[++i], args[++i]);
         case "empty" -> cmdLineArgs.replaceAll((k, v) -> "");
         case "opt" -> {
-          args[++i] = options[iOpt++];
+          options[iOpt++] = args[++i];
           if (args[i].equals("-textFile")) {
-            args[++i] = options[iOpt++];
+            options[iOpt++] = args[++i];
           }
         }
       }
@@ -101,7 +100,7 @@ class Project2IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMainCustom("empty", "repl", "name", "Koan");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Caller Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMainCustom("empty", "op", "-print", "repl", "name", "Koan");
+    result = invokeMainCustom("empty", "opt", "-print", "repl", "name", "Koan");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Caller Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -111,7 +110,7 @@ class Project2IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMainCustom("empty", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Callee Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMainCustom( "empty", "op", "-print", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
+    result = invokeMainCustom( "empty", "opt", "-print", "repl", "name", "Koan", "repl", "caller", "123-456-3984");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Callee Number"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -131,7 +130,7 @@ class Project2IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321");
+    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -139,10 +138,10 @@ class Project2IT extends InvokeMainTestCase {
   @Test
   void invokingMainWithNameCallerNumCalleeNumBeginDateBeginTimeBeginDatePrintsMissingBeginAMPMToStdErr() {
     MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for Begin Time"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time AM/PM"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for Begin Time"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time AM/PM"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
@@ -151,7 +150,7 @@ class Project2IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Date"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34");
+    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Date"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -161,7 +160,7 @@ class Project2IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM", "02/31/3498");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Time"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "02/31/3498");
+    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM", "02/31/3498");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Time"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -169,16 +168,16 @@ class Project2IT extends InvokeMainTestCase {
   @Test
   void invokingMainWithNameCallerNumCalleeNumBeginDateBeginTimeEndDateEndTimePrintsMissingEndAMPMToStdErr() {
     MainMethodResult result = invokeMain("Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM", "02/31/3498", "12:34");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for End time"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Time AM/PM"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "02/31/3498");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Missing AM/PM for End Time"));
+    result = invokeMain("-print", "Koan", "123-456-3984", "434-556-2321", "02/31/3940", "11:34", "PM", "02/31/3498", "12:34");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Time AM/PM"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithValidArgumentsWithPrintPrintsPhoneBillInformation() {
-    MainMethodResult result = invokeMainCustom("op", "-print");
+    MainMethodResult result = invokeMainCustom("opt", "-print");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 AM to 4/5/2023 12:59 PM"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
@@ -188,7 +187,7 @@ class Project2IT extends InvokeMainTestCase {
   void invokingMainWithValidArgumentsWithMultiplePrintsPrintsTooManyCommandLineArguments() {
     MainMethodResult result = invokeMain("-print", "Any Name", "123-456-7890", "-print", "098-765-4321", "4/5/2023", "11:34", "AM", "-print", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
-    assertThat(result.getTextWrittenToStandardError(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/P<"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
@@ -292,29 +291,29 @@ class Project2IT extends InvokeMainTestCase {
 
   @Test
   void invokingMainWithValidArgumentsWithReadMePrintsReadMeOnly() {
-    MainMethodResult result = invokeMain("-README", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "-print", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-README", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "-print", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
   }
 
   @Test
   void invokingMainWithValidArgumentsWithReadMePrintPrintsReadMeOnly() {
-    MainMethodResult result = invokeMain("-README", "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "-print", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-README", "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "-print", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
   }
 
   @Test
   void invokingMainWithValidArgumentsWithPrintPrintPrintPrintsPhoneBillInformation() {
-    MainMethodResult result = invokeMain("-print", "-print", "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-print", "-print", "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 to 4/5/2023 12:59"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 AM to 4/5/2023 12:59 PM"));
   }
 
   @Test
   void invokingMainWithValidArgumentsWithREADMEREADMEPrintsReadMe() {
-    MainMethodResult result = invokeMain("-README", "-README", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-README", "-README", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
   }
@@ -324,7 +323,7 @@ class Project2IT extends InvokeMainTestCase {
     String fileName = "it-test.txt";
     File f = new File(tempDir, fileName);
     f.delete();
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertTrue(f.exists());
@@ -335,7 +334,7 @@ class Project2IT extends InvokeMainTestCase {
     String fileName = "it-test.txt";
     File f = new File(tempDir, fileName);
     f.delete();
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertTrue(f.exists());
@@ -346,8 +345,8 @@ class Project2IT extends InvokeMainTestCase {
     PhoneCall o = (PhoneCall) read.getPhoneCalls().toArray()[0];
     assertThat(o.getCaller(), equalTo("123-456-7890"));
     assertThat(o.getCallee(), equalTo("098-765-4321"));
-    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34"));
-    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59"));
+    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34 AM"));
+    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59 PM"));
   }
 
   @Test
@@ -355,10 +354,10 @@ class Project2IT extends InvokeMainTestCase {
     String fileName = "it-test.txt";
     File f = new File(tempDir, fileName);
     f.delete();
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "opt", "-print");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 to 4/5/2023 12:59"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 AM to 4/5/2023 12:59 PM"));
     assertTrue(f.exists());
 
     TextParser parser = new TextParser(new FileReader(f.getAbsoluteFile()));
@@ -367,8 +366,8 @@ class Project2IT extends InvokeMainTestCase {
     PhoneCall o = (PhoneCall) read.getPhoneCalls().toArray()[0];
     assertThat(o.getCaller(), equalTo("123-456-7890"));
     assertThat(o.getCallee(), equalTo("098-765-4321"));
-    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34"));
-    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59"));
+    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34 AM"));
+    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59 PM"));
   }
 
   @Test
@@ -380,18 +379,18 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "repl", "name", "Carl Jones");
     TextParser p = new TextParser(new FileReader(f));
     PhoneBill bill = p.parse();
     assertEquals("Carl Jones's phone bill with 2 phone calls", bill.toString());
 
     PhoneCall call2 = (PhoneCall) bill.getPhoneCalls().toArray()[1];
-    assertThat(call2.toString(), containsString("998-433-4345"));
+    assertThat(call2.toString(), containsString("123-456-7890"));
   }
 
   @Test
@@ -403,17 +402,17 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-print", "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-print", "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "12:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Carl Jones's phone bill with 2 phone calls"));
     assertThat(result.getTextWrittenToStandardOut(), containsString("998-433-4345"));
 
-    result = invokeMain("-print", "-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5446", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    result = invokeMain("-print", "-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5446", "3/4/2024", "12:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Carl Jones's phone bill with 3 phone calls"));
     assertThat(result.getTextWrittenToStandardOut(), containsString("998-433-4345"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
@@ -428,16 +427,16 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-README", "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-README", "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "12:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
 
-    result = invokeMain("-README", "-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    result = invokeMain("-README", "-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "12:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
   }
@@ -451,16 +450,21 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl Jones");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "PM", "12/12/2043", "12:34");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Time AM/PM"));
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043");
+    result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "PM", "12/12/2043");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Time"));
 
-    result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "20:55");
+    result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing End Date"));
+
+    result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "2:55");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time AM/PM"));
 
     result = invokeMain("-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024");
     assertThat(result.getTextWrittenToStandardError(), containsString("Missing Begin Time"));
@@ -490,12 +494,12 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println(fileCustomer);
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), givenCustomer, "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), givenCustomer, "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Unmatching customer names in provided file: Expected " + givenCustomer + " but found " + fileCustomer + "."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -509,12 +513,12 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
-      pw.println("923-456-7890a 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890a 098-765-4321 4/5/2023 11:34 PM 4/5/2023 12:59 AM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -528,12 +532,12 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
-      pw.println("923-456-7890 098--765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098--765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "AM", "12/12/2043", "2:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid phone number format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -547,12 +551,12 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
-      pw.println("923-456-7890 098-765-4321 4//5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4//5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -566,12 +570,12 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34[ 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34[ AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -585,12 +589,12 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5wq/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5wq/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
@@ -604,19 +608,19 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12::59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12::59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "20:55", "12/12/2043", "12:20");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "Carl", "998-433-4345", "343-343-5445", "3/4/2024", "2:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Invalid date and time format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void supplyingDirectoryToTextFilePrintsErrorToStdErr(@TempDir File tempDir) {
-    MainMethodResult result = invokeMain("-textFile", tempDir.getAbsolutePath(), "aa", "456-335-2353", "234-434-4535", "4/5/5004", "03:45", "2/4/4234", "05:34");
+    MainMethodResult result = invokeMain("-textFile", tempDir.getAbsolutePath(), "aa", "456-335-2353", "234-434-4535", "4/5/5004", "03:45", "AM", "2/4/4234", "05:34", "AM");
     assertThat(result.getTextWrittenToStandardError(), containsString("Unable to process file: Given file is a directory."));
   }
 
@@ -629,12 +633,12 @@ class Project2IT extends InvokeMainTestCase {
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
     ) {
       pw.println("Carl");
-      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 4/5/2023 12:59");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-print", "Carl", "923-456-7890", "098-765-4321", "4/5/2023", "11:34", "4/5/2023", "12:59");
+    MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-print", "Carl", "923-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertThat(result.getTextWrittenToStandardError(), containsString("Unable to add new phone call to file: Exact phone call already recorded."));
   }
