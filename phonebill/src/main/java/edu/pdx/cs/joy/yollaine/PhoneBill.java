@@ -3,14 +3,14 @@ package edu.pdx.cs.joy.yollaine;
 import edu.pdx.cs.joy.AbstractPhoneBill;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 /**
 * Represents a phone bill that extends the {@link AbstractPhoneBill} class.
 */
 public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   private final String customer;
-  private final Collection<PhoneCall> phoneCalls;
+  private final List<PhoneCall> phoneCalls;
 
   /**
   * Constructor for the PhoneBill class.
@@ -48,7 +48,7 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   *      Returns the collection of PhoneCalls.
   */
   @Override
-  public Collection<PhoneCall> getPhoneCalls() {
+  public List<PhoneCall> getPhoneCalls() {
     return this.phoneCalls;
   }
 }

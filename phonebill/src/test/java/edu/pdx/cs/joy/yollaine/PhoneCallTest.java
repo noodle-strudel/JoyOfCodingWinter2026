@@ -1,14 +1,15 @@
 package edu.pdx.cs.joy.yollaine;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.junit.jupiter.api.Test;
 
-import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.Matchers.lessThan;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -106,5 +107,61 @@ public class PhoneCallTest {
     String end = "3/03/2004 12:40 PM";
     PhoneCall call = createPhoneCall(caller, callee, begin, end);
     assertThat(call.toString(), equalTo("Phone call from " + caller + " to " + callee + " from 3/3/04, 12:34 AM to 3/3/04, 12:40 PM"));
+  }
+
+  @Test
+  void phoneCallWithEarlierBeginTimeIsHigherInOrderAndLessThan() {
+    String caller = "343-563-5465";
+    String callee = "443-452-6775";
+    String begin = "3/03/2004 12:34 AM";
+    String end = "3/03/2004 12:40 PM";
+
+    String caller2 = "343-563-5465";
+    String callee2 = "443-452-6775";
+    String begin2 = "3/03/2003 12:34 AM";
+    String end2 = "3/03/2004 12:40 PM";
+    PhoneCall call = createPhoneCall(caller, callee, begin, end);
+    PhoneCall call2 = createPhoneCall(caller2, callee2, begin2, end2);
+    assertThat(call2.compareTo(call), lessThan(0));
+  }
+
+  @Test
+  void phoneCallWithSameBeginTimeSameCallerIsEqual() {
+    String caller = "343-563-5465";
+    String callee = "443-452-6775";
+    String begin = "3/03/2004 12:34 AM";
+    String end = "3/03/2004 12:40 PM";
+
+    String caller2 = "343-563-5465";
+    String callee2 = "434-452-6775";
+    String begin2 = "3/03/2004 12:34 AM";
+    String end2 = "3/03/2010 3:45 PM";
+    PhoneCall call = createPhoneCall(caller, callee, begin, end);
+    PhoneCall call2 = createPhoneCall(caller2, callee2, begin2, end2);
+    assertThat(call2.compareTo(call), equalTo(0));
+  }
+
+  @Test
+  void phoneCallOrderingGoesFromEarliestToLatestAndHighestPhoneCallToLowestPhoneCall() {
+    PhoneCall call = createPhoneCall("345-234-4353", "343-342-3434", "1/2/2005 4:56 PM", "1/2/2005 5:34 PM");
+    PhoneCall call2 = createPhoneCall("345-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
+    PhoneCall call3 = createPhoneCall();
+    PhoneCall call4 = createPhoneCall("104-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
+    PhoneCall call5 = createPhoneCall("345-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
+
+    List<PhoneCall> phoneCalls = new ArrayList<>();
+    phoneCalls.add(call);
+    phoneCalls.add(call2);
+    phoneCalls.add(call3);
+    phoneCalls.add(call4);
+    phoneCalls.add(call5);
+
+    Collections.sort(phoneCalls);
+
+    assertThat(phoneCalls.getFirst(), equalTo(call3));
+    assertThat(phoneCalls.get(1), equalTo(call));
+    assertThat(phoneCalls.get(2), equalTo(call4));
+    assertThat(phoneCalls.get(3), equalTo(call2));
+    assertThat(phoneCalls.get(4), equalTo(call5));
   }
 }

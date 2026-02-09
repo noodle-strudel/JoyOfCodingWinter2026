@@ -11,7 +11,7 @@ import java.util.Objects;
 /**
 * Represents a phone call that extends the {@link AbstractPhoneCall} class.
 */
-public class PhoneCall extends AbstractPhoneCall {
+public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall>{
   private final String caller;
   private final String callee;
   private final String beginTimeString;
@@ -98,6 +98,11 @@ public class PhoneCall extends AbstractPhoneCall {
     return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(this.endTime);
   }
 
+  /**
+   * Get the raw unformatted begin time of the phone call, suitable for printing to a file.
+   * @return
+   *    Returns the raw begin time.
+   */
   public String getBeginTimeRaw() {
     return this.beginTimeString;
   }
@@ -137,5 +142,21 @@ public class PhoneCall extends AbstractPhoneCall {
   @Override
   public int hashCode() {
     return Objects.hash(caller, callee, beginTimeString, endTimeString);
+  }
+
+  /**
+   * Comparison is different from equals() for this class.
+   * @param o the object to be compared.
+   * @return
+   *    a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.
+   *    Return comment taken from {@link Comparable#compareTo(Object)}.
+   */
+  @Override
+  public int compareTo(PhoneCall o) {
+    int cmp = this.beginTime.compareTo(o.beginTime);
+    if (cmp == 0) {
+      cmp = this.caller.compareTo(o.caller);
+    }
+    return cmp;
   }
 }
