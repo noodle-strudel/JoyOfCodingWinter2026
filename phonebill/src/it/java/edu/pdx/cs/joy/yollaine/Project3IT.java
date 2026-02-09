@@ -179,7 +179,7 @@ class Project3IT extends InvokeMainTestCase {
   void invokingMainWithValidArgumentsWithPrintPrintsPhoneBillInformation() {
     MainMethodResult result = invokeMainCustom("opt", "-print");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 AM to 4/5/2023 12:59 PM"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
   }
 
@@ -308,7 +308,7 @@ class Project3IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("-print", "-print", "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 AM to 4/5/2023 12:59 PM"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
   }
 
   @Test
@@ -345,8 +345,8 @@ class Project3IT extends InvokeMainTestCase {
     PhoneCall o = (PhoneCall) read.getPhoneCalls().toArray()[0];
     assertThat(o.getCaller(), equalTo("123-456-7890"));
     assertThat(o.getCallee(), equalTo("098-765-4321"));
-    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34 AM"));
-    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59 PM"));
+    assertThat(o.getBeginTimeString(), equalTo("4/5/23, 11:34 AM"));
+    assertThat(o.getEndTimeString(), equalTo("4/5/23, 12:59 PM"));
   }
 
   @Test
@@ -357,7 +357,7 @@ class Project3IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "opt", "-print");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/2023 11:34 AM to 4/5/2023 12:59 PM"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
     assertTrue(f.exists());
 
     TextParser parser = new TextParser(new FileReader(f.getAbsoluteFile()));
@@ -366,8 +366,8 @@ class Project3IT extends InvokeMainTestCase {
     PhoneCall o = (PhoneCall) read.getPhoneCalls().toArray()[0];
     assertThat(o.getCaller(), equalTo("123-456-7890"));
     assertThat(o.getCallee(), equalTo("098-765-4321"));
-    assertThat(o.getBeginTimeString(), equalTo("4/5/2023 11:34 AM"));
-    assertThat(o.getEndTimeString(), equalTo("4/5/2023 12:59 PM"));
+    assertThat(o.getBeginTimeString(), equalTo("4/5/23, 11:34 AM"));
+    assertThat(o.getEndTimeString(), equalTo("4/5/23, 12:59 PM"));
   }
 
   @Test
