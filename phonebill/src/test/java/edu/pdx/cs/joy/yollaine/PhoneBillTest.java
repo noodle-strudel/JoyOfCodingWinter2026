@@ -25,7 +25,7 @@ public class PhoneBillTest {
   }
 
   private static PhoneCall createDefaultPhoneCall() throws IllegalArgumentException {
-    return new PhoneCall("123-456-7890", "098-765-4321", "00/00/00 00:00", "00/00/00 00:00");
+    return new PhoneCall("123-456-7890", "098-765-4321", "10/03/2004 00:00 AM", "10/04/2005 10:00 PM");
   }
 
   @Test

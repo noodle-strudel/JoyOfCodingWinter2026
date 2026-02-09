@@ -32,7 +32,7 @@ public class TextDumper implements PhoneBillDumper<PhoneBill> {
     ) {
       pw.println(bill.getCustomer());
       for (PhoneCall call : bill.getPhoneCalls()) {
-        pw.println(call.getCaller() + " " + call.getCallee() + " " + call.getBeginTimeString() + " " + call.getEndTimeString());
+        pw.println(call.getCaller() + " " + call.getCallee() + " " + call.getBeginTimeRaw() + " " + call.getEndTimeRaw());
       }
 
       pw.flush();

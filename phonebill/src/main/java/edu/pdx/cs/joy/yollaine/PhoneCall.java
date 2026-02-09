@@ -2,6 +2,10 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.AbstractPhoneCall;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
 import java.util.Objects;
 
 /**
@@ -10,8 +14,10 @@ import java.util.Objects;
 public class PhoneCall extends AbstractPhoneCall {
   private final String caller;
   private final String callee;
-  private final String beginTime;
-  private final String endTime;
+  private final String beginTimeString;
+  private final String endTimeString;
+  private final LocalDateTime beginTime;
+  private final LocalDateTime endTime;
 
   /**
   * Constructor for the PhoneCall class.
@@ -37,10 +43,19 @@ public class PhoneCall extends AbstractPhoneCall {
       throw new IllegalArgumentException("Missing EndTime");
     }
 
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a");
+
+    try {
+      this.beginTime = LocalDateTime.parse(newBeginTime, dateTimeFormatter);
+      this.endTime = LocalDateTime.parse(newEndTime, dateTimeFormatter);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException(newBeginTime + " is an invalid date and time. Date and time format should be mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format.");
+    }
+
     this.caller = newCaller;
     this.callee = newCallee;
-    this.beginTime = newBeginTime;
-    this.endTime = newEndTime;
+    this.beginTimeString = newBeginTime;
+    this.endTimeString = newEndTime;
   }
 
   /**
@@ -70,7 +85,7 @@ public class PhoneCall extends AbstractPhoneCall {
   */
   @Override
   public String getBeginTimeString() {
-    return this.beginTime;
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(this.beginTime);
   }
 
   /**
@@ -80,6 +95,24 @@ public class PhoneCall extends AbstractPhoneCall {
   */
   @Override
   public String getEndTimeString() {
+    return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).format(this.endTime);
+  }
+
+  public String getBeginTimeRaw() {
+    return this.beginTimeString;
+  }
+
+  public String getEndTimeRaw() {
+    return this.endTimeString;
+  }
+
+  @Override
+  public LocalDateTime getBeginTime() {
+    return this.beginTime;
+  }
+
+  @Override
+  public LocalDateTime getEndTime() {
     return this.endTime;
   }
 
@@ -103,6 +136,6 @@ public class PhoneCall extends AbstractPhoneCall {
    */
   @Override
   public int hashCode() {
-    return Objects.hash(caller, callee, beginTime, endTime);
+    return Objects.hash(caller, callee, beginTimeString, endTimeString);
   }
 }

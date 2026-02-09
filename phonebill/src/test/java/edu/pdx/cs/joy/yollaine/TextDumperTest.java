@@ -1,9 +1,7 @@
 package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.ParserException;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperties;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
@@ -47,7 +45,7 @@ public class TextDumperTest {
     String customer = "Test Phone Bill";
     PhoneBill bill = new PhoneBill(customer);
 
-    PhoneCall call = new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004 3:45", "11/23/2004 4:56");
+    PhoneCall call = new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004 3:45 AM", "11/23/2004 4:56 PM");
     bill.addPhoneCall(call);
 
     File textFile = new File(tempDir, "apptbook.txt");
@@ -62,8 +60,8 @@ public class TextDumperTest {
     PhoneCall o = (PhoneCall) bill.getPhoneCalls().toArray()[0];
     assertThat(o.getCaller(), equalTo("445-345-3353"));
     assertThat(o.getCallee(), equalTo("409-435-3948"));
-    assertThat(o.getBeginTimeString(), equalTo("11/23/2004 3:45"));
-    assertThat(o.getEndTimeString(), equalTo("11/23/2004 4:56"));
+    assertThat(o.getBeginTimeString(), equalTo("11/23/04, 3:45 AM"));
+    assertThat(o.getEndTimeString(), equalTo("11/23/04, 4:56 PM"));
   }
 
   @Test
@@ -71,8 +69,8 @@ public class TextDumperTest {
     String customer = "Test Phone Bill";
     PhoneBill bill = new PhoneBill(customer);
 
-    PhoneCall call = new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004 3:45", "11/23/2004 4:56");
-    PhoneCall calldos = new PhoneCall("239-345-2342", "454-235-7677", "12/4/2004 23:50", "12/5/2004 00:00");
+    PhoneCall call = new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004 3:45 AM", "11/23/2004 4:56 PM");
+    PhoneCall calldos = new PhoneCall("239-345-2342", "454-235-7677", "12/4/2004 3:50 AM", "12/5/2004 00:00 AM");
     bill.addPhoneCall(call);
     bill.addPhoneCall(calldos);
 
@@ -88,23 +86,15 @@ public class TextDumperTest {
     PhoneCall o = (PhoneCall) bill.getPhoneCalls().toArray()[1];
     assertThat(o.getCaller(), equalTo("239-345-2342"));
     assertThat(o.getCallee(), equalTo("454-235-7677"));
-    assertThat(o.getBeginTimeString(), equalTo("12/4/2004 23:50"));
-    assertThat(o.getEndTimeString(), equalTo("12/5/2004 00:00"));
+    assertThat(o.getBeginTimeString(), equalTo("12/4/04, 3:50 AM"));
+    assertThat(o.getEndTimeString(), equalTo("12/5/04, 12:00 AM"));
   }
 
   @Test
-  void textDumperStillDumpsMalformedPhoneBillButThrowsExceptionWhenParsed(@TempDir File tempDir) throws IOException {
+  void textDumperUnableToDumpMalformedPhoneBillDueToBuiltInValidationInPhoneCall(@TempDir File tempDir) throws IOException {
     String customer = "Test Phone Bill";
     PhoneBill bill = new PhoneBill(customer);
-    PhoneCall call = new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004", "4:56");
-    bill.addPhoneCall(call);
-
-    File textFile = new File(tempDir, "apptbook.txt");
-    TextDumper dumper = new TextDumper(new FileWriter(textFile));
-    dumper.dump(bill);
-
-    TextParser parser = new TextParser(new FileReader(textFile));
-    assertThrows(ParserException.class, parser::parse);
+    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004", "4:56"));
   }
 
 }

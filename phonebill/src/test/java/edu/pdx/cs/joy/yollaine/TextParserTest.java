@@ -41,8 +41,8 @@ public class TextParserTest {
     PhoneCall o = (PhoneCall) bill.getPhoneCalls().toArray()[0];
     assertThat(o.getCaller(), equalTo("445-345-3353"));
     assertThat(o.getCallee(), equalTo("409-435-3948"));
-    assertThat(o.getBeginTimeString(), equalTo("11/23/2004 3:45"));
-    assertThat(o.getEndTimeString(), equalTo("11/23/2004 4:56"));
+    assertThat(o.getBeginTimeString(), equalTo("11/23/04, 3:45 AM"));
+    assertThat(o.getEndTimeString(), equalTo("11/23/04, 4:56 PM"));
   }
 
   @Test
@@ -110,11 +110,13 @@ public class TextParserTest {
 
   private static Stream<Arguments> missingArguments() {
     return Stream.of (
-      Arguments.of("invalid-phonebill-1-phonecall.txt", "Missing End Time from phone call in the given file."),
-      Arguments.of("invalid-phonebill-1-phonecall-2.txt", "Missing End Date from phone call in the given file."),
-      Arguments.of("invalid-phonebill-1-phonecall-3.txt", "Missing Begin Time from phone call in the given file."),
-      Arguments.of("invalid-phonebill-1-phonecall-4.txt", "Missing Begin Date from phone call in the given file."),
-      Arguments.of("invalid-phonebill-1-phonecall-5.txt", "Missing Callee Number from phone call in the given file.")
+        Arguments.of("invalid-phonebill-1-phonecall-missing-end-ampm.txt", "Missing End Time AM/PM from phone call in the given file."),
+        Arguments.of("invalid-phonebill-1-phonecall.txt", "Missing End Time from phone call in the given file."),
+        Arguments.of("invalid-phonebill-1-phonecall-2.txt", "Missing End Date from phone call in the given file."),
+        Arguments.of("invalid-phonebill-1-phonecall-2-missing-begin-time-ampm.txt", "Missing Begin Time AM/PM from phone call in the given file."),
+        Arguments.of("invalid-phonebill-1-phonecall-3.txt", "Missing Begin Time from phone call in the given file."),
+        Arguments.of("invalid-phonebill-1-phonecall-4.txt", "Missing Begin Date from phone call in the given file."),
+        Arguments.of("invalid-phonebill-1-phonecall-5.txt", "Missing Callee Number from phone call in the given file.")
     );
   }
 
