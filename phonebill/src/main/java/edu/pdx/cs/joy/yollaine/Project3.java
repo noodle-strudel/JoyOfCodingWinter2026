@@ -313,17 +313,18 @@ public class Project3 {
       // An exception was thrown because there was no argument for the textFile or pretty option.
       if (textFileFlag && textFileArg.isEmpty()) {
         System.err.println("-textFile argument requires file path");
+        return null;
       } else if (prettyFileFlag && prettyFileArg.isEmpty()) {
         System.err.println("-pretty argument requires file path or \"-\" for standard output.");
-
+        return null;
         // If there's no -README flag and no unknown arguments, then the program will try to
         // store phone bill information without exiting.
         // But since there's no arguments and only options, it will give an error message.
       } else if (!readMeFlag && !unknownArgFlag) {
         System.err.println("Missing phone bill information");
         System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM");
+        return null;
       }
-      return null;
     }
     return new progFlags(printFlag, readMeFlag, unknownArgFlag, textFileFlag, prettyFileFlag, unknownArg, textFileArg, prettyFileArg);
   }
