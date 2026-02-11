@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 
 /**
- * Write a {@link PhoneBill} to a text file along with its associated {@link PhoneCall}s.
+ * Writes a {@link PhoneBill} to a text file along with its associated {@link PhoneCall}s.
  */
 public class TextDumper implements PhoneBillDumper<PhoneBill> {
   private final Writer writer;

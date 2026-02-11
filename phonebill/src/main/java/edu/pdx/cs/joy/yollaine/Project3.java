@@ -143,7 +143,7 @@ public class Project3 {
         System.err.println("Missing End Date");
       } else if (e.getMessage().contains("Index 7")) {
         System.err.println("Missing End Time");
-      } else if (e.getMessage().contains("Index 8")) {
+      } else {
         System.err.println("Missing End Time AM/PM");
       }
       return;
@@ -158,11 +158,10 @@ public class Project3 {
     } else if (!isValidPhoneNumber(calleeNum)) {
       System.err.println("Invalid Callee Phone Format. Phone format should be ###-###-####.");
       return;
-    } else if (!isValidDateAndTime(begin)) {
-      System.err.println("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)");
-      return;
-    } else if (!isValidDateAndTime(end)) {
-      System.err.println("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)");
+    }
+
+    if (flags.textFileFlag() && flags.prettyFileFlag() && flags.textFileArg().equals(flags.prettyFileArg())) {
+      System.err.println("Error: -pretty and -textFile share the same file location.");
       return;
     }
 
@@ -194,7 +193,16 @@ public class Project3 {
     }
 
     // Create a phone call attached to a phone bill after verification is successful
-    PhoneCall newCall = new PhoneCall(callerNum, calleeNum, begin, end);
+    PhoneCall newCall;
+    try {
+      newCall = new PhoneCall(callerNum, calleeNum, begin, end);
+    } catch (IllegalArgumentException e) {
+      System.err.println(e.getMessage());
+      return;
+    }
+
+
+
     // either you have the textFile flag and a new file was created, or you didn't put a textFile option
     if (!flags.textFileFlag() || newFile) {
       newBill = new PhoneBill(name);
@@ -230,14 +238,17 @@ public class Project3 {
         writer = new StringWriter();
       } else {
         File phoneBillPrettyFile = new File(flags.prettyFileArg());
+        if (phoneBillPrettyFile.isDirectory()) {
+          System.err.println("Unable to process file: Given file is a directory.");
+          return;
+        }
+
         try {
           writer = new FileWriter(phoneBillPrettyFile);
-          if (phoneBillPrettyFile.isDirectory()) {
-            System.err.println("Unable to process file: Given file is a directory.");
-            return;
-          }
+
         } catch (IOException e) {
           System.err.println(e.getMessage());
+          return;
         }
       }
 
@@ -263,9 +274,7 @@ public class Project3 {
 
     if (flags.printFlag()) {
       System.out.println(newBill);
-      for (PhoneCall call: newBill.getPhoneCalls()) {
-        System.out.println(call);
-      }
+      System.out.println("Newest " + newCall);
     }
   }
 

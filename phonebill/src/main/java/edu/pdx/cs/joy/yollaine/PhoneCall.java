@@ -12,6 +12,7 @@ import java.util.Objects;
 * Represents a phone call that extends the {@link AbstractPhoneCall} class.
 */
 public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall>{
+  public static final String DATE_TIME_PARSE_ERROR = " is an invalid date and time. Date and time format should be mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format.";
   private final String caller;
   private final String callee;
   private final String beginTimeString;
@@ -38,18 +39,27 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
     } else if (newCallee.isEmpty()) {
       throw new IllegalArgumentException("Missing Callee");
     } else if (newBeginTime.isEmpty()) {
-      throw new IllegalArgumentException("Missing BeginTime");
+      throw new IllegalArgumentException("Missing Begin Time");
     } else if (newEndTime.isEmpty()) {
-      throw new IllegalArgumentException("Missing EndTime");
+      throw new IllegalArgumentException("Missing End Time");
     }
 
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a");
 
     try {
       this.beginTime = LocalDateTime.parse(newBeginTime, dateTimeFormatter);
+    } catch (DateTimeParseException e) {
+      throw new IllegalArgumentException("Begin time of " + newBeginTime + DATE_TIME_PARSE_ERROR);
+    }
+
+    try {
       this.endTime = LocalDateTime.parse(newEndTime, dateTimeFormatter);
     } catch (DateTimeParseException e) {
-      throw new IllegalArgumentException(newBeginTime + " is an invalid date and time. Date and time format should be mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format.");
+      throw new IllegalArgumentException("End time of " + newEndTime + DATE_TIME_PARSE_ERROR);
+    }
+
+    if (this.beginTime.isAfter(this.endTime)) {
+      throw new IllegalArgumentException("Error: End Time starts before Begin Time");
     }
 
     this.caller = newCaller;
@@ -107,15 +117,30 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
     return this.beginTimeString;
   }
 
+  /**
+   * Get the raw unformatted end time of the phone call, suitable for printing to a file.
+   * @return
+   *    Returns the raw end time.
+   */
   public String getEndTimeRaw() {
     return this.endTimeString;
   }
 
+  /**
+   * Get the LocalDateTime begin time object of the PhoneCall.
+   * @return
+   *    Returns the call's begin time as a LocalDateTime object.
+   */
   @Override
   public LocalDateTime getBeginTime() {
     return this.beginTime;
   }
 
+  /**
+   * Get the LocalDateTime end time object of the PhoneCall.
+   * @return
+   *    Returns the call's end time as a LocalDateTime object.
+   */
   @Override
   public LocalDateTime getEndTime() {
     return this.endTime;
@@ -145,7 +170,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
   }
 
   /**
-   * Comparison is different from equals() for this class.
+   * Comparison is <b>different</b> from equals() for this class.
    * @param o the object to be compared.
    * @return
    *    a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.

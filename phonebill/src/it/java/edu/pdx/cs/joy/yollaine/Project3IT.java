@@ -14,13 +14,14 @@ import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests the functionality in the {@link Project3} main class.
  */
 class Project3IT extends InvokeMainTestCase {
+
+  public static final String FILE_NAME = "myPhoneBill.txt";
 
   /**
    * Invokes the main method of {@link Project3} with the given arguments.
@@ -178,10 +179,10 @@ class Project3IT extends InvokeMainTestCase {
   }
 
   @Test
-  void invokingMainWithValidArgumentsWithPrintPrintsPhoneBillInformation() {
+  void invokingMainWithValidArgumentsWithPrintPrintsNewPhoneCallInformation() {
     MainMethodResult result = invokeMainCustom("opt", "-print");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
   }
 
@@ -210,26 +211,26 @@ class Project3IT extends InvokeMainTestCase {
   @Test
   void invokingMainWithInvalidBeginTimePrintsInvalidDateAndTime() {
     MainMethodResult result = invokeMainCustom("repl", "beginDate", "totally a date");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Begin time of totally a date 11:34 AM" + PhoneCall.DATE_TIME_PARSE_ERROR));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     result = invokeMainCustom("repl", "beginTime", "totally a time");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Begin time of 4/5/2023 totally a time AM" + PhoneCall.DATE_TIME_PARSE_ERROR));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMainCustom("repl", "beginAMPM", "totally aMPM");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid Begin Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    result = invokeMainCustom("repl", "beginAMPM", "totally AMPM");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Begin time of 4/5/2023 11:34 totally AMPM" + PhoneCall.DATE_TIME_PARSE_ERROR));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
   @Test
   void invokingMainWithInvalidEndTimePrintsInvalidDateAndTime() {
     MainMethodResult result = invokeMainCustom("repl", "endDate", "totally a date");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("End time of totally a date 12:59 PM" + PhoneCall.DATE_TIME_PARSE_ERROR));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     result = invokeMainCustom("repl", "endTime", "totally a time");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("End time of 4/5/2023 totally a time PM" + PhoneCall.DATE_TIME_PARSE_ERROR));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    result = invokeMainCustom("repl", "endAMPM", "totally aMPM");
-    assertThat(result.getTextWrittenToStandardError(), containsString("Invalid End Time Format. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM)"));
+    result = invokeMainCustom("repl", "endAMPM", "totally AMPM");
+    assertThat(result.getTextWrittenToStandardError(), containsString("End time of 4/5/2023 12:59 totally AMPM" + PhoneCall.DATE_TIME_PARSE_ERROR));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
@@ -310,7 +311,7 @@ class Project3IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("-print", "-print", "-print", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "4/5/2023", "12:59", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
   }
 
   @Test
@@ -359,7 +360,7 @@ class Project3IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "opt", "-print");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
     assertTrue(f.exists());
 
     TextParser parser = new TextParser(new FileReader(f.getAbsoluteFile()));
@@ -399,7 +400,7 @@ class Project3IT extends InvokeMainTestCase {
   }
 
   @Test
-  void matchingCustomerNameInFileWithPrintOptionAddsPhoneCallToItAndPrintsOutUpdatedPhoneBill(@TempDir File tempDir) throws IOException {
+  void matchingCustomerNameInFileWithPrintOptionAddsPhoneCallToItAndPrintsOutOnlyNewestPhoneCall(@TempDir File tempDir) throws IOException {
     String fileName = "carlPhoneBill.txt";
     File f = new File(tempDir, fileName);
 
@@ -415,11 +416,11 @@ class Project3IT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("-textFile", f.getAbsolutePath(), "-print", "Carl Jones", "998-433-4345", "343-343-5445", "3/4/2024", "12:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Carl Jones's phone bill with 2 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("998-433-4345"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 998-433-4345 to 343-343-5445 from 3/4/24, 12:55 AM to 12/12/43, 12:20 PM"));
 
     result = invokeMain("-print", "-textFile", f.getAbsolutePath(), "Carl Jones", "998-433-4345", "343-343-5446", "3/4/2024", "12:55", "AM", "12/12/2043", "12:20", "PM");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Carl Jones's phone bill with 3 phone calls"));
-    assertThat(result.getTextWrittenToStandardOut(), containsString("998-433-4345"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 998-433-4345 to 343-343-5446 from 3/4/24, 12:55 AM to 12/12/43, 12:20 PM"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
   }
 
@@ -492,8 +493,7 @@ class Project3IT extends InvokeMainTestCase {
   @ParameterizedTest
   @CsvSource({"Carl Jones,Cameron Jones", "Jane Doe,John Doe", "Linda,Polly"})
   void unmatchingCustomerNameInFilePrintsUnmatchingCustomerNameInFileToStdError(String fileCustomer, String givenCustomer, @TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+  File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -511,8 +511,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void parsingFileWithInvalidCallerNumberPrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -530,8 +529,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void parsingFileWithInvalidCalleeNumberPrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -549,8 +547,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void parsingFileWithInvalidBeginDatePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -568,8 +565,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void parsingFileWithInvalidBeginTimePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -587,8 +583,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void parsingFileWithInvalidEndDatePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -606,8 +601,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void parsingFileWithInvalidEndTimePrintsCorrespondingErrorToStdErr(@TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -631,8 +625,7 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void addingDuplicatePhoneCallPrintsErrorMessageToStdErr(@TempDir File tempDir) throws IOException {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     f.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
@@ -665,13 +658,141 @@ class Project3IT extends InvokeMainTestCase {
 
   @Test
   void prettyPrintWithFilePrintsPhoneBillToFile(@TempDir File tempDir) {
-    String fileName = "myPhoneBill.txt";
-    File f = new File(tempDir, fileName);
+    File f = new File(tempDir, FILE_NAME);
 
     MainMethodResult result = invokeMainCustom("opt", "-pretty", f.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertTrue(f.exists());
   }
+
+  @Test
+  void prettyPrintWithTextFileOptionPrintsPhoneBillToBothFiles(@TempDir File tempDir) {
+    String prettyFileName = "myPrettyBill.txt";
+    File f = new File(tempDir, FILE_NAME);
+    File pf = new File(tempDir, prettyFileName);
+
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", pf.getAbsolutePath(), "opt", "-textFile", f.getAbsolutePath());
+    assertTrue(f.exists());
+    assertTrue(pf.exists());
+
+  }
+
+  @Test
+  void prettyPrintWithTextFileWithDashPrintsPrettyToStdOutAndTextFileToNewFile(@TempDir File tempDir) {
+    File f = new File(tempDir, FILE_NAME);
+
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", "-", "opt", "-textFile", f.getAbsolutePath());
+    assertTrue(f.exists());
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
+  }
+
+  @Test
+  void prettyPrintWithPrintPrintsOutNewestCallOnlyThenPrettyPhoneBill(@TempDir File tempDir) {
+    File f = new File(tempDir, FILE_NAME);
+
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", f.getAbsolutePath(), "opt", "-print");
+    assertTrue(f.exists());
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+
+  }
+
+  @Test
+  void prettyPrintWithPrintAndDashPrintsOutNewestCallOnlyThenPrettyPhoneBill() {
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", "-", "opt", "-print");
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+  }
+
+  @Test
+  void prettyPrintWithReadMePrintsReadMeOnly(@TempDir File tempDir) {
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", "-", "opt", "-README");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+
+    File f = new File(tempDir, FILE_NAME);
+    result = invokeMainCustom("opt", "-README", "opt", "-pretty", f.getAbsolutePath());
+    assertFalse(f.exists());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+  }
+
+  @Test
+  void prettyPrintAndTextFileSharingSameFileResultsInError(@TempDir File tempDir) {
+    File f = new File(tempDir, FILE_NAME);
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "opt", "-pretty", f.getAbsolutePath());
+    assertFalse(f.exists());
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: -pretty and -textFile share the same file location"));
+  }
+
+  @Test
+  void prettyPrintFileThatAlreadyExistsPrintsNewPhoneBillWithNewCall(@TempDir File tempDir) throws IOException {
+    File f = new File(tempDir, FILE_NAME);
+    File pf = new File(tempDir, "prettyFile.txt");
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
+    ) {
+      pw.println("Any Name");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "opt", "-pretty", pf.getAbsolutePath());
+    assertTrue(pf.exists());
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void prettyPrintWithNoOtherArgsPrintsMissingArgErrorToStdErr(@TempDir File tempFile) {
+    File f = new File(tempFile, "hello.txt");
+    MainMethodResult result = invokeMain("-pretty");
+    assertThat(result.getTextWrittenToStandardError(), containsString("-pretty argument requires file path or \"-\" for standard output."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    result = invokeMain("-textFile", f.getAbsolutePath(), "-pretty");
+    assertThat(result.getTextWrittenToStandardError(), containsString("-pretty argument requires file path or \"-\" for standard output."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void PrettyPrintWithItsArgButNoPhoneCallArgumentsPrintsMissingArgsErrorToStderr(@TempDir File tempFile) {
+    File f = new File(tempFile, "hello.txt");
+    MainMethodResult result = invokeMain("-pretty", f.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardError(), containsString("Missing phone bill information"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void prettyPrintArgIsDirectoryPrintsErrorToStdErr(@TempDir File tempDir) {
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", tempDir.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Unable to process file: Given file is a directory."));
+  }
+
+  @Test
+  void prettyPrintWithTooManyArgumentsPrintsTooManyArgsErrorToStdErr() {
+    MainMethodResult result = invokeMain("-pretty", "-", "Any Name", "123-456-7890", "098-765-4321", "4/5/2023", "11:34", "AM", "PM", "4/5/2023", "12:59", "PM");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  // TODO:
+  //  pretty file arg has textFile formatting (detect and abort)
+  //  pretty with file that already exists and adding another call to it
+
+  @Test
+  void phoneCallWithEndTimeBeforeBeginTimeGivesAnError() {
+    MainMethodResult result = invokeMainCustom("opt", "-print", "repl", "endAMPM", "AM");
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: End Time starts before Begin Time"));
+  }
+  
 
 }

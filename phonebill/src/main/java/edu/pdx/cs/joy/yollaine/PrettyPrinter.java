@@ -8,13 +8,26 @@ import java.io.Writer;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Writes a {@link PhoneBill} to a formatted text file meant for viewing along with its associated {@link PhoneCall}s.
+ */
 public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
   private final Writer writer;
 
+  /**
+   * The constructor for the PrettyPrinter class.
+   * @param writer
+   *    A writer to a text file for the PrettyPrinter to use.
+   */
   public PrettyPrinter(Writer writer) {
     this.writer = writer;
   }
 
+  /**
+   * Dump a given PhoneBill into a "pretty" format into the given text file.
+   * @param phoneBill
+   *    The PhoneBill to format into to the given file.
+   */
   @Override
   public void dump(PhoneBill phoneBill) {
     try (
