@@ -18,7 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 public class PhoneCallTest {
 
-  private static PhoneCall createPhoneCall(String... params) {
+  public static final PhoneCall CALL_1 = createPhoneCall("345-234-4353", "343-342-3434", "1/2/2005 4:56 PM", "1/2/2005 5:34 PM");
+  public static final PhoneCall CALL_2 = createPhoneCall("345-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
+  public static final PhoneCall CALL_4 = createPhoneCall("104-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
+  public static final PhoneCall CALL_5 = createPhoneCall("345-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
+  public static final PhoneCall CALL_3 = createPhoneCall("345-678-9012", "123-456-7890", "11/2/2025 4:00 PM","11/2/2025 5:00 PM");
+
+  static PhoneCall createPhoneCall(String... params) {
     return switch (params.length) {
       case 1 -> new PhoneCall(params[0], "098-765-4321", "10/01/1000 00:00 AM", "10/01/1000 10:00 PM");
       case 2 -> new PhoneCall(params[0], params[1], "10/01/1000 00:00 AM", "10/10/1000 10:00 PM");
@@ -143,25 +149,21 @@ public class PhoneCallTest {
 
   @Test
   void phoneCallOrderingGoesFromEarliestToLatestAndHighestPhoneCallToLowestPhoneCall() {
-    PhoneCall call = createPhoneCall("345-234-4353", "343-342-3434", "1/2/2005 4:56 PM", "1/2/2005 5:34 PM");
-    PhoneCall call2 = createPhoneCall("345-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
     PhoneCall call3 = createPhoneCall();
-    PhoneCall call4 = createPhoneCall("104-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
-    PhoneCall call5 = createPhoneCall("345-234-4353", "343-342-3434", "3/2/2005 4:56 PM", "3/2/2005 5:34 PM");
 
     List<PhoneCall> phoneCalls = new ArrayList<>();
-    phoneCalls.add(call);
-    phoneCalls.add(call2);
+    phoneCalls.add(CALL_1);
+    phoneCalls.add(CALL_2);
     phoneCalls.add(call3);
-    phoneCalls.add(call4);
-    phoneCalls.add(call5);
+    phoneCalls.add(CALL_4);
+    phoneCalls.add(CALL_5);
 
     Collections.sort(phoneCalls);
 
     assertThat(phoneCalls.getFirst(), equalTo(call3));
-    assertThat(phoneCalls.get(1), equalTo(call));
-    assertThat(phoneCalls.get(2), equalTo(call4));
-    assertThat(phoneCalls.get(3), equalTo(call2));
-    assertThat(phoneCalls.get(4), equalTo(call5));
+    assertThat(phoneCalls.get(1), equalTo(CALL_1));
+    assertThat(phoneCalls.get(2), equalTo(CALL_4));
+    assertThat(phoneCalls.get(3), equalTo(CALL_2));
+    assertThat(phoneCalls.get(4), equalTo(CALL_5));
   }
 }

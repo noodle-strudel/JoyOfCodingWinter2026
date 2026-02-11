@@ -1,8 +1,11 @@
 package edu.pdx.cs.joy.yollaine;
 
+import org.hamcrest.CoreMatchers;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.Test;
 
+
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -50,5 +53,22 @@ public class PhoneBillTest {
       bill.addPhoneCall(createDefaultPhoneCall());
     }
     assertThat(bill.getPhoneCalls().size(), equalTo(5));
+  }
+
+  @Test
+  void addedPhoneCallsAutomaticallySortThemselves() {
+    PhoneBill bill = createPhoneBillNamed("Jane");
+    bill.addPhoneCall(PhoneCallTest.CALL_1);
+    bill.addPhoneCall(PhoneCallTest.CALL_2);
+    bill.addPhoneCall(PhoneCallTest.createPhoneCall());
+    bill.addPhoneCall(PhoneCallTest.CALL_4);
+    bill.addPhoneCall(PhoneCallTest.CALL_5);
+
+    List<PhoneCall> phoneCalls = bill.getPhoneCalls();
+    assertThat(phoneCalls.getFirst(), CoreMatchers.equalTo(PhoneCallTest.createPhoneCall()));
+    assertThat(phoneCalls.get(1), CoreMatchers.equalTo(PhoneCallTest.CALL_1));
+    assertThat(phoneCalls.get(2), CoreMatchers.equalTo(PhoneCallTest.CALL_4));
+    assertThat(phoneCalls.get(3), CoreMatchers.equalTo(PhoneCallTest.CALL_2));
+    assertThat(phoneCalls.get(4), CoreMatchers.equalTo(PhoneCallTest.CALL_5));
   }
 }

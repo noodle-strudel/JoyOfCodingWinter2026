@@ -93,6 +93,9 @@ public class Project3 {
     if (flags.unknownArgFlag()) {
       System.err.println("Unknown option " + flags.unknownArg());
       System.err.println("options are (options may appear in any order before arguments):");
+      System.err.println("\t-pretty file    Pretty print the phone bill to a text file");
+      System.err.println("\t                or standard out (-pretty -)");
+      System.err.println("\t-textFile file  Where to read/write the phone bill");
       System.err.println("\t-print          Prints a description of the new phone call");
       System.err.println("\t-README         Prints a README for this project and exits");
       return;
@@ -220,6 +223,33 @@ public class Project3 {
     }
 
     newBill.addPhoneCall(newCall);
+
+    if (flags.prettyFileFlag()) {
+      Writer writer = null;
+      if (flags.prettyFileArg().equals("-")) {
+        writer = new StringWriter();
+      } else {
+        File phoneBillPrettyFile = new File(flags.prettyFileArg());
+        try {
+          writer = new FileWriter(phoneBillPrettyFile);
+          if (phoneBillPrettyFile.isDirectory()) {
+            System.err.println("Unable to process file: Given file is a directory.");
+            return;
+          }
+        } catch (IOException e) {
+          System.err.println(e.getMessage());
+        }
+      }
+
+      // if the file is all good, print out the bill to it
+      PrettyPrinter prettyPrinter = new PrettyPrinter(writer);
+      prettyPrinter.dump(newBill);
+
+      if (writer instanceof StringWriter) {
+        System.out.println(writer);
+      }
+    }
+
     if (flags.textFileFlag()) {
       try {
         TextDumper textDumper = new TextDumper(new FileWriter(phoneBillFile));
@@ -252,7 +282,9 @@ public class Project3 {
     boolean readMeFlag = false;
     boolean unknownArgFlag = false;
     boolean textFileFlag = false;
+    boolean prettyFileFlag = false;
     String textFileArg = "";
+    String prettyFileArg = "";
     String unknownArg = "";
     String currentArg;
     try {
@@ -261,6 +293,10 @@ public class Project3 {
           argList.removeFirst();
           textFileFlag = true;
           textFileArg = argList.removeFirst();
+        } else if (currentArg.contains("pretty")) {
+          argList.removeFirst();
+          prettyFileFlag = true;
+          prettyFileArg = argList.removeFirst();
         } else {
           if (currentArg.contains("print")) {
             printFlag = true;
@@ -274,21 +310,22 @@ public class Project3 {
         }
       }
     } catch (NoSuchElementException e) {
-      // An exception was thrown because there was no argument for the textFile option.
+      // An exception was thrown because there was no argument for the textFile or pretty option.
       if (textFileFlag && textFileArg.isEmpty()) {
         System.err.println("-textFile argument requires file path");
-        return null;
-      }
-      // If there's no -README flag and no unknown arguments, then the program will try to
-      // store phone bill information without exiting.
-      // But since there's no arguments and only options, it will give an error message.
-      if (!readMeFlag && !unknownArgFlag) {
+      } else if (prettyFileFlag && prettyFileArg.isEmpty()) {
+        System.err.println("-pretty argument requires file path or \"-\" for standard output.");
+
+        // If there's no -README flag and no unknown arguments, then the program will try to
+        // store phone bill information without exiting.
+        // But since there's no arguments and only options, it will give an error message.
+      } else if (!readMeFlag && !unknownArgFlag) {
         System.err.println("Missing phone bill information");
         System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM");
-        return null;
       }
+      return null;
     }
-    return new progFlags(printFlag, readMeFlag, unknownArgFlag, textFileFlag, unknownArg, textFileArg);
+    return new progFlags(printFlag, readMeFlag, unknownArgFlag, textFileFlag, prettyFileFlag, unknownArg, textFileArg, prettyFileArg);
   }
 
   /**
@@ -302,13 +339,17 @@ public class Project3 {
    *    Prints the unknown argument error to standard error and exits the program.
    * @param textFileFlag
    *    Reads and possibly creates a given text file to parse and write a PhoneBill to.
+   * @param prettyFileFlag
+   *    Prints the PhoneBill in a "pretty" format meant for viewing.
    * @param unknownArg
    *    The unknown argument detected.
    * @param textFileArg
    *    The argument for the text file to perform I/O on.
+   * @param prettyFileArg
+   *    The argument for the pretty file to perform output on.
    */
-  private record progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, String unknownArg,
-                           String textFileArg) {
+  private record progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, boolean prettyFileFlag, String unknownArg,
+                           String textFileArg, String prettyFileArg) {
     /**
      * The constructor for the progFlag record.
      *
@@ -320,19 +361,16 @@ public class Project3 {
      *    Prints the unknown argument error to standard error and exits the program.
      * @param textFileFlag
      *    Reads and possibly creates a given text file to parse and write a PhoneBill to.
+     * @param prettyFileFlag
+     *    Prints the PhoneBill in a "pretty" format meant for viewing.
      * @param unknownArg
      *    The unknown argument detected.
      * @param textFileArg
      *    The argument for the text file to perform I/O on.
+     * @param prettyFileArg
+     *    The argument for the pretty file to perform output on.
      */
-    private progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, String unknownArg,
-                           String textFileArg) {
-      this.printFlag = printFlag;
-      this.readMeFlag = readMeFlag;
-      this.unknownArgFlag = unknownArgFlag;
-      this.textFileFlag = textFileFlag;
-      this.unknownArg = unknownArg;
-      this.textFileArg = textFileArg;
+    private progFlags {
     }
   }
 }

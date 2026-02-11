@@ -1,11 +1,13 @@
 package edu.pdx.cs.joy.yollaine;
 
+import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.internal.matchers.NotNull;
 
 import java.io.*;
 import java.util.HashMap;
@@ -72,7 +74,7 @@ class Project3IT extends InvokeMainTestCase {
         case "empty" -> cmdLineArgs.replaceAll((k, v) -> "");
         case "opt" -> {
           options[iOpt++] = args[++i];
-          if (args[i].equals("-textFile")) {
+          if (args[i].equals("-textFile") || args[i].equals("-pretty")) {
             options[iOpt++] = args[++i];
           }
         }
@@ -371,7 +373,7 @@ class Project3IT extends InvokeMainTestCase {
   }
 
   @Test
-  void matchingCustomerNameInFileAddsPhoneCallToIt(@TempDir File tempDir) throws IOException, ParserException {
+  void matchingCustomerNameInFileAddsPhoneCallToItAndAtCorrectPosition(@TempDir File tempDir) throws IOException, ParserException {
     String fileName = "carlPhoneBill.txt";
     File f = new File(tempDir, fileName);
 
@@ -384,13 +386,16 @@ class Project3IT extends InvokeMainTestCase {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "repl", "name", "Carl Jones");
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "repl", "name", "Carl Jones", "repl", "caller", "123-456-7890");
     TextParser p = new TextParser(new FileReader(f));
     PhoneBill bill = p.parse();
     assertEquals("Carl Jones's phone bill with 2 phone calls", bill.toString());
 
+    PhoneCall call1 = (PhoneCall) bill.getPhoneCalls().toArray()[0];
+    assertThat(call1.toString(), containsString("123-456-7890"));
+
     PhoneCall call2 = (PhoneCall) bill.getPhoneCalls().toArray()[1];
-    assertThat(call2.toString(), containsString("123-456-7890"));
+    assertThat(call2.toString(), containsString("923-456-7890"));
   }
 
   @Test
@@ -647,6 +652,26 @@ class Project3IT extends InvokeMainTestCase {
   void textFileOptionOnlyWithNoArgsPrintsToStdError() {
     MainMethodResult result = invokeMain("-textFile");
     assertThat(result.getTextWrittenToStandardError(), containsString("-textFile argument requires file path"));
+  }
+
+  /* PROGRAM 3 TESTS*/
+
+  @Test
+  void prettyPrintWithDashPrintsPhoneBillToStdOut() {
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", "-");
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("123-456-7890  | 098-765-4321"));
+  }
+
+  @Test
+  void prettyPrintWithFilePrintsPhoneBillToFile(@TempDir File tempDir) {
+    String fileName = "myPhoneBill.txt";
+    File f = new File(tempDir, fileName);
+
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", f.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertTrue(f.exists());
   }
 
 }

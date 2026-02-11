@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
   private final Writer writer;
@@ -23,12 +24,17 @@ public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
       pw.println("-=".repeat(customerNameSize));
       pw.println("Customer: " + phoneBill.getCustomer());
       pw.println("-=".repeat(customerNameSize));
+      pw.println();
       pw.println("Phone calls on record:");
+      pw.println("-----------------------------------------------------------------------------------------------------------");
+      pw.println("Caller Number | Callee Number | Start Date and Time         | End Date and Time            | Duration (min)");
+      pw.println("-----------------------------------------------------------------------------------------------------------");
 
-      DateTimeFormatter dTFormat = DateTimeFormatter.ofPattern("E, MMM d yyyy h:mm a");
+      DateTimeFormatter dTFormat = DateTimeFormatter.ofPattern("E, MMM d yyyy 'at' h:mm a");
       for (PhoneCall call: phoneBill.getPhoneCalls()) {
-        pw.println("\t"+call.getCaller() + " to " + call.getCallee());
-        pw.println(call.getBeginTime().format(dTFormat));
+        String startDateTime = call.getBeginTime().format(dTFormat);
+        String endDateTime =  call.getEndTime().format(dTFormat);
+        pw.println(call.getCaller() + "  | " + call.getCallee() + "  | " + startDateTime + " | " + endDateTime + " | " + call.getBeginTime().until(call.getEndTime(), ChronoUnit.MINUTES));
       }
     }
 
