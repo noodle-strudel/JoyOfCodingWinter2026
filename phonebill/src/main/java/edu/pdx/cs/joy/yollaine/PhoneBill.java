@@ -3,6 +3,7 @@ package edu.pdx.cs.joy.yollaine;
 import edu.pdx.cs.joy.AbstractPhoneBill;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -40,6 +41,7 @@ public class PhoneBill extends AbstractPhoneBill<PhoneCall> {
   @Override
   public void addPhoneCall(PhoneCall call) {
     this.phoneCalls.add(call);
+    Collections.sort(this.phoneCalls);
   }
 
   /**
