@@ -31,7 +31,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
   * @param newEndTime
   *       Date and time of when the phone call ended.
   * @throws IllegalArgumentException
-  *       Throws IllegalArgumentException if the arguments are empty.
+  *       Throws IllegalArgumentException if the arguments are formatted incorrectly or are empty.
   */
   public PhoneCall (String newCaller, String newCallee, String newBeginTime, String newEndTime) throws IllegalArgumentException {
     if (newCaller.isEmpty()) {
@@ -59,7 +59,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
     }
 
     if (this.beginTime.isAfter(this.endTime)) {
-      throw new IllegalArgumentException("Error: End Time starts before Begin Time");
+      throw new IllegalArgumentException("Error: End Time is before Begin Time");
     }
 
     this.caller = newCaller;
@@ -170,7 +170,7 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
   }
 
   /**
-   * Comparison is <b>different</b> from equals() for this class.
+   * Compares this PhoneCall to another PhoneCall for sorting. Comparison is <b>different</b> from equals() for this class.
    * @param o the object to be compared.
    * @return
    *    a negative integer, zero, or a positive integer as this object is less than, equal to, or greater than the specified object.

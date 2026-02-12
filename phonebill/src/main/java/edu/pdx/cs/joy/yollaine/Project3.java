@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The main class for the Phone Bill in Project 2.
+ * The main class for the Phone Bill Program in Project3.
  */
 public class Project3 {
 

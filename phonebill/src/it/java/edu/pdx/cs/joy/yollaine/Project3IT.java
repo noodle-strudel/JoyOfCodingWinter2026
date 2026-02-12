@@ -48,7 +48,7 @@ class Project3IT extends InvokeMainTestCase {
   }
 
   private MainMethodResult invokeMainCustom(String... args) {
-    String[] options = {"", "", "", ""};
+    String[] options = {"", "", "", "", "", ""};
     HashMap<String, String> cmdLineArgs = new HashMap<>();
     cmdLineArgs.put("name", "Any Name");
     cmdLineArgs.put("caller", "123-456-7890");
@@ -87,6 +87,8 @@ class Project3IT extends InvokeMainTestCase {
         options[1],
         options[2],
         options[3],
+        options[4],
+        options[5],
         cmdLineArgs.get("name"),
         cmdLineArgs.get("caller"),
         cmdLineArgs.get("callee"),
@@ -750,6 +752,24 @@ class Project3IT extends InvokeMainTestCase {
   }
 
   @Test
+  void prettyPrintFileThatAlreadyExistsWithPrintOptionPrintsNewPhoneBillWithNewCallToFileAndNewestCallOnlyToStdOut(@TempDir File tempDir) throws IOException {
+    File f = new File(tempDir, FILE_NAME);
+    File pf = new File(tempDir, "prettyFile.txt");
+    f.createNewFile();
+    try (PrintWriter pw = new PrintWriter(new FileWriter(f.getAbsoluteFile()))
+    ) {
+      pw.println("Any Name");
+      pw.println("923-456-7890 098-765-4321 4/5/2023 11:34 AM 4/5/2023 12:59 PM");
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "opt", "-pretty", pf.getAbsolutePath(), "opt", "-print");
+    assertTrue(pf.exists());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 2 phone calls"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+  }
+
+  @Test
   void prettyPrintWithNoOtherArgsPrintsMissingArgErrorToStdErr(@TempDir File tempFile) {
     File f = new File(tempFile, "hello.txt");
     MainMethodResult result = invokeMain("-pretty");
@@ -783,16 +803,10 @@ class Project3IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 
-  // TODO:
-  //  pretty file arg has textFile formatting (detect and abort)
-  //  pretty with file that already exists and adding another call to it
-
   @Test
   void phoneCallWithEndTimeBeforeBeginTimeGivesAnError() {
     MainMethodResult result = invokeMainCustom("opt", "-print", "repl", "endAMPM", "AM");
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Error: End Time starts before Begin Time"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: End Time is before Begin Time"));
   }
-  
-
 }

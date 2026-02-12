@@ -40,7 +40,7 @@ public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
       pw.println();
       pw.println("Phone calls on record:");
       pw.println("-----------------------------------------------------------------------------------------------------------");
-      pw.println("Caller Number | Callee Number | Start Date and Time         | End Date and Time            | Duration (min)");
+      pw.println("Caller Number | Callee Number | Start Date and Time         | End Date and Time           | Duration (min)");
       pw.println("-----------------------------------------------------------------------------------------------------------");
 
       DateTimeFormatter dTFormat = DateTimeFormatter.ofPattern("E, MMM d yyyy 'at' h:mm a");
@@ -50,6 +50,5 @@ public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
         pw.println(call.getCaller() + "  | " + call.getCallee() + "  | " + startDateTime + " | " + endDateTime + " | " + call.getBeginTime().until(call.getEndTime(), ChronoUnit.MINUTES));
       }
     }
-
   }
 }
