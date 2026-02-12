@@ -22,6 +22,7 @@ accordingly
     <module>koans</module>
     <module>student</module>
     <module>phonebill</module>
+    <module>phonebill-web</module>
   </modules>
   <inceptionYear>2026</inceptionYear>
   <organization>
