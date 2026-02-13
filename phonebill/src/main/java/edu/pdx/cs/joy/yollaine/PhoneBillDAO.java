@@ -89,7 +89,7 @@ public class PhoneBillDAO {
    * @throws SQLException if a data error occurs.
    */
   public PhoneBill findByCustomerID(int customerID) throws SQLException {
-    String selectSQL = "SELECT id FROM customers WHERE id = ?";
+    String selectSQL = "SELECT id, name FROM customers WHERE id = ?";
 
     try (PreparedStatement statement = connection.prepareStatement(selectSQL)) {
       statement.setInt(1, customerID);

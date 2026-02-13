@@ -65,7 +65,9 @@ public class PhoneBillDAOTest {
   @Test
   public void canPersistAndFetchPhoneBillByCustomerID() throws SQLException {
     String customerName = "Jane Doe";
+    String customerNameTwo = "John Doe";
     PhoneBill bill = new PhoneBill(customerName);
+    PhoneBill billTwo = new PhoneBill(customerNameTwo);
 
     // Persist the phone bill using the DAO
     dao.save(bill);
@@ -76,6 +78,12 @@ public class PhoneBillDAOTest {
     // Validate that the fetched bill matches the original
     assertThat(fetchedBill, is(notNullValue()));
     assertThat(fetchedBill.getCustomer(), is(equalTo(customerName)));
+
+    dao.save(billTwo);
+
+    PhoneBill fetchedBillTwo = dao.findByCustomerID(2);
+    assertThat(fetchedBillTwo, is(notNullValue()));
+    assertThat(fetchedBillTwo.getCustomer(), is(equalTo(customerNameTwo)));
   }
 
   //TODO
