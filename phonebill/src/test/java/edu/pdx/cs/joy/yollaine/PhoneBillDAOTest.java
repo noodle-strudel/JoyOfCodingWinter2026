@@ -18,6 +18,7 @@ import static org.hamcrest.Matchers.*;
  */
 public class PhoneBillDAOTest {
 
+  public static final String CUSTOMER_NAME = "Jane Doe";
   private Connection connection;
   private PhoneBillDAO dao;
 
@@ -27,7 +28,7 @@ public class PhoneBillDAOTest {
     connection = DriverManager.getConnection("jdbc:h2:mem:phonebill_test");
 
     // Create the phone_bills table
-    PhoneBillDAO.createTable(connection);
+    PhoneBillDAO.createTables(connection);
 
     // Create the DAO
     dao = new PhoneBillDAO(connection);
@@ -42,31 +43,29 @@ public class PhoneBillDAOTest {
 
   @Test
   public void canPersistAndFetchPhoneBillByCustomerName() throws SQLException {
-    String customerName = "Jane Doe";
-    PhoneBill bill = new PhoneBill(customerName);
+    PhoneBill bill = new PhoneBill(CUSTOMER_NAME);
 
     // Persist the phone bill using the DAO
     dao.save(bill);
 
     // Fetch the phone bill by customer name
-    PhoneBill fetchedBill = dao.findByCustomer(customerName);
+    PhoneBill fetchedBill = dao.findByCustomerName(CUSTOMER_NAME);
 
     // Validate that the fetched bill matches the original
     assertThat(fetchedBill, is(notNullValue()));
-    assertThat(fetchedBill.getCustomer(), is(equalTo(customerName)));
+    assertThat(fetchedBill.getCustomer(), is(equalTo(CUSTOMER_NAME)));
   }
 
   @Test
   public void returnsNullWhenPhoneBillNotFound() throws SQLException {
-    PhoneBill fetchedBill = dao.findByCustomer("Non-existent Customer");
+    PhoneBill fetchedBill = dao.findByCustomerName("Non-existent Customer");
     assertThat(fetchedBill, is(nullValue()));
   }
 
   @Test
   public void canPersistAndFetchPhoneBillByCustomerID() throws SQLException {
-    String customerName = "Jane Doe";
     String customerNameTwo = "John Doe";
-    PhoneBill bill = new PhoneBill(customerName);
+    PhoneBill bill = new PhoneBill(CUSTOMER_NAME);
     PhoneBill billTwo = new PhoneBill(customerNameTwo);
 
     // Persist the phone bill using the DAO
@@ -77,7 +76,7 @@ public class PhoneBillDAOTest {
 
     // Validate that the fetched bill matches the original
     assertThat(fetchedBill, is(notNullValue()));
-    assertThat(fetchedBill.getCustomer(), is(equalTo(customerName)));
+    assertThat(fetchedBill.getCustomer(), is(equalTo(CUSTOMER_NAME)));
 
     dao.save(billTwo);
 
@@ -86,8 +85,22 @@ public class PhoneBillDAOTest {
     assertThat(fetchedBillTwo.getCustomer(), is(equalTo(customerNameTwo)));
   }
 
+  @Test
+  public void canPersistAndFetchPhoneBillWithPhoneCallByCustomerName() throws SQLException {
+    PhoneBill bill = new PhoneBill(CUSTOMER_NAME);
+    PhoneCall call = PhoneCallTest.CALL_1;
+
+    bill.addPhoneCall(call);
+
+    dao.save(bill);
+
+    PhoneBill fetchedBill = dao.findByCustomerName(CUSTOMER_NAME);
+    assertThat(fetchedBill, is(notNullValue()));
+    assertThat(fetchedBill.getCustomer(), equalTo(CUSTOMER_NAME));
+    assertThat(fetchedBill.getPhoneCalls().size(), equalTo(1));
+  }
+
   //TODO
-  //  query a phone bill's ID
-  //  ID should start at 1 and go up, so its automatically assigned
+  // get a phone call from a customer
 }
 

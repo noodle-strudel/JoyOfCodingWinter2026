@@ -13,6 +13,7 @@ import java.util.Objects;
 */
 public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall>{
   public static final String DATE_TIME_PARSE_ERROR = " is an invalid date and time. Date and time format should be mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format.";
+  public static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a");
   private final String caller;
   private final String callee;
   private final String beginTimeString;
@@ -44,16 +45,14 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
       throw new IllegalArgumentException("Missing End Time");
     }
 
-    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("M/d/yyyy h:mm a");
-
     try {
-      this.beginTime = LocalDateTime.parse(newBeginTime, dateTimeFormatter);
+      this.beginTime = LocalDateTime.parse(newBeginTime, DATE_TIME_FORMAT);
     } catch (DateTimeParseException e) {
       throw new IllegalArgumentException("Begin time of " + newBeginTime + DATE_TIME_PARSE_ERROR);
     }
 
     try {
-      this.endTime = LocalDateTime.parse(newEndTime, dateTimeFormatter);
+      this.endTime = LocalDateTime.parse(newEndTime, DATE_TIME_FORMAT);
     } catch (DateTimeParseException e) {
       throw new IllegalArgumentException("End time of " + newEndTime + DATE_TIME_PARSE_ERROR);
     }
