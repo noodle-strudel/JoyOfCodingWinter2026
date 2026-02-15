@@ -2,6 +2,7 @@ package edu.pdx.cs.joy.yollaine;
 
 import org.jspecify.annotations.Nullable;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +62,24 @@ public class PhoneBillDAO {
 
     try (Statement statement = connection.createStatement()) {
       statement.execute(createTables);
+    }
+  }
+
+  public static void writeOut(Connection connection, File dbFile) throws SQLException {
+    String writeOut = "SCRIPT TO ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(writeOut)) {
+      statement.setString(1, dbFile.getAbsolutePath());
+      statement.execute();
+    }
+  }
+
+  public static void readFrom(Connection connection, File dbFile) throws SQLException {
+    String readFrom = "RUNSCRIPT FROM ?";
+
+    try (PreparedStatement statement = connection.prepareStatement(readFrom)) {
+      statement.setString(1, dbFile.getAbsolutePath());
+      statement.execute();
     }
   }
 
