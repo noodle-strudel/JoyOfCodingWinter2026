@@ -9,10 +9,19 @@ import java.sql.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
+// TODO
+//  PhoneBillDAO
+//  get a single phone call from a customer
+//  DatabaseDumper implements PhoneBillDumper
+//  ensure it can dump a phonebill into the database
+//  ensure it tried to dump a duplicate phone bill but cant?
+//  DatabaseLoader implements PhoneBillParser
+//  ensure it can parse a given phonebill from the database
+
 /**
  * A simple example unit test that demonstrates persisting a PhoneBill
  * to an H2 in-memory database using JDBC.
- *
+ * <p>
  * This is a starting point for students to understand how to use
  * Data Access Objects (DAOs) to persist domain objects to a database.
  */
@@ -100,7 +109,6 @@ public class PhoneBillDAOTest {
     assertThat(fetchedBill.getPhoneCalls().size(), equalTo(1));
   }
 
-  //TODO
-  // get a phone call from a customer
+
 }
 

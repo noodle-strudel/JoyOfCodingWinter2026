@@ -23,7 +23,7 @@ public class PhoneBillTest {
    * @return
    *      Returns PhoneBill
    */
-  private static @NonNull PhoneBill createPhoneBillNamed(String name) {
+  public static @NonNull PhoneBill createPhoneBillNamed(String name) {
       return new PhoneBill(name);
   }
 
