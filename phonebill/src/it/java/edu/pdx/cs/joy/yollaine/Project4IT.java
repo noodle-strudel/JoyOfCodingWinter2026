@@ -1,13 +1,11 @@
 package edu.pdx.cs.joy.yollaine;
 
-import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.internal.matchers.NotNull;
 
 import java.io.*;
 import java.util.HashMap;
@@ -17,17 +15,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Tests the functionality in the {@link Project3} main class.
+ * Tests the functionality in the {@link Project4} main class.
  */
-class Project3IT extends InvokeMainTestCase {
+class Project4IT extends InvokeMainTestCase {
 
   public static final String FILE_NAME = "myPhoneBill.txt";
 
   /**
-   * Invokes the main method of {@link Project3} with the given arguments.
+   * Invokes the main method of {@link Project4} with the given arguments.
    */
   private MainMethodResult invokeMain(String... args) {
-    return invokeMain(Project3.class, args);
+    return invokeMain(Project4.class, args);
   }
 
   /**

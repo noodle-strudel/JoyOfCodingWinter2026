@@ -14,9 +14,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * The main class for the Phone Bill Program in Project3.
+ * The main class for the Phone Bill Program in Project4.
  */
-public class Project3 {
+public class Project4 {
 
   /**
    * Maximum amount of arguments allowed on the command line.
@@ -68,7 +68,7 @@ public class Project3 {
 
     // Print out the README and exit the program
     if (flags.readMeFlag()) {
-      try (InputStream readme = Project3.class.getResourceAsStream("README.txt")
+      try (InputStream readme = Project4.class.getResourceAsStream("README.txt")
     ) {
       if (readme == null) {
         throw new IOException("Unable to access README.txt");
@@ -233,7 +233,7 @@ public class Project3 {
     newBill.addPhoneCall(newCall);
 
     if (flags.prettyFileFlag()) {
-      Writer writer = null;
+      Writer writer;
       if (flags.prettyFileArg().equals("-")) {
         writer = new StringWriter();
       } else {
@@ -339,7 +339,7 @@ public class Project3 {
   }
 
   /**
-   * A record of all the flags for the Project3 program.
+   * A record of all the flags for the Project4 program.
    *
    * @param printFlag
    *    Prints the {@link PhoneBill} to standard out.

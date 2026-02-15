@@ -65,6 +65,8 @@ public class PhoneBillDAO {
     }
   }
 
+  // TODO
+  //  javadoc comments on these
   public static void writeOut(Connection connection, File dbFile) throws SQLException {
     String writeOut = "SCRIPT TO ?";
 

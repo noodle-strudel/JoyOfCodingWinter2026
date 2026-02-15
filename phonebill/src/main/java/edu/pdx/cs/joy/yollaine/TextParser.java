@@ -108,27 +108,27 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
   }
 
   /**
-   * Ensures the parsed date and time is valid based off of {@link Project3#isValidDateAndTime(String) Project3's isValidDateAndTime} method.
+   * Ensures the parsed date and time is valid based off of {@link Project4#isValidDateAndTime(String) Project4's isValidDateAndTime} method.
    * @param dateAndTime
    *    The date and time string to validate.
    * @throws IllegalArgumentException
    *    Throws an IllegalArgumentException if the date and time is invalid.
    */
   static void validateDateAndTime(String dateAndTime) throws IllegalArgumentException {
-    if (!Project3.isValidDateAndTime(dateAndTime)) {
+    if (!Project4.isValidDateAndTime(dateAndTime)) {
       throw new IllegalArgumentException("Invalid date and time format in the given file.");
     }
   }
 
   /**
-   * Ensures the parsed date and time is valid based off of {@link Project3#isValidPhoneNumber(String)} Project3's isValidPhoneNumber} method.
+   * Ensures the parsed date and time is valid based off of {@link Project4#isValidPhoneNumber(String)} Project4's isValidPhoneNumber} method.
    * @param number
    *    The phone number to validate.
    * @throws IllegalArgumentException
    *    Throws an IllegalArgumentException if the phone number is invalid.
    */
   static void validatePhoneNumber(String number) throws IllegalArgumentException {
-    if (!Project3.isValidPhoneNumber(number)) {
+    if (!Project4.isValidPhoneNumber(number)) {
       throw new IllegalArgumentException("Invalid phone number format in the given file.");
     }
   }

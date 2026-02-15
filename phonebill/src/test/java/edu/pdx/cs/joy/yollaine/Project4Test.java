@@ -14,16 +14,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
- * A unit test for code in the <code>Project3</code> class.  This is different
+ * A unit test for code in the <code>Project4</code> class.  This is different
  * from <code>Project1IT</code> which is an integration test and can capture data
  * written to {@link System#out} and the like.
  */
-class Project3Test {
+class Project4Test {
 
   @Test
   void readmeCanBeReadAsResource() throws IOException {
     try (
-      InputStream readme = Project3.class.getResourceAsStream("README.txt")
+      InputStream readme = Project4.class.getResourceAsStream("README.txt")
     ) {
       assertThat(readme, not(nullValue()));
       BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
@@ -32,16 +32,16 @@ class Project3Test {
     }
   }
   private static boolean isValidDateAndTime(String dateAndTime) {
-    return Project3.isValidDateAndTime(dateAndTime);
+    return Project4.isValidDateAndTime(dateAndTime);
   }
 
   private static boolean getValidPhoneNumber(String number) {
-    return Project3.isValidPhoneNumber(number);
+    return Project4.isValidPhoneNumber(number);
   }
 
   @Test
   void canCreateProject2Object() {
-    Project3 prog2 = new Project3();
+    Project4 prog2 = new Project4();
   }
 
   @Test
@@ -99,7 +99,7 @@ class Project3Test {
   }
 
   /**
-   * As of Project3, dates have to follow the 12-hour rule, meaning semantically incorrect dates are not allowed.
+   * As of Project4, dates have to follow the 12-hour rule, meaning semantically incorrect dates are not allowed.
    * In addition, month, date, and year cannot be equivalent to 0.
    * @param date
    *    The incorrect date to try.
