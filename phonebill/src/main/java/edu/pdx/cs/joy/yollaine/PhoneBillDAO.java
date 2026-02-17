@@ -38,7 +38,7 @@ public class PhoneBillDAO {
   public static void createTables(Connection connection) throws SQLException {
     // Check if the table already exists
     DatabaseMetaData metaData = connection.getMetaData();
-    try (ResultSet tables = metaData.getTables(null, null, "CUSTOMERS", new String[]{"TABLE"})) {
+    try (ResultSet tables = metaData.getTables(null, "PUBLIC", "CUSTOMERS", new String[]{"TABLE"})) {
       if (tables.next()) {
         // Table already exists, no need to create it
         return;
@@ -68,7 +68,7 @@ public class PhoneBillDAO {
   // TODO
   //  javadoc comments on these
   public static void writeOut(Connection connection, File dbFile) throws SQLException {
-    String writeOut = "SCRIPT TO ?";
+    String writeOut = "SCRIPT TO ? TABLE PUBLIC.CUSTOMERS,PUBLIC.PHONE_CALLS ";
 
     try (PreparedStatement statement = connection.prepareStatement(writeOut)) {
       statement.setString(1, dbFile.getAbsolutePath());
@@ -76,7 +76,25 @@ public class PhoneBillDAO {
     }
   }
 
+  /**
+   * Runs a saved database script from a file, checking first if the database is empty.
+   * @param connection
+   * @param dbFile
+   * @throws SQLException
+   */
   public static void readFrom(Connection connection, File dbFile) throws SQLException {
+    DatabaseMetaData metaData = connection.getMetaData();
+
+    // Ensure the database is completely fresh with no CUSTOMERS in it
+    try (
+        ResultSet tables = metaData.getTables(null, "PUBLIC", "CUSTOMERS", new String[]{"TABLE"})
+    ) {
+      // if it isn't then there's no work to do
+      if (tables.next()) {
+        String thing = tables.getString("TABLE_NAME");
+        return;
+      }
+    }
     String readFrom = "RUNSCRIPT FROM ?";
 
     try (PreparedStatement statement = connection.prepareStatement(readFrom)) {

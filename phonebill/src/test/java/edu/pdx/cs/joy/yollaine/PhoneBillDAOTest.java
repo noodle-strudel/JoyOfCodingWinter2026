@@ -1,6 +1,7 @@
 package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
+import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,9 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
 import java.sql.*;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -26,13 +30,15 @@ import static org.hamcrest.Matchers.*;
 public class PhoneBillDAOTest {
 
   public static final String CUSTOMER_NAME = "Jane Doe";
+  public static final String CUSTOMER_NAME_TWO = "John Doe";
   private Connection connection;
   private PhoneBillDAO dao;
   private File tempFile;
-
+  private File tempFileTwo;
   @BeforeEach
   public void setUp(@TempDir File tempDir) throws SQLException {
     tempFile = new File(tempDir, "myDatabase.h2.db");
+    tempFileTwo = new File(tempDir, "yourDatabase.h2.db");
     // Create an in-memory H2 database
     connection = H2DatabaseHelper.createFileBasedConnection(tempFile.getAbsoluteFile());
 
@@ -73,9 +79,8 @@ public class PhoneBillDAOTest {
 
   @Test
   public void canPersistAndFetchPhoneBillByCustomerID() throws SQLException {
-    String customerNameTwo = "John Doe";
     PhoneBill bill = new PhoneBill(CUSTOMER_NAME);
-    PhoneBill billTwo = new PhoneBill(customerNameTwo);
+    PhoneBill billTwo = new PhoneBill(CUSTOMER_NAME_TWO);
 
     // Persist the phone bill using the DAO
     dao.save(bill);
@@ -91,7 +96,7 @@ public class PhoneBillDAOTest {
 
     PhoneBill fetchedBillTwo = dao.findByCustomerID(2);
     assertThat(fetchedBillTwo, is(notNullValue()));
-    assertThat(fetchedBillTwo.getCustomer(), is(equalTo(customerNameTwo)));
+    assertThat(fetchedBillTwo.getCustomer(), is(equalTo(CUSTOMER_NAME_TWO)));
   }
 
   @Test
@@ -141,8 +146,9 @@ public class PhoneBillDAOTest {
 
     // create a new connection in memory
     try (Connection memConnection = H2DatabaseHelper.createInMemoryConnection("phonebill_test")) {
-      PhoneBillDAO newDAO = new PhoneBillDAO(memConnection);
       PhoneBillDAO.readFrom(memConnection, tempFile);
+      PhoneBillDAO newDAO = new PhoneBillDAO(memConnection);
+
 
       PhoneBill fetchedBill = newDAO.findByCustomerName(CUSTOMER_NAME);
       assertThat(fetchedBill, is(notNullValue()));
@@ -153,7 +159,7 @@ public class PhoneBillDAOTest {
 
   @Test
   public void canPersistSaveAndLoadDataBaseWithPhoneBillWithMultiplePhoneCallsInAFile() throws SQLException {
-    PhoneBill bill = new PhoneBill(CUSTOMER_NAME);
+    PhoneBill bill = new PhoneBill(CUSTOMER_NAME_TWO);
     bill.addPhoneCall(PhoneCallTest.CALL_1);
     bill.addPhoneCall(PhoneCallTest.CALL_2);
     bill.addPhoneCall(PhoneCallTest.CALL_4);
@@ -163,15 +169,21 @@ public class PhoneBillDAOTest {
     PhoneBillDAO.writeOut(connection, tempFile);
 
     // create a new connection in memory
-    try (Connection memConnection = H2DatabaseHelper.createInMemoryConnection("phonebill_test")) {
+    try (Connection memConnection = H2DatabaseHelper.createFileBasedConnection(tempFileTwo)) {
       PhoneBillDAO newDAO = new PhoneBillDAO(memConnection);
       PhoneBillDAO.readFrom(memConnection, tempFile);
 
-      PhoneBill fetchedBill = newDAO.findByCustomerName(CUSTOMER_NAME);
+      PhoneBill fetchedBill = newDAO.findByCustomerName(CUSTOMER_NAME_TWO);
       assertThat(fetchedBill, is(notNullValue()));
-      assertThat(fetchedBill.getCustomer(), equalTo(CUSTOMER_NAME));
+      assertThat(fetchedBill.getCustomer(), equalTo(CUSTOMER_NAME_TWO));
       assertThat(fetchedBill.getPhoneCalls().size(), equalTo(3));
     }
+  }
+
+  @Test
+  void aboveTestsTogetherToSaveTwoPhoneCallsAndRetrieveDataFromBoth() throws SQLException {
+    canPersistSaveAndLoadDataBaseWithPhoneBillInAFile();
+    canPersistSaveAndLoadDataBaseWithPhoneBillWithMultiplePhoneCallsInAFile();
   }
 
 

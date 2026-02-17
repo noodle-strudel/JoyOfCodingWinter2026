@@ -35,4 +35,16 @@ public class DatabaseLoader implements PhoneBillParser<PhoneBill> {
       throw new ParserException(e.getMessage());
     }
   }
+
+  public PhoneBill parseNamed(String customerName) throws ParserException {
+    try {
+      PhoneBill bill = billDAO.findByCustomerName(customerName);
+      if (bill == null) {
+        throw new ParserException("Customer with name "+customerName+"not found in database.");
+      }
+      return bill;
+    } catch (SQLException e) {
+      throw new ParserException(e.getMessage());
+    }
+  }
 }
