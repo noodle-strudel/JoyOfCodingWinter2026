@@ -52,7 +52,7 @@ public class DatabaseDumperTest {
 
 
       assertTrue(checkFileFor(tempFile, "(1, 'My Name')"));
-
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -73,6 +73,7 @@ public class DatabaseDumperTest {
       PhoneBillDAO.writeOut(connection, tempFile);
 
       assertTrue(checkFileFor(tempFile, "(1, '345-234-4353', '343-342-3434', 1, TIMESTAMP '2005-01-02 16:56:00', TIMESTAMP '2005-01-02 17:34:00')"));
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -89,6 +90,7 @@ public class DatabaseDumperTest {
     ) {
       DatabaseDumper dbd = new DatabaseDumper(connection);
       assertThrows(RuntimeException.class ,() -> dbd.dump(bill));
+      assertFalse(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -113,6 +115,7 @@ public class DatabaseDumperTest {
       assertTrue(checkFileFor(tempFile, "(1, '345-234-4353', '343-342-3434', 1, TIMESTAMP '2005-01-02 16:56:00', TIMESTAMP '2005-01-02 17:34:00')"));
       // ensure it returns false for nonexistent data
       assertFalse(checkFileFor(tempFile, "(1, '345-234-4353', '343-342-3435', 1, TIMESTAMP '2005-01-02 16:56:00', TIMESTAMP '2005-01-02 17:34:00')"));
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -139,9 +142,9 @@ public class DatabaseDumperTest {
       assertTrue(checkFileFor(tempFile, "(2, '345-234-4353', '343-342-3434', 1, TIMESTAMP '2005-03-02 16:56:00', TIMESTAMP '2005-03-02 17:34:00')"));
       // ensure it returns false for nonexistent data
       assertFalse(checkFileFor(tempFile, "(1, '345-234-4353', '343-342-3435', 1, TIMESTAMP '2005-01-02 16:56:00', TIMESTAMP '2005-01-02 17:34:00')"));
+      assertTrue(new File(tempDir, "4324.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
   }
-
 }
