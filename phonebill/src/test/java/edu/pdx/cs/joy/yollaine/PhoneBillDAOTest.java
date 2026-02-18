@@ -16,10 +16,6 @@ import java.util.stream.Stream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-// TODO
-//  PhoneBillDAO
-//  get a single phone call from a customer
-
 /**
  * A simple example unit test that demonstrates persisting a PhoneBill
  * to an H2 in-memory database using JDBC.
@@ -35,6 +31,7 @@ public class PhoneBillDAOTest {
   private PhoneBillDAO dao;
   private File tempFile;
   private File tempFileTwo;
+
   @BeforeEach
   public void setUp(@TempDir File tempDir) throws SQLException {
     tempFile = new File(tempDir, "myDatabase.h2.db");
@@ -149,7 +146,6 @@ public class PhoneBillDAOTest {
       PhoneBillDAO.readFrom(memConnection, tempFile);
       PhoneBillDAO newDAO = new PhoneBillDAO(memConnection);
 
-
       PhoneBill fetchedBill = newDAO.findByCustomerName(CUSTOMER_NAME);
       assertThat(fetchedBill, is(notNullValue()));
       assertThat(fetchedBill.getCustomer(), equalTo(CUSTOMER_NAME));
@@ -185,7 +181,5 @@ public class PhoneBillDAOTest {
     canPersistSaveAndLoadDataBaseWithPhoneBillInAFile();
     canPersistSaveAndLoadDataBaseWithPhoneBillWithMultiplePhoneCallsInAFile();
   }
-
-
 }
 

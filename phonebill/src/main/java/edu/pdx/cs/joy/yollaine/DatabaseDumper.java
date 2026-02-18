@@ -30,7 +30,9 @@ public class DatabaseDumper implements PhoneBillDumper<PhoneBill> {
     try {
       billDAO.save(bill);
     } catch (SQLException e) {
-      throw new RuntimeException(e);
+      if (e.getMessage().contains("empty"))
+        throw new RuntimeException("Error: Database is empty. Cannot dump phone bill.");
+      throw new RuntimeException(e.getMessage());
     }
   }
 }

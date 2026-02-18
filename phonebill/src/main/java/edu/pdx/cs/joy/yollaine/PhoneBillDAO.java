@@ -110,12 +110,25 @@ public class PhoneBillDAO {
    * @throws SQLException if a database error occurs
    */
   public void save(PhoneBill bill) throws SQLException {
-    String insertCustomer = "INSERT INTO customers (name) VALUES (?)";
+    // check if the phone bill already exists in the database
+    // if so, check if there are any new phone calls to associate with the customer
+    // don't do anything if the call already exists
+    // add it in if its unique
     String customerName = bill.getCustomer();
+    String checkForCustomer = "SELECT id, name from customers WHERE name = ?";
 
-    try (PreparedStatement statement = connection.prepareStatement(insertCustomer)) {
+    try (PreparedStatement statement = connection.prepareStatement(checkForCustomer)) {
       statement.setString(1, customerName);
-      statement.executeUpdate();
+      try (ResultSet result = statement.executeQuery()) {
+        if (!result.next()) {
+          String insertCustomer = "INSERT INTO customers (name) VALUES (?)";
+
+          try (PreparedStatement inStatement = connection.prepareStatement(insertCustomer)) {
+            inStatement.setString(1, customerName);
+            inStatement.executeUpdate();
+          }
+        }
+      }
     }
 
     for (PhoneCall call: bill.getPhoneCalls()) {
@@ -181,29 +194,50 @@ public class PhoneBillDAO {
       this.connection = connection;
     }
 
+    /**
+     * Save a phone call associated with a customer if it's not already associated with the customer.
+     * @param call
+     * @param customerName
+     * @throws SQLException
+     */
     public void save(PhoneCall call, String customerName) throws SQLException {
-      String insertPhoneCall = "INSERT INTO phone_calls (" +
-          "caller, " +
-          "callee, " +
-          "customer_id, " +
-          "begin_time, " +
-          "end_time" +
-          ") VALUES (" +
-          "?," +
-          "?," +
-          "(SELECT id FROM customers WHERE name = ?)," +
-          "?," +
-          "?" +
-          ")";
+      String checkForCall = "SELECT " +
+          "caller, callee, begin_time, end_time " +
+          "FROM phone_calls WHERE customer_id = (SELECT id FROM customers WHERE name = ?)";
 
-      try (PreparedStatement statement = connection.prepareStatement(insertPhoneCall)) {
-        statement.setString(1, call.getCaller());
-        statement.setString(2, call.getCallee());
-        statement.setString(3, customerName);
-        statement.setTimestamp(4, Timestamp.valueOf(call.getBeginTime()));
-        statement.setTimestamp(5, Timestamp.valueOf(call.getEndTime()));
-        statement.executeUpdate();
+      try (PreparedStatement checkStatement = connection.prepareStatement(checkForCall)) {
+        checkStatement.setString(1, customerName);
+        try (ResultSet result = checkStatement.executeQuery()) {
+          boolean differentCall = true;
+          while (result.next() && differentCall) {
+            String caller = result.getString("caller");
+            String callee = result.getString("callee");
+            String beginTime = result.getTimestamp("begin_time").toLocalDateTime().format(PhoneCall.DATE_TIME_FORMAT);
+            String endTime = result.getTimestamp("end_time").toLocalDateTime().format(PhoneCall.DATE_TIME_FORMAT);
+            if (call.equals(new PhoneCall(caller, callee, beginTime, endTime))) {
+              differentCall = false;
+            }
+          }
+
+          if (differentCall) {
+            String insertPhoneCall = "INSERT INTO phone_calls (" +
+                "caller, callee, customer_id, begin_time, end_time" +
+                ") VALUES (?, ?, (SELECT id FROM customers WHERE name = ?), ?, ?)";
+
+            try (PreparedStatement statement = connection.prepareStatement(insertPhoneCall)) {
+              statement.setString(1, call.getCaller());
+              statement.setString(2, call.getCallee());
+              statement.setString(3, customerName);
+              statement.setTimestamp(4, Timestamp.valueOf(call.getBeginTime()));
+              statement.setTimestamp(5, Timestamp.valueOf(call.getEndTime()));
+              statement.executeUpdate();
+            }
+          }
+        }
       }
+
+
+
     }
 
     public List<PhoneCall> findCallsByCustomerID(int customerID) throws SQLException {

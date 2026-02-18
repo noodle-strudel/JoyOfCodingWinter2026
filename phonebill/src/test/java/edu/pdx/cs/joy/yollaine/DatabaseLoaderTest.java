@@ -15,10 +15,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-// TODO
-//  DatabaseLoader implements PhoneBillParser
-//  error if there is no matching customer
-
 public class DatabaseLoaderTest {
 
   @TempDir
@@ -33,7 +29,7 @@ public class DatabaseLoaderTest {
     PhoneBill bill = PhoneBillTest.createPhoneBillNamed("My Name");
     bill.addPhoneCall(PhoneCallTest.CALL_1);
     bill.addPhoneCall(PhoneCallTest.CALL_2);
-    bill.addPhoneCall(PhoneCallTest.CALL_5);
+    bill.addPhoneCall(PhoneCallTest.CALL_3);
 
     PhoneBill coolBill = PhoneBillTest.createPhoneBillNamed("Cool Customer");
     coolBill.addPhoneCall(PhoneCallTest.CALL_5);
@@ -107,7 +103,7 @@ public class DatabaseLoaderTest {
   }
 
   @Test
-  void throwsErrorIfTheresNoCustomerInDatabase() {
+  void throwsErrorIfTheresNoNamedCustomerInDatabase() {
     try (
         Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)
     ) {
