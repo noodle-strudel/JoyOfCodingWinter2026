@@ -8,6 +8,7 @@ import java.io.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // TODO
@@ -35,14 +36,16 @@ public class ConverterIT extends InvokeMainTestCase {
   @Test
   void invokingMainWithCorrectArgumentsConvertsPhoneBillTextFileToDatabaseFile(@TempDir File tempDir) throws IOException {
     File textFile = new File(tempDir, "textFile.txt");
-    File dbFile = new File(tempDir, "coolThing.h2.db");
+    File dbFileBackup = new File(tempDir, "coolThing");
+    File dbFile = new File(tempDir, "coolThing.mv.db");
     PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Loki");
     TextDumper textDumper = new TextDumper(new FileWriter(textFile));
     textDumper.dump(bill);
-    MainMethodResult result = invokeMain(textFile.getAbsolutePath(), dbFile.getAbsolutePath());
+    MainMethodResult result = invokeMain(textFile.getAbsolutePath(), dbFileBackup.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    assertTrue(DatabaseDumperTest.checkFileFor(dbFile, "-- H2 2.4.240;"));
+    assertTrue(DatabaseDumperTest.checkFileFor(dbFileBackup, "-- H2 2.4.240;"));
+    assertTrue(dbFileBackup.exists());
     assertTrue(dbFile.exists());
   }
 
@@ -71,15 +74,17 @@ public class ConverterIT extends InvokeMainTestCase {
   @Test
   void invokingMainWithMalformedFilePrintsError(@TempDir File tempDir) throws IOException {
     File textFile = new File(tempDir, "textFile.txt");
-    File dbFile = new File(tempDir, "coolThing.h2.db");
+    File dbFileBackup = new File(tempDir, "coolThing.h2.db");
+    File dbFile = new File(tempDir, "coolThing.h2.mv.db");
     textFile.createNewFile();
     try (PrintWriter pw = new PrintWriter(new FileWriter(textFile))) {
       pw.println("Cool thing");
       pw.println("53453 45345345354 435345");
     }
-    MainMethodResult result = invokeMain(textFile.getAbsolutePath(), dbFile.getAbsolutePath());
+    MainMethodResult result = invokeMain(textFile.getAbsolutePath(), dbFileBackup.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardError(),containsString("Invalid phone number format in the given file."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertFalse(dbFile.exists());
   }
 
   @Test
