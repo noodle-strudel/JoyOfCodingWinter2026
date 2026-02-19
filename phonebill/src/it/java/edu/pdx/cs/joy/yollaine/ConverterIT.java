@@ -11,8 +11,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// TODO
-//  incorrect format for database file
 public class ConverterIT extends InvokeMainTestCase {
   private MainMethodResult invokeMain(String... args) {
     return invokeMain(Converter.class, args);
@@ -68,6 +66,15 @@ public class ConverterIT extends InvokeMainTestCase {
     textFile.createNewFile();
     MainMethodResult result = invokeMain(textFile.getAbsolutePath(), dbFile.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardError(),containsString("Missing customer name in given text file."));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void invokingMainWithANonExistentFilePrintsNonExistentFileError(@TempDir File tempDir) throws IOException {
+    File textFile = new File(tempDir, "textFile.txt");
+    File dbFile = new File(tempDir, "coolThing.h2.db");
+    MainMethodResult result = invokeMain(textFile.getAbsolutePath(), dbFile.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardError(),containsString("Phone bill text file does not exist"));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 

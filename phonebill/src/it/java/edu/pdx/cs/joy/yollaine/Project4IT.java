@@ -1,5 +1,6 @@
 package edu.pdx.cs.joy.yollaine;
 
+import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Test;
@@ -73,7 +74,7 @@ class Project4IT extends InvokeMainTestCase {
         case "empty" -> cmdLineArgs.replaceAll((k, v) -> "");
         case "opt" -> {
           options[iOpt++] = args[++i];
-          if (args[i].equals("-textFile") || args[i].equals("-pretty")) {
+          if (args[i].equals("-textFile") || args[i].equals("-pretty") || args[i].equals("-dbFile")) {
             options[iOpt++] = args[++i];
           }
         }
@@ -807,4 +808,88 @@ class Project4IT extends InvokeMainTestCase {
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertThat(result.getTextWrittenToStandardError(), containsString("Error: End Time is before Begin Time"));
   }
+
+  /* PROJECT 4 */
+
+  @Test
+  void dbFileOnlyPrintsMissingArgumentForDbFile() {
+    MainMethodResult result = invokeMain("-dbFile");
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), containsString("-dbFile argument requires file path"));
+  }
+
+  @Test
+  void dbFileWithTextFilePrintsIncompatibleFlagError(@TempDir File tempDir) {
+    File thing = new File(tempDir, "database");
+    File thing2 = new File(tempDir, "textFile.txt");
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath(), "opt", "-textFile", thing2.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Incompatible flags -textFile and -dbFile: Only one can be specified at a time"));
+    result = invokeMainCustom("opt", "-textFile", thing2.getAbsolutePath(), "opt", "-dbFile", thing.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Incompatible flags -textFile and -dbFile: Only one can be specified at a time"));
+  }
+
+  @Test
+  void dbFileWithREADMEPrintsREADMEOnly(@TempDir File tempDir) {
+    File thing = new File(tempDir, "database");
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath(), "opt", "-README");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    result = invokeMainCustom("opt", "-README", "opt", "-dbFile", thing.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] <args>"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+  }
+
+  @Test
+  void dbFileWithCorrectArgumentsCreatesDBFileSuccessfully(@TempDir File tempDir) {
+    File thing = new File(tempDir, "database");
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertTrue(thing.exists());
+    assertTrue(new File(tempDir, "database.mv.db").exists());
+  }
+
+  @Test
+  void dbFileWithPrettyPrintCreatesDbFileAndPrettyPrintsCall(@TempDir File tempDir) {
+    File thing = new File(tempDir, "database");
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath(), "opt", "-pretty", "-");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertTrue(thing.exists());
+    assertTrue(new File(tempDir, "database.mv.db").exists());
+  }
+
+  // need to work on this unit test
+  /*
+  @Test
+  void dbFileWithPrintCreatesDbFileAndPrintsNewestCall(@TempDir File tempDir) throws IOException {
+    File textFile = new File(tempDir, "textFile.txt");
+    File dbFileBackup = new File(tempDir, "coolThing");
+    File dbFile = new File(tempDir, "coolThing.mv.db");
+    PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Any Name");
+    TextDumper textDumper = new TextDumper(new FileWriter(textFile));
+    textDumper.dump(bill);
+    MainMethodResult cresult = invokeMain(Converter.class, textFile.getAbsolutePath(), dbFileBackup.getAbsolutePath());
+
+
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-print");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertTrue(dbFile.exists());
+    assertTrue(new File(tempDir, "database.mv.db").exists());
+  }
+
+   */
+
+
+
+  // TODO
+  //  successfully with dbFile and prettyPrint
+  //  successfully with dbFile and print
+  //  too many arguments with dbFile
+  //  max arguments with dbFile
+
 }

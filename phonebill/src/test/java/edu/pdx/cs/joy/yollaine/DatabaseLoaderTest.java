@@ -14,6 +14,7 @@ import java.sql.SQLException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DatabaseLoaderTest {
 
@@ -56,6 +57,7 @@ public class DatabaseLoaderTest {
       PhoneBill newBill = dbl.parse();
       assertThat(newBill.getCustomer(), equalTo("My Name"));
       assertThat(newBill.getPhoneCalls().size(), equalTo(3));
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException | ParserException e) {
       throw new RuntimeException(e);
     }
@@ -70,6 +72,7 @@ public class DatabaseLoaderTest {
       PhoneBill newBill = dbl.parseNamed("My Name");
       assertThat(newBill.getCustomer(), equalTo("My Name"));
       assertThat(newBill.getPhoneCalls().size(), equalTo(3));
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException | ParserException e) {
       throw new RuntimeException(e);
     }
@@ -84,6 +87,7 @@ public class DatabaseLoaderTest {
       PhoneBill newBill = dbl.parseNamed("Cool Customer");
       assertThat(newBill.getCustomer(), equalTo("Cool Customer"));
       assertThat(newBill.getPhoneCalls().size(), equalTo(2));
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException | ParserException e) {
       throw new RuntimeException(e);
     }
@@ -97,6 +101,7 @@ public class DatabaseLoaderTest {
     ) {
       DatabaseLoader dbl = new DatabaseLoader(badConnection);
       assertThrows(ParserException.class, dbl::parse);
+      assertTrue(new File(thisTempDir, "4343fsd.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
@@ -109,6 +114,7 @@ public class DatabaseLoaderTest {
     ) {
       DatabaseLoader dbl = new DatabaseLoader(connection);
       assertThrows(ParserException.class, () -> dbl.parseNamed("Non-existent Customer"));
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }

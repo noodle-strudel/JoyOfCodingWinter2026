@@ -9,10 +9,6 @@ import java.util.List;
 
 /**
  * A Data Access Object (DAO) for persisting PhoneBill instances to a database.
- *
- * This is a simple example to demonstrate basic JDBC operations.
- * Students can expand this to include PhoneCall persistence and more
- * sophisticated query capabilities.
  */
 public class PhoneBillDAO {
 
@@ -32,8 +28,8 @@ public class PhoneBillDAO {
   /**
    * Creates the customers table in the database if it doesn't already exist.
    *
-   * @param connection the database connection to use
-   * @throws SQLException if a database error occurs
+   * @param connection the database connection to use.
+   * @throws SQLException if an error occurs while accessing the database.
    */
   public static void createTables(Connection connection) throws SQLException {
     // Check if the table already exists
@@ -65,8 +61,12 @@ public class PhoneBillDAO {
     }
   }
 
-  // TODO
-  //  javadoc comments on these
+  /**
+   * Write out a "back-up" file of the database to the given file.
+   * @param connection the database connection to use.
+   * @param dbFile the back-up file to be created.
+   * @throws SQLException if an error occurs while accessing the database.
+   */
   public static void writeOut(Connection connection, File dbFile) throws SQLException {
     String writeOut = "SCRIPT TO ? TABLE PUBLIC.CUSTOMERS,PUBLIC.PHONE_CALLS ";
 
@@ -78,9 +78,9 @@ public class PhoneBillDAO {
 
   /**
    * Runs a saved database script from a file, checking first if the database is empty.
-   * @param connection
-   * @param dbFile
-   * @throws SQLException
+   * @param connection the database connection to use.
+   * @param dbFile the back-up file to be created.
+   * @throws SQLException if an error occurs while accessing the database.
    */
   public static void readFrom(Connection connection, File dbFile) throws SQLException {
     DatabaseMetaData metaData = connection.getMetaData();
@@ -106,8 +106,8 @@ public class PhoneBillDAO {
   /**
    * Saves a PhoneBill to the database.
    *
-   * @param bill the phone bill to save
-   * @throws SQLException if a database error occurs
+   * @param bill the phone bill to save.
+   * @throws SQLException if an error occurs while accessing the database.
    */
   public void save(PhoneBill bill) throws SQLException {
     // check if the phone bill already exists in the database
@@ -139,9 +139,9 @@ public class PhoneBillDAO {
   /**
    * Finds a PhoneBill by customer name.
    *
-   * @param customerName the customer name to search for
-   * @return the PhoneBill for the customer, or null if not found
-   * @throws SQLException if a database error occurs
+   * @param customerName the customer name to search for.
+   * @return the PhoneBill for the customer, or null if not found.
+   * @throws SQLException if an error occurs while accessing the database.
    */
   public PhoneBill findByCustomerName(String customerName) throws SQLException {
     String selectCustomer = "SELECT id,name FROM customers WHERE name = ?";
@@ -158,7 +158,7 @@ public class PhoneBillDAO {
    *
    * @param customerID the customer ID to search for.
    * @return the PhoneBill for the customer, or null if not found.
-   * @throws SQLException if a data error occurs.
+   * @throws SQLException if an error occurs while accessing the database.
    */
   public PhoneBill findByCustomerID(int customerID) throws SQLException {
     String selectSQL = "SELECT id, name FROM customers WHERE id = ?";
@@ -170,6 +170,12 @@ public class PhoneBillDAO {
     }
   }
 
+  /**
+   * Helper function to get a PhoneBill.
+   * @param statement PreparedStatement to execute.
+   * @return a PhoneBill created from the database.
+   * @throws SQLException if an error occurs while accessing the database.
+   */
   @Nullable
   private PhoneBill getPhoneBill(PreparedStatement statement) throws SQLException {
     try (ResultSet resultSet = statement.executeQuery()) {
@@ -187,18 +193,25 @@ public class PhoneBillDAO {
     }
   }
 
+  /**
+   * A helper Inner Class Data Access Object (DAO) for persisting PhoneCall instances to a database.
+   */
   static class PhoneCallDAO {
     private final Connection connection;
 
+    /**
+     * The constructor for the PhoneCallDAO.
+     * @param connection The connection to the database.
+     */
     public PhoneCallDAO(Connection connection) {
       this.connection = connection;
     }
 
     /**
      * Save a phone call associated with a customer if it's not already associated with the customer.
-     * @param call
-     * @param customerName
-     * @throws SQLException
+     * @param call The call to save to the database.
+     * @param customerName The customer name associated with the phone call.
+     * @throws SQLException if an error occurs while accessing the database.
      */
     public void save(PhoneCall call, String customerName) throws SQLException {
       String checkForCall = "SELECT " +
@@ -240,6 +253,13 @@ public class PhoneBillDAO {
 
     }
 
+    /**
+     * Finds a call by its customer_id in the database.
+     *
+     * @param customerID The ID of the customer associated with a customer.
+     * @return a list of PhoneCalls.
+     * @throws SQLException if an error occurs while accessing the database.
+     */
     public List<PhoneCall> findCallsByCustomerID(int customerID) throws SQLException {
       String selectCalls = "SELECT caller, callee, begin_time, end_time FROM phone_calls WHERE customer_id = ?";
 

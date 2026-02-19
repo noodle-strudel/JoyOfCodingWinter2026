@@ -2,10 +2,13 @@ package edu.pdx.cs.joy.yollaine;
 
 import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs.joy.ParserException;
+import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
 import org.jspecify.annotations.Nullable;
 
 import java.io.*;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -170,6 +173,7 @@ public class Project4 {
     boolean newFile = false;
     PhoneBill newBill = null;
     File phoneBillFile = null;
+
     if (flags.textFileFlag()) {
       phoneBillFile = new File(flags.textFileArg());
 
@@ -191,6 +195,19 @@ public class Project4 {
         return;
       }
     }
+    /*
+    else if (flags.dbFileFlag()) {
+      File dbFile = new File(flags.dbFileArg());
+      try (Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)) {
+        PhoneBillDAO.createTables(connection);
+        DatabaseLoader dbd = new DatabaseLoader(connection);
+        newBill = dbd.parseNamed(name);
+      } catch (ParserException | SQLException e) {
+        System.err.println("An error occurred while parsing the database: "+e.getMessage());
+      }
+    }
+
+     */
 
     // Create a phone call attached to a phone bill after verification is successful
     PhoneCall newCall;
@@ -269,7 +286,17 @@ public class Project4 {
         System.err.println(e.getMessage());
         return;
       }
-
+    } else if (flags.dbFileFlag()) {
+      File dbFile = new File(flags.dbFileArg());
+      try (Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)) {
+        PhoneBillDAO.createTables(connection);
+        DatabaseDumper dbd = new DatabaseDumper(connection);
+        dbd.dump(newBill);
+        PhoneBillDAO.writeOut(connection, dbFile);
+      } catch (SQLException | RuntimeException e) {
+        System.err.println("An error occurred while creating the database: " + e.getMessage());
+        return;
+      }
     }
 
     if (flags.printFlag()) {
@@ -292,13 +319,18 @@ public class Project4 {
     boolean unknownArgFlag = false;
     boolean textFileFlag = false;
     boolean prettyFileFlag = false;
+    boolean dbFileFlag = false;
     String textFileArg = "";
     String prettyFileArg = "";
     String unknownArg = "";
     String currentArg;
+    String dbFileArg = "";
     try {
       while ((currentArg = argList.getFirst()).startsWith("-")) {
         if (currentArg.contains("textFile")) {
+          if (dbFileFlag) {
+            throw new IllegalArgumentException("Incompatible flags -textFile and -dbFile: Only one can be specified at a time");
+            }
           argList.removeFirst();
           textFileFlag = true;
           textFileArg = argList.removeFirst();
@@ -306,6 +338,13 @@ public class Project4 {
           argList.removeFirst();
           prettyFileFlag = true;
           prettyFileArg = argList.removeFirst();
+        } else if (currentArg.contains("dbFile")) {
+          if (textFileFlag) {
+            throw new IllegalArgumentException("Incompatible flags -textFile and -dbFile: Only one can be specified at a time");
+          }
+          argList.removeFirst();
+          dbFileFlag = true;
+          dbFileArg = argList.removeFirst();
         } else {
           if (currentArg.contains("print")) {
             printFlag = true;
@@ -326,6 +365,9 @@ public class Project4 {
       } else if (prettyFileFlag && prettyFileArg.isEmpty()) {
         System.err.println("-pretty argument requires file path or \"-\" for standard output.");
         return null;
+      } else if (dbFileFlag && dbFileArg.isEmpty()) {
+        System.err.println("-dbFile argument requires file path");
+        return null;
         // If there's no -README flag and no unknown arguments, then the program will try to
         // store phone bill information without exiting.
         // But since there's no arguments and only options, it will give an error message.
@@ -334,8 +376,11 @@ public class Project4 {
         System.err.println("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM");
         return null;
       }
+    } catch (IllegalArgumentException e) {
+      System.err.println(e.getMessage());
+      return null;
     }
-    return new progFlags(printFlag, readMeFlag, unknownArgFlag, textFileFlag, prettyFileFlag, unknownArg, textFileArg, prettyFileArg);
+    return new progFlags(printFlag, readMeFlag, unknownArgFlag, textFileFlag, prettyFileFlag, dbFileFlag, unknownArg, textFileArg, prettyFileArg, dbFileArg);
   }
 
   /**
@@ -351,15 +396,19 @@ public class Project4 {
    *    Reads and possibly creates a given text file to parse and write a PhoneBill to.
    * @param prettyFileFlag
    *    Prints the PhoneBill in a "pretty" format meant for viewing.
+   * @param dbFileFlag
+   *    Reads and adds a PhoneBill to a relational database file.
    * @param unknownArg
    *    The unknown argument detected.
    * @param textFileArg
    *    The argument for the text file to perform I/O on.
    * @param prettyFileArg
    *    The argument for the pretty file to perform output on.
+   * @param dbFileArg
+   *    The argument for the database file to add the phone bill to.
    */
-  private record progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, boolean prettyFileFlag, String unknownArg,
-                           String textFileArg, String prettyFileArg) {
+  private record progFlags(boolean printFlag, boolean readMeFlag, boolean unknownArgFlag, boolean textFileFlag, boolean prettyFileFlag, boolean dbFileFlag, String unknownArg,
+                           String textFileArg, String prettyFileArg, String dbFileArg) {
     /**
      * The constructor for the progFlag record.
      *
@@ -373,12 +422,16 @@ public class Project4 {
      *    Reads and possibly creates a given text file to parse and write a PhoneBill to.
      * @param prettyFileFlag
      *    Prints the PhoneBill in a "pretty" format meant for viewing.
+     * @param dbFileFlag
+     *    Reads and adds a PhoneBill to a relational database file.
      * @param unknownArg
      *    The unknown argument detected.
      * @param textFileArg
      *    The argument for the text file to perform I/O on.
      * @param prettyFileArg
      *    The argument for the pretty file to perform output on.
+     * @param dbFileArg
+     *    The argument for the database file to add the phone bill to.
      */
     private progFlags {
     }

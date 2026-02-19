@@ -10,10 +10,6 @@ import java.sql.SQLException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-// TODO
-//  convert text file to database
-//  error if converting nonexistent file
-//  error if converting empty file
 public class ConverterTest {
 
   @Test

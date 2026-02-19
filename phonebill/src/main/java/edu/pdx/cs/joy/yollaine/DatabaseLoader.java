@@ -36,6 +36,12 @@ public class DatabaseLoader implements PhoneBillParser<PhoneBill> {
     }
   }
 
+  /**
+   * Parse a named customer in a database into a PhoneBill.
+   * @param customerName The customer to recreate the phone bill.
+   * @return the PhoneBill associated with the customer.
+   * @throws ParserException if an error occurs while accessing the database.
+   */
   public PhoneBill parseNamed(String customerName) throws ParserException {
     try {
       PhoneBill bill = billDAO.findByCustomerName(customerName);

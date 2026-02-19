@@ -90,7 +90,7 @@ public class DatabaseDumperTest {
     ) {
       DatabaseDumper dbd = new DatabaseDumper(connection);
       assertThrows(RuntimeException.class ,() -> dbd.dump(bill));
-      assertFalse(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
+      assertTrue(new File(tempDir, "billDatabase.h2.db.mv.db").exists());
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }

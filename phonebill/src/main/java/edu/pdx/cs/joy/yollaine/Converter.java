@@ -4,14 +4,23 @@ import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
 import org.jspecify.annotations.NonNull;
 
-import javax.annotation.processing.SupportedSourceVersion;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Converts a {@link PhoneBill} text file created by {@link TextDumper} to a database file.
+ */
 public class Converter {
+
+  /**
+   * Converts a PhoneBill to a database file.
+   * @param bill PhoneBill to convert.
+   * @param dbFile Target database file to create.
+   * @throws SQLException if an error occurs while accessing the database.
+   */
   public static void phoneBillToDatabase(PhoneBill bill, File dbFile) throws SQLException {
     try (Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)) {
       PhoneBillDAO.createTables(connection);
@@ -22,6 +31,10 @@ public class Converter {
     }
   }
 
+  /**
+   * The main method of the Converter.
+   * @param args Arguments passed in from the command line.
+   */
   public static void main(String @NonNull [] args) {
     if (args.length == 0) {
       System.err.println("Missing command line arguments");
@@ -57,7 +70,7 @@ public class Converter {
       if (dbFile.isDirectory() || textFile.isDirectory()) {
         System.err.println("Error while reading files: At least 1 File is a directory");
       } else {
-        System.err.println("Error while reading files: At least 1 File does not exist");
+        System.err.println("Error while reading files: Phone bill text file does not exist");
       }
     } catch (ParserException e) {
       System.err.println("Error while parsing text file: "+e.getMessage());
