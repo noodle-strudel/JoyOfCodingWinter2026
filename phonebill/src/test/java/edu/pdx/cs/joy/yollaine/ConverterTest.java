@@ -13,7 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ConverterTest {
 
   @Test
-  void canConvertPhoneBillToDatabaseFile(@TempDir File tempDir) throws SQLException, IOException {
+  void canInstantiateConverterClass() {
+    Converter converter = new Converter();
+  }
+
+  @Test
+  void canConvertPhoneBillToDatabaseFile(@TempDir File tempDir) throws SQLException {
     PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Hello");
     File dbFile = new File(tempDir, "fjdf.h2.db");
     File dbFileReal = new File(tempDir, "fjdf.h2.db.mv.db");

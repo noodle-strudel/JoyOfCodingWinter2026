@@ -2,6 +2,7 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
+import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

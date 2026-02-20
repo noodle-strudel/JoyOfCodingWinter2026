@@ -46,7 +46,7 @@ public class DatabaseLoader implements PhoneBillParser<PhoneBill> {
     try {
       PhoneBill bill = billDAO.findByCustomerName(customerName);
       if (bill == null) {
-        throw new ParserException("Customer with name "+customerName+"not found in database.");
+        throw new ParserException("Customer with name "+customerName+" not found in database.");
       }
       return bill;
     } catch (SQLException e) {

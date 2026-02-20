@@ -1,10 +1,12 @@
 package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.InvokeMainTestCase;
+import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
+import java.sql.SQLException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -32,7 +34,7 @@ public class ConverterIT extends InvokeMainTestCase {
   }
 
   @Test
-  void invokingMainWithCorrectArgumentsConvertsPhoneBillTextFileToDatabaseFile(@TempDir File tempDir) throws IOException {
+  void invokingMainWithCorrectArgumentsConvertsPhoneBillTextFileToDatabaseFile(@TempDir File tempDir) throws IOException, SQLException {
     File textFile = new File(tempDir, "textFile.txt");
     File dbFileBackup = new File(tempDir, "coolThing");
     File dbFile = new File(tempDir, "coolThing.mv.db");
@@ -45,6 +47,7 @@ public class ConverterIT extends InvokeMainTestCase {
     assertTrue(DatabaseDumperTest.checkFileFor(dbFileBackup, "-- H2 2.4.240;"));
     assertTrue(dbFileBackup.exists());
     assertTrue(dbFile.exists());
+    PrintH2DatabaseSchema.main(new String[]{dbFileBackup.getAbsolutePath()});
   }
 
   @Test
@@ -99,6 +102,19 @@ public class ConverterIT extends InvokeMainTestCase {
     MainMethodResult result = invokeMain("dfsfsd", "sdfsf", "643");
     assertThat(result.getTextWrittenToStandardError(),containsString("Too many command line arguments"));
     assertThat(result.getTextWrittenToStandardError(), containsString("usage: java -cp target/phonebill-1.0.0.jar edu.pdx.cs.joy.<login-id>.Converter textFile dbFile"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void invokingMainWithSharedFileLocationPrintsError(@TempDir File tempDir) throws IOException {
+    File textFile = new File(tempDir, "textFile.txt");
+    File dbFileBackup = new File(tempDir, "coolThing");
+    File dbFile = new File(tempDir, "coolThing.mv.db");
+    PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Loki");
+    TextDumper textDumper = new TextDumper(new FileWriter(textFile));
+    textDumper.dump(bill);
+    MainMethodResult result = invokeMain(textFile.getAbsolutePath(), textFile.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: Given textFile and dbFile share the same file location."));
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
   }
 }

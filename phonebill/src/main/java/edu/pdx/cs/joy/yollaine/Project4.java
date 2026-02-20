@@ -166,6 +166,9 @@ public class Project4 {
     if (flags.textFileFlag() && flags.prettyFileFlag() && flags.textFileArg().equals(flags.prettyFileArg())) {
       System.err.println("Error: -pretty and -textFile share the same file location.");
       return;
+    } else if (flags.dbFileFlag() && flags.prettyFileFlag() && flags.dbFileArg().equals(flags.prettyFileArg())) {
+      System.err.println("Error: -pretty and -dbFile share the same file location.");
+      return;
     }
 
 
@@ -194,10 +197,12 @@ public class Project4 {
         System.err.println(e.getMessage());
         return;
       }
-    }
-    /*
-    else if (flags.dbFileFlag()) {
+    } else if (flags.dbFileFlag()) {
       File dbFile = new File(flags.dbFileArg());
+      if (!dbFile.exists()) {
+        System.err.println("Error: "+dbFile.getAbsolutePath()+" does not exist.");
+        return;
+      }
       try (Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)) {
         PhoneBillDAO.createTables(connection);
         DatabaseLoader dbd = new DatabaseLoader(connection);
@@ -206,8 +211,6 @@ public class Project4 {
         System.err.println("An error occurred while parsing the database: "+e.getMessage());
       }
     }
-
-     */
 
     // Create a phone call attached to a phone bill after verification is successful
     PhoneCall newCall;
@@ -218,10 +221,8 @@ public class Project4 {
       return;
     }
 
-
-
-    // either you have the textFile flag and a new file was created, or you didn't put a textFile option
-    if (!flags.textFileFlag() || newFile) {
+    // create a new phonebill if it wasn't from a file or a textFile option is done but there's no preexisting file
+    if (!flags.dbFileFlag() && (!flags.textFileFlag() || newFile)) {
       newBill = new PhoneBill(name);
 
     } else { // otherwise, there is a valid phone bill with at least a customer name

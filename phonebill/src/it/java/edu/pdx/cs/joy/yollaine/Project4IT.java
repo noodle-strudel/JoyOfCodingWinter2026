@@ -3,12 +3,14 @@ package edu.pdx.cs.joy.yollaine;
 import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
+import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -842,54 +844,121 @@ class Project4IT extends InvokeMainTestCase {
   }
 
   @Test
-  void dbFileWithCorrectArgumentsCreatesDBFileSuccessfully(@TempDir File tempDir) {
-    File thing = new File(tempDir, "database");
-    MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath());
+  void dbFileWithCorrectArgumentsCreatesDBFileSuccessfully(@TempDir File tempDir) throws IOException, SQLException {
+    File textFile = new File(tempDir, "textFile.txt");
+    File dbFile = new File(tempDir, "database");
+    File dbFileReal = new File(tempDir, "database.mv.db");
+    PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Any Name");
+    bill.addPhoneCall(new PhoneCall("435-665-3467", "545-234-6456", "1/1/2004 11:00 AM", "1/1/2004 12:00 PM"));
+    TextDumper textDumper = new TextDumper(new FileWriter(textFile));
+    textDumper.dump(bill);
+    invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
+
+    PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-    assertTrue(thing.exists());
-    assertTrue(new File(tempDir, "database.mv.db").exists());
+    assertTrue(dbFile.exists());
+    assertTrue(dbFileReal.exists());
   }
 
   @Test
-  void dbFileWithPrettyPrintCreatesDbFileAndPrettyPrintsCall(@TempDir File tempDir) {
-    File thing = new File(tempDir, "database");
-    MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath(), "opt", "-pretty", "-");
+  void dbFileWithPrettyPrintCreatesDbFileAndPrettyPrintsCall(@TempDir File tempDir) throws IOException, SQLException {
+    File textFile = new File(tempDir, "textFile.txt");
+    File dbFile = new File(tempDir, "coolThing");
+    File dbFileReal = new File(tempDir, "coolThing.mv.db");
+    PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Any Name");
+    bill.addPhoneCall(new PhoneCall("435-665-3467", "545-234-6456", "1/1/2004 11:00 AM", "1/1/2004 12:00 PM"));
+    TextDumper textDumper = new TextDumper(new FileWriter(textFile));
+    textDumper.dump(bill);
+    invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
+
+    PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
+
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-pretty", "-");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-    assertTrue(thing.exists());
-    assertTrue(new File(tempDir, "database.mv.db").exists());
+    assertTrue(dbFile.exists());
+    assertTrue(dbFileReal.exists());
   }
 
-  // need to work on this unit test
-  /*
   @Test
-  void dbFileWithPrintCreatesDbFileAndPrintsNewestCall(@TempDir File tempDir) throws IOException {
+  void dbFileWithPrintCreatesDbFileAndPrintsNewestCall(@TempDir File tempDir) throws IOException, SQLException {
     File textFile = new File(tempDir, "textFile.txt");
-    File dbFileBackup = new File(tempDir, "coolThing");
-    File dbFile = new File(tempDir, "coolThing.mv.db");
+    File dbFile = new File(tempDir, "coolThing");
+    File dbFileReal = new File(tempDir, "coolThing.mv.db");
     PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Any Name");
     TextDumper textDumper = new TextDumper(new FileWriter(textFile));
     textDumper.dump(bill);
-    MainMethodResult cresult = invokeMain(Converter.class, textFile.getAbsolutePath(), dbFileBackup.getAbsolutePath());
+    invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
 
+    PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
 
     MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-print");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
     assertTrue(dbFile.exists());
-    assertTrue(new File(tempDir, "database.mv.db").exists());
+    assertTrue(dbFileReal.exists());
   }
 
-   */
+  @Test
+  void dbFileWithTooManyArgumentsPrintsTooManyArguments(@TempDir File tempDir) {
+    File dbFile = new File(tempDir, "coolThing");
+    MainMethodResult result = invokeMain("-dbFile", dbFile.getAbsolutePath(), "Any Name", "123-456-7890", "-print", "098-765-4321", "4/5/2023", "11:34", "AM", "-print", "4/5/2023", "12:59", "PM");
+    assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
+    assertThat(result.getTextWrittenToStandardError(), containsString("usage: java -jar target/phonebill-1.0.0.jar [options] customer callerNumber calleeNumber beginDate beginTime AM/PM endDate endTime AM/PM"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
 
+  @Test
+  void validOptionsWithDbFileExecutesSuccessfully(@TempDir File tempDir) throws IOException, SQLException {
+    File textFile = new File(tempDir, "textFile.txt");
+    File dbFile = new File(tempDir, "coolThing");
+    File dbFileReal = new File(tempDir, "coolThing.mv.db");
+    PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Any Name");
+    TextDumper textDumper = new TextDumper(new FileWriter(textFile));
+    textDumper.dump(bill);
+    invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
 
+    PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
 
-  // TODO
-  //  successfully with dbFile and prettyPrint
-  //  successfully with dbFile and print
-  //  too many arguments with dbFile
-  //  max arguments with dbFile
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-print", "opt", "-pretty", "-");
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Newest Phone call from 123-456-7890 to 098-765-4321 from 4/5/23, 11:34 AM to 4/5/23, 12:59 PM"));
+    assertTrue(dbFile.exists());
+    assertTrue(dbFileReal.exists());
+  }
+
+  @Test
+  void dbFileAndPrettyPrintFileWithSameLocationPrintsError(@TempDir File tempDir) throws IOException, SQLException {
+    File textFile = new File(tempDir, "textFile.txt");
+    File dbFile = new File(tempDir, "coolThing");
+    File dbFileReal = new File(tempDir, "coolThing.mv.db");
+    PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Any Name");
+    TextDumper textDumper = new TextDumper(new FileWriter(textFile));
+    textDumper.dump(bill);
+    invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
+
+    PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
+
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-print", "opt", "-pretty", dbFile.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: -pretty and -dbFile share the same file location"));
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+  }
+
+  @Test
+  void dbFileWithNonExistentFilePrintsFileDoesNotExistError(@TempDir File tempDir) {
+    File thing = new File(tempDir, "database");
+    MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    assertThat(result.getTextWrittenToStandardError(), containsString("Error: "+thing.getAbsolutePath()+" does not exist."));
+  }
+
+  // so... when accessing the database, use the file name without the extension
+  // but in the file system, the database file has the extension.
+  // but there's a different file without the extensions that is just a text file
+  // @_@
 
 }
