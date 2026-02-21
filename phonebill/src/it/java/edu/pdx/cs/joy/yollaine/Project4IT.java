@@ -2,7 +2,9 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
+import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
 import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -854,6 +856,8 @@ class Project4IT extends InvokeMainTestCase {
     invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
 
     PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
+    dbFile.delete();
+
     MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     assertThat(result.getTextWrittenToStandardError(), equalTo(""));
@@ -873,6 +877,7 @@ class Project4IT extends InvokeMainTestCase {
     invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
 
     PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
+    dbFile.delete();
 
     MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-pretty", "-");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
@@ -892,6 +897,7 @@ class Project4IT extends InvokeMainTestCase {
     invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
 
     PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
+    dbFile.delete();
 
     MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-print");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
@@ -919,9 +925,8 @@ class Project4IT extends InvokeMainTestCase {
     TextDumper textDumper = new TextDumper(new FileWriter(textFile));
     textDumper.dump(bill);
     invokeMain(Converter.class, textFile.getAbsolutePath(), dbFile.getAbsolutePath());
-
     PrintH2DatabaseSchema.main(new String[]{dbFile.getAbsolutePath()});
-
+    dbFile.delete();
     MainMethodResult result = invokeMainCustom("opt", "-dbFile", dbFile.getAbsolutePath(), "opt", "-print", "opt", "-pretty", "-");
     assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
     assertThat(result.getTextWrittenToStandardOut(), containsString("Any Name's phone bill with 1 phone calls"));
@@ -947,11 +952,23 @@ class Project4IT extends InvokeMainTestCase {
   }
 
   @Test
-  void dbFileWithNonExistentFilePrintsFileDoesNotExistError(@TempDir File tempDir) {
+  void dbFileWithNonExistentFileCreatesNewDatabase(@TempDir File tempDir) {
     File thing = new File(tempDir, "database");
+    File dbFile = new File(tempDir, "database.mv.db");
     MainMethodResult result = invokeMainCustom("opt", "-dbFile", thing.getAbsolutePath());
     assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
-    assertThat(result.getTextWrittenToStandardError(), containsString("Error: "+thing.getAbsolutePath()+" does not exist."));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertTrue(dbFile.exists());
+  }
+
+  @Test
+  void dbFileWithNonExistentFileAndPrettyCreatesNewDatabaseAndPrettyPrints(@TempDir File tempDir) {
+    File thing = new File(tempDir, "database");
+    File dbFile = new File(tempDir, "database.mv.db");
+    MainMethodResult result = invokeMainCustom("opt", "-pretty", "-", "opt", "-dbFile", thing.getAbsolutePath());
+    assertThat(result.getTextWrittenToStandardOut(), containsString("Customer: Any Name"));
+    assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+    assertTrue(dbFile.exists());
   }
 
   // so... when accessing the database, use the file name without the extension

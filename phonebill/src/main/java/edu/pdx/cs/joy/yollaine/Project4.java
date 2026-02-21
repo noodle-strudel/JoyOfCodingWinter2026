@@ -200,17 +200,23 @@ public class Project4 {
 
     } else if (flags.dbFileFlag()) {
       File dbFile = new File(flags.dbFileArg());
-      if (!dbFile.exists()) {
-        System.err.println("Error: "+dbFile.getAbsolutePath()+" does not exist.");
-        return;
-      }
-      try (Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)) {
-        PhoneBillDAO.createTables(connection);
-        DatabaseLoader dbd = new DatabaseLoader(connection);
-        newBill = dbd.parseNamed(name);
-      } catch (ParserException | SQLException e) {
-        System.err.println("An error occurred while parsing the database: "+e.getMessage());
-        return;
+      File dbFileReal = new File(flags.dbFileArg()+".mv.db");
+      if (!dbFileReal.exists()) {
+        try (Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)) {
+          PhoneBillDAO.createTables(connection);
+        } catch (SQLException e) {
+          System.err.println("An error occurred while parsing the database: "+e.getMessage());
+          return;
+        }
+      } else {
+        try (Connection connection = H2DatabaseHelper.createFileBasedConnection(dbFile)) {
+          PhoneBillDAO.createTables(connection);
+          DatabaseLoader dbd = new DatabaseLoader(connection);
+          newBill = dbd.parseNamed(name);
+        } catch (ParserException | SQLException e) {
+          System.err.println("An error occurred while parsing the database: " + e.getMessage());
+          return;
+        }
       }
     }
 
