@@ -121,7 +121,7 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
   }
 
   /**
-   * Ensures the parsed date and time is valid based off of {@link Project4#isValidPhoneNumber(String)} Project4's isValidPhoneNumber} method.
+   * Ensures the parsed date and time is valid based off of {@link Project4#isValidPhoneNumber(String)} Project4's isValidPhoneNumber method.
    * @param number
    *    The phone number to validate.
    * @throws IllegalArgumentException

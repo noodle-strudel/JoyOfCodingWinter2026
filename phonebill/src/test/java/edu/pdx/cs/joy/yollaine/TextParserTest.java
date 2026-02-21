@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,7 +12,6 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TextParserTest {
@@ -90,7 +88,7 @@ public class TextParserTest {
     assertThat(resource, notNullValue());
     ParserException exception = assertThrows(ParserException.class, () -> {
       TextParser parser = new TextParser(new InputStreamReader(resource));
-      PhoneBill parsedBill = parser.parse();
+      parser.parse();
     });
     assertThat(exception.getMessage(), containsString(msg));
   }
@@ -102,7 +100,7 @@ public class TextParserTest {
     assertThat(resource, notNullValue());
     ParserException exception = assertThrows(ParserException.class, () -> {
       TextParser parser = new TextParser(new InputStreamReader(resource));
-      PhoneBill parsedBill = parser.parse();
+      parser.parse();
     });
     assertThat(exception.getMessage(), containsString(msg));
   }

@@ -116,7 +116,7 @@ public class Project4 {
     String name = argList.getFirst();
     String callerNum;
     String calleeNum;
-    String beginDate = "";
+    String beginDate;
     String beginTime;
     String beginAMPM;
     String endDate;
@@ -173,7 +173,7 @@ public class Project4 {
 
 
     // Check if the phone bill will be read to a text file
-    boolean newFile = false;
+    boolean newFile;
     PhoneBill newBill = null;
     File phoneBillFile = null;
 
@@ -197,6 +197,7 @@ public class Project4 {
         System.err.println(e.getMessage());
         return;
       }
+
     } else if (flags.dbFileFlag()) {
       File dbFile = new File(flags.dbFileArg());
       if (!dbFile.exists()) {
@@ -209,6 +210,7 @@ public class Project4 {
         newBill = dbd.parseNamed(name);
       } catch (ParserException | SQLException e) {
         System.err.println("An error occurred while parsing the database: "+e.getMessage());
+        return;
       }
     }
 
@@ -221,8 +223,8 @@ public class Project4 {
       return;
     }
 
-    // create a new phonebill if it wasn't from a file or a textFile option is done but there's no preexisting file
-    if (!flags.dbFileFlag() && (!flags.textFileFlag() || newFile)) {
+    // create a new PhoneBill if it wasn't from a file or a textFile option is done but there's no preexisting file
+    if (newBill == null) {
       newBill = new PhoneBill(name);
 
     } else { // otherwise, there is a valid phone bill with at least a customer name

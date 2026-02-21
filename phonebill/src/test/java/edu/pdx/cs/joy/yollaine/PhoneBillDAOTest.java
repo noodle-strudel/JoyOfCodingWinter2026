@@ -1,7 +1,6 @@
 package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
-import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,10 +8,6 @@ import org.junit.jupiter.api.io.TempDir;
 
 import java.io.*;
 import java.sql.*;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Stream;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 

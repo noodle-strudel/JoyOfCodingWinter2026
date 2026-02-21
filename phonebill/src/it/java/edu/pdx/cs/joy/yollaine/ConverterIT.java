@@ -73,7 +73,7 @@ public class ConverterIT extends InvokeMainTestCase {
   }
 
   @Test
-  void invokingMainWithANonExistentFilePrintsNonExistentFileError(@TempDir File tempDir) throws IOException {
+  void invokingMainWithANonExistentFilePrintsNonExistentFileError(@TempDir File tempDir) {
     File textFile = new File(tempDir, "textFile.txt");
     File dbFile = new File(tempDir, "coolThing.h2.db");
     MainMethodResult result = invokeMain(textFile.getAbsolutePath(), dbFile.getAbsolutePath());
@@ -108,8 +108,6 @@ public class ConverterIT extends InvokeMainTestCase {
   @Test
   void invokingMainWithSharedFileLocationPrintsError(@TempDir File tempDir) throws IOException {
     File textFile = new File(tempDir, "textFile.txt");
-    File dbFileBackup = new File(tempDir, "coolThing");
-    File dbFile = new File(tempDir, "coolThing.mv.db");
     PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Loki");
     TextDumper textDumper = new TextDumper(new FileWriter(textFile));
     textDumper.dump(bill);

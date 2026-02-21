@@ -2,7 +2,6 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.PhoneBillDumper;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.time.format.DateTimeFormatter;

@@ -1,6 +1,5 @@
 package edu.pdx.cs.joy.yollaine;
 
-import com.sun.tools.javac.Main;
 import edu.pdx.cs.joy.InvokeMainTestCase;
 import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
@@ -390,7 +389,7 @@ class Project4IT extends InvokeMainTestCase {
       throw new RuntimeException(e);
     }
 
-    MainMethodResult result = invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "repl", "name", "Carl Jones", "repl", "caller", "123-456-7890");
+    invokeMainCustom("opt", "-textFile", f.getAbsolutePath(), "repl", "name", "Carl Jones", "repl", "caller", "123-456-7890");
     TextParser p = new TextParser(new FileReader(f));
     PhoneBill bill = p.parse();
     assertEquals("Carl Jones's phone bill with 2 phone calls", bill.toString());
@@ -675,7 +674,7 @@ class Project4IT extends InvokeMainTestCase {
     File f = new File(tempDir, FILE_NAME);
     File pf = new File(tempDir, prettyFileName);
 
-    MainMethodResult result = invokeMainCustom("opt", "-pretty", pf.getAbsolutePath(), "opt", "-textFile", f.getAbsolutePath());
+    invokeMainCustom("opt", "-pretty", pf.getAbsolutePath(), "opt", "-textFile", f.getAbsolutePath());
     assertTrue(f.exists());
     assertTrue(pf.exists());
 
@@ -935,7 +934,6 @@ class Project4IT extends InvokeMainTestCase {
   void dbFileAndPrettyPrintFileWithSameLocationPrintsError(@TempDir File tempDir) throws IOException, SQLException {
     File textFile = new File(tempDir, "textFile.txt");
     File dbFile = new File(tempDir, "coolThing");
-    File dbFileReal = new File(tempDir, "coolThing.mv.db");
     PhoneBill bill = PhoneBillTest.createPhoneBillNamed("Any Name");
     TextDumper textDumper = new TextDumper(new FileWriter(textFile));
     textDumper.dump(bill);

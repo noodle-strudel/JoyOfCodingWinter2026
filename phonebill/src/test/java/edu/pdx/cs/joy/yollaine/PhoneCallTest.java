@@ -36,7 +36,7 @@ public class PhoneCallTest {
 
   @Test
   void phoneCallWithCorrectArgumentsThrowsNoException() {
-    PhoneCall call = createPhoneCall();
+    createPhoneCall();
   }
 
   @Test
@@ -64,7 +64,17 @@ public class PhoneCallTest {
     assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "00/00/0000 00:00", "2/4/2054 4:35 AM"));
     assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "2/4/2054 4:35 AM", "00/00/0000 00:00"));
     assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "2/32/2054 4:35 AM", "10/01/1000 00:00 AM"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "2/32/2054 4:35", "10/01/1000 00:00 AM"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "2/32/2054 AM", "10/01/1000 00:00 AM"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "2/32/2054 4:35 AM", "10/01/1000 00:00"));
+    assertThrows(IllegalArgumentException.class, () -> createPhoneCall("098-765-4321", "494-494-3403", "2/32/2054 4:35 AM", "10/01/1000 AM"));
+
+
+
+
   }
+
+
 
   @Test
   void getCallerReturnsCallerNumber() {

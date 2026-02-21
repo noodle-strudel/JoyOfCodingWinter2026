@@ -4,8 +4,6 @@ import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.PhoneBillParser;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Parses a database file meant for {@link PhoneBill PhoneBills} to create a PhoneBill with its associated {@link PhoneCall}s.

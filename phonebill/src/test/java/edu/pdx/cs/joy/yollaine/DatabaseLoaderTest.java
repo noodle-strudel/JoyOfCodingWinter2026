@@ -2,7 +2,6 @@ package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
-import edu.pdx.cs.joy.jdbc.PrintH2DatabaseSchema;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -98,7 +97,7 @@ public class DatabaseLoaderTest {
   void throwsErrorIfTheresNoTablesToDumpTo(@TempDir File thisTempDir) {
     File thing = new File(thisTempDir, "4343fsd.h2.db");
     try (
-        Connection badConnection = H2DatabaseHelper.createFileBasedConnection(thing);
+        Connection badConnection = H2DatabaseHelper.createFileBasedConnection(thing)
     ) {
       DatabaseLoader dbl = new DatabaseLoader(badConnection);
       assertThrows(ParserException.class, dbl::parse);

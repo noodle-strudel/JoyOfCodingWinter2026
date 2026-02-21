@@ -41,7 +41,7 @@ class Project4Test {
 
   @Test
   void canCreateProject2Object() {
-    Project4 prog2 = new Project4();
+    new Project4();
   }
 
   @Test

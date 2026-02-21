@@ -1,6 +1,5 @@
 package edu.pdx.cs.joy.yollaine;
 
-import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.jdbc.H2DatabaseHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -12,9 +11,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DatabaseDumperTest {

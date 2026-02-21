@@ -3,9 +3,7 @@ package edu.pdx.cs.joy.yollaine;
 import edu.pdx.cs.joy.PhoneBillDumper;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 
 /**
  * Writes a {@link PhoneBill} to a database file along with its associated {@link PhoneCall}s.

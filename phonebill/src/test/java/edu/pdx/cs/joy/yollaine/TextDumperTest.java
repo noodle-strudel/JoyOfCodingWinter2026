@@ -91,10 +91,10 @@ public class TextDumperTest {
   }
 
   @Test
-  void textDumperUnableToDumpMalformedPhoneBillDueToBuiltInValidationInPhoneCall(@TempDir File tempDir) throws IOException {
+  void textDumperUnableToDumpMalformedPhoneBillDueToBuiltInValidationInPhoneCall() {
     String customer = "Test Phone Bill";
     PhoneBill bill = new PhoneBill(customer);
-    assertThrows(IllegalArgumentException.class, () -> new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004", "4:56"));
+    assertThrows(IllegalArgumentException.class, () -> bill.addPhoneCall(new PhoneCall("445-345-3353", "409-435-3948", "11/23/2004", "4:56")));
   }
 
 }

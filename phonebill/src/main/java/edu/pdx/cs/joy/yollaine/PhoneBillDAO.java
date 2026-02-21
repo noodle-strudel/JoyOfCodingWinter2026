@@ -91,7 +91,6 @@ public class PhoneBillDAO {
     ) {
       // if it isn't then there's no work to do
       if (tables.next()) {
-        String thing = tables.getString("TABLE_NAME");
         return;
       }
     }
