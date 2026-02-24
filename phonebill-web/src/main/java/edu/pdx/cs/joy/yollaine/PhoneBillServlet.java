@@ -18,8 +18,8 @@ import java.util.Map;
  */
 public class PhoneBillServlet extends HttpServlet
 {
-    static final String WORD_PARAMETER = "word";
-    static final String DEFINITION_PARAMETER = "definition";
+    static final String CUSTOMER_PARAMETER = "customer";
+    static final String CALLER_NUMBER_PARAMETER = "callerNumber";
 
     private final Map<String, String> dictionary = new HashMap<>();
 
@@ -34,7 +34,7 @@ public class PhoneBillServlet extends HttpServlet
     {
         response.setContentType( "text/plain" );
 
-        String word = getParameter( WORD_PARAMETER, request );
+        String word = getParameter(CUSTOMER_PARAMETER, request );
         if (word != null) {
             log("GET " + word);
             writeDefinition(word, response);
@@ -55,15 +55,15 @@ public class PhoneBillServlet extends HttpServlet
     {
         response.setContentType( "text/plain" );
 
-        String word = getParameter(WORD_PARAMETER, request );
+        String word = getParameter(CUSTOMER_PARAMETER, request );
         if (word == null) {
-            missingRequiredParameter(response, WORD_PARAMETER);
+            missingRequiredParameter(response, CUSTOMER_PARAMETER);
             return;
         }
 
-        String definition = getParameter(DEFINITION_PARAMETER, request );
+        String definition = getParameter(CALLER_NUMBER_PARAMETER, request );
         if ( definition == null) {
-            missingRequiredParameter( response, DEFINITION_PARAMETER );
+            missingRequiredParameter( response, CALLER_NUMBER_PARAMETER);
             return;
         }
 

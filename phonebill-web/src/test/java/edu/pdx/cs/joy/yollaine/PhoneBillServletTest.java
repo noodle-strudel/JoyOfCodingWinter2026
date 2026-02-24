@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class PhoneBillServletTest {
 
   @Test
-  void initiallyServletContainsNoDictionaryEntries() throws ServletException, IOException {
+  void initiallyServletContainsNoPhoneBills() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();
 
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -39,15 +39,15 @@ class PhoneBillServletTest {
   }
 
   @Test
-  void addOneWordToDictionary() throws ServletException, IOException {
+  void addOneCallToPhoneBill() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();
 
-    String word = "TEST WORD";
-    String definition = "TEST DEFINITION";
+    String customerName = "TEST CUSTOMER";
+    String callerNumber = "123-456-7890";
 
     HttpServletRequest request = mock(HttpServletRequest.class);
-    when(request.getParameter(PhoneBillServlet.WORD_PARAMETER)).thenReturn(word);
-    when(request.getParameter(PhoneBillServlet.DEFINITION_PARAMETER)).thenReturn(definition);
+    when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(customerName);
+    when(request.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn(callerNumber);
 
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -59,7 +59,7 @@ class PhoneBillServletTest {
 
     servlet.doPost(request, response);
 
-    assertThat(stringWriter.toString(), containsString(Messages.definedWordAs(word, definition)));
+    assertThat(stringWriter.toString(), containsString(Messages.definedWordAs(customerName, callerNumber)));
 
     // Use an ArgumentCaptor when you want to make multiple assertions against the value passed to the mock
     ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
@@ -67,7 +67,7 @@ class PhoneBillServletTest {
 
     assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_OK));
 
-    assertThat(servlet.getDefinition(word), equalTo(definition));
+    assertThat(servlet.getDefinition(customerName), equalTo(callerNumber));
   }
 
 }
