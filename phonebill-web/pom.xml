@@ -41,6 +41,12 @@
       <artifactId>jakarta.servlet-api</artifactId>
       <version>${jakarta.servlet-api.version}</version>
     </dependency>
+      <dependency>
+          <groupId>edu.pdx.cs.joy.yollaine</groupId>
+          <artifactId>phonebill</artifactId>
+          <version>1.0.0</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
   <build>
     <finalName>phonebill</finalName>  <!-- Need finalName to make integration tests work -->

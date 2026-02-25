@@ -8,6 +8,7 @@ import edu.pdx.cs.joy.web.HttpRequestHelper.RestException;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -48,27 +49,34 @@ public class PhoneBillRestClient {
     throwExceptionIfNotOkayHttpStatus(response);
 
     TextParser parser = new TextParser(new StringReader(response.getContent()));
-    return parser.parse();
+    throw new UnsupportedEncodingException("Not implemented");
   }
 
   /**
    * Returns the definition for the given word
    */
-  public String getDefinition(String word) throws IOException, ParserException {
-    Response response = http.get(Map.of(PhoneBillServlet.CUSTOMER_PARAMETER, word));
+  public PhoneBill getPhoneBill(String customerName) throws IOException, ParserException {
+    Response response = http.get(Map.of(PhoneBillServlet.CUSTOMER_PARAMETER, customerName));
     throwExceptionIfNotOkayHttpStatus(response);
     String content = response.getContent();
 
     TextParser parser = new TextParser(new StringReader(content));
-    return parser.parse().get(word);
+    return parser.parse();
   }
 
-    public void addDictionaryEntry(String word, String definition) throws IOException {
-      Response response = http.post(Map.of(PhoneBillServlet.CUSTOMER_PARAMETER, word, PhoneBillServlet.CALLER_NUMBER_PARAMETER, definition));
+    public void addPhoneCall(String customerName, PhoneCall phoneCall) throws IOException {
+      Response response = http.post(
+          Map.of(
+              PhoneBillServlet.CUSTOMER_PARAMETER, customerName,
+              PhoneBillServlet.CALLER_NUMBER_PARAMETER, phoneCall.getCaller(),
+              PhoneBillServlet.CALLEE_NUMBER_PARAMETER, phoneCall.getCallee(),
+              PhoneBillServlet.BEGIN_TIME_PARAMETER, phoneCall.getBeginTimeRaw(),
+              PhoneBillServlet.END_TIME_PARAMETER, phoneCall.getEndTimeRaw())
+      );
       throwExceptionIfNotOkayHttpStatus(response);
     }
 
-  public void removeAllDictionaryEntries() throws IOException {
+  public void removeAllPhoneBills() throws IOException {
       Response response = http.delete(Map.of());
       throwExceptionIfNotOkayHttpStatus(response);
     }

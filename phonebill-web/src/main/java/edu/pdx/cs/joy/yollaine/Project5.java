@@ -18,21 +18,33 @@ public class Project5 {
     public static void main(String... args) {
         String hostName = null;
         String portString = null;
-        String word = null;
-        String definition = null;
+        String customerName = null;
+        String callerNumber = null;
+        String calleeNumber = null;
+        String beginTime = null;
+        String endTime = null;
 
         for (String arg : args) {
             if (hostName == null) {
                 hostName = arg;
 
-            } else if ( portString == null) {
+            } else if (portString == null) {
                 portString = arg;
 
-            } else if (word == null) {
-                word = arg;
+            } else if (customerName == null) {
+                customerName = arg;
 
-            } else if (definition == null) {
-                definition = arg;
+            } else if (callerNumber == null) {
+                callerNumber = arg;
+
+            } else if (calleeNumber == null) {
+                calleeNumber = arg;
+
+            } else if (beginTime == null) {
+                beginTime = arg;
+
+            } else if (endTime == null) {
+                endTime = arg;
 
             } else {
                 usage("Extraneous command line argument: " + arg);
@@ -44,6 +56,21 @@ public class Project5 {
 
         } else if ( portString == null) {
             usage( "Missing port" );
+        } else if (customerName == null) {
+            usage( "Missing customer name" );
+
+        } else if (callerNumber == null) {
+            usage( "Missing caller number" );
+
+        } else if (calleeNumber == null) {
+            usage( "Missing callee number" );
+
+        } else if (beginTime == null) {
+            usage( "Missing begin time" );
+
+        } else if (endTime == null) {
+            usage( "Missing end time" );
+
         }
 
         int port;
@@ -59,22 +86,22 @@ public class Project5 {
 
         String message;
         try {
-            if (word == null) {
-                // Print all word/definition pairs
-                Map<String, String> dictionary = client.getAllDictionaryEntries();
+            if (customerName == null) {
+                // Print all customerName/definition pairs
+                throw new UnsupportedOperationException("Missing Customer");
+
+            } else if (callerNumber == null) {
+                // Print Phone Bill
+                PhoneBill phoneBill = client.getPhoneBill(customerName);
                 StringWriter sw = new StringWriter();
                 PrettyPrinter pretty = new PrettyPrinter(sw);
-                pretty.dump(dictionary);
+                pretty.dump(phoneBill);
                 message = sw.toString();
-
-            } else if (definition == null) {
-                // Print all dictionary entries
-                message = PrettyPrinter.formatDictionaryEntry(word, client.getDefinition(word));
 
             } else {
                 // Post the word/definition pair
-                client.addDictionaryEntry(word, definition);
-                message = Messages.definedWordAs(word, definition);
+                client.addPhoneCall(customerName, new PhoneCall(callerNumber, calleeNumber, beginTime, endTime));
+                message = Messages.definedWordAs(customerName, callerNumber);
             }
 
         } catch (IOException | ParserException ex ) {
@@ -100,13 +127,13 @@ public class Project5 {
         PrintStream err = System.err;
         err.println("** " + message);
         err.println();
-        err.println("usage: java Project5 host port [word] [definition]");
+        err.println("usage: java Project5 host port [customerName] [definition]");
         err.println("  host         Host of web server");
         err.println("  port         Port of web server");
-        err.println("  word         Word in dictionary");
+        err.println("  customerName Word in dictionary");
         err.println("  definition   Definition of word");
         err.println();
-        err.println("This simple program posts words and their definitions");
+        err.println("This simple program posts  and their definitions");
         err.println("to the server.");
         err.println("If no definition is specified, then the word's definition");
         err.println("is printed.");

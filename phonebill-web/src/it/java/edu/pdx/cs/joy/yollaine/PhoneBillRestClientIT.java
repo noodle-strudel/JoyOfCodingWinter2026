@@ -29,13 +29,13 @@ class PhoneBillRestClientIT {
   }
 
   @Test
-  void test0RemoveAllDictionaryEntries() throws IOException {
+  void test0RemoveAllPhoneBills() throws IOException {
     PhoneBillRestClient client = newPhoneBillRestClient();
-    client.removeAllDictionaryEntries();
+    client.removeAllPhoneBills();
   }
 
   @Test
-  void test1EmptyServerContainsNoDictionaryEntries() throws IOException, ParserException {
+  void test1EmptyServerContainsNoPhoneBills() throws IOException, ParserException {
     PhoneBillRestClient client = newPhoneBillRestClient();
     Map<String, String> dictionary = client.getAllDictionaryEntries();
     assertThat(dictionary.size(), equalTo(0));
@@ -44,12 +44,18 @@ class PhoneBillRestClientIT {
   @Test
   void test2DefineOneWord() throws IOException, ParserException {
     PhoneBillRestClient client = newPhoneBillRestClient();
-    String testWord = "TEST WORD";
-    String testDefinition = "TEST DEFINITION";
-    client.addDictionaryEntry(testWord, testDefinition);
+    String customerName = "TEST NAME";
+    String callerNumber = "123-456-7890";
+    String calleeNumber = "098-765-4321";
+    String beginTime = "1/1/2004 3:00 PM";
+    String endTime = "1/2/2004 3:00 PM";
 
-    String definition = client.getDefinition(testWord);
-    assertThat(definition, equalTo(testDefinition));
+
+    PhoneCall phoneCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+    client.addPhoneCall(customerName, phoneCall);
+
+    PhoneBill bill = client.getPhoneBill(customerName);
+    assertThat(bill.getCustomer(), equalTo(customerName));
   }
 
   @Test
@@ -57,7 +63,7 @@ class PhoneBillRestClientIT {
     PhoneBillRestClient client = newPhoneBillRestClient();
     String emptyString = "";
 
-    RestException ex = assertThrows(RestException.class, () -> client.addDictionaryEntry(emptyString, emptyString));
+    RestException ex = assertThrows(RestException.class, () -> client.addPhoneCall("CUSTOMER NAME", new PhoneCall("", "", "", "")));
     assertThat(ex.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
     assertThat(ex.getMessage(), containsString(Messages.missingRequiredParameter(PhoneBillServlet.CUSTOMER_PARAMETER)));
   }

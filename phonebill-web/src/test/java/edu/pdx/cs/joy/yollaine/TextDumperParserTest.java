@@ -3,6 +3,7 @@ package edu.pdx.cs.joy.yollaine;
 import edu.pdx.cs.joy.ParserException;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
@@ -14,16 +15,17 @@ import static org.hamcrest.Matchers.equalTo;
 public class TextDumperParserTest {
 
   @Test
-  void emptyMapCanBeDumpedAndParsed() throws ParserException {
-    Map<String, String> map = Collections.emptyMap();
-    Map<String, String> read = dumpAndParse(map);
-    assertThat(read, equalTo(map));
+  void emptyPhoneBillCanBeDumpedAndParsed() throws ParserException, IOException {
+    String customerName = "Test Customer";
+    PhoneBill phoneBill = new PhoneBill(customerName);
+    PhoneBill read = dumpAndParse(phoneBill);
+    assertThat(read.getCustomer(), equalTo(customerName));
   }
 
-  private Map<String, String> dumpAndParse(Map<String, String> map) throws ParserException {
+  private PhoneBill dumpAndParse(PhoneBill bill) throws ParserException, IOException {
     StringWriter sw = new StringWriter();
     TextDumper dumper = new TextDumper(sw);
-    dumper.dump(map);
+    dumper.dump(bill);
 
     String text = sw.toString();
 
@@ -32,9 +34,19 @@ public class TextDumperParserTest {
   }
 
   @Test
-  void dumpedTextCanBeParsed() throws ParserException {
-    Map<String, String> map = Map.of("one", "1", "two", "2");
-    Map<String, String> read = dumpAndParse(map);
-    assertThat(read, equalTo(map));
+  void phoneBillWithOnePhoneCallCanBeDumpedAndParsed() throws ParserException, IOException {
+    String customerName = "Test Customer";
+    String callerNumber = "123-456-7890";
+    String calleeNumber = "098-765-4321";
+    String beginTime = "1/1/2004 3:00 PM";
+    String endTime = "1/2/2004 3:00 PM";
+    PhoneBill phoneBill = new PhoneBill(customerName);
+    phoneBill.addPhoneCall(new PhoneCall(callerNumber, calleeNumber, beginTime, endTime));
+
+    PhoneBill read = dumpAndParse(phoneBill);
+
+    assertThat(read.getCustomer(), equalTo(customerName));
+    assertThat(read.getPhoneCalls().size(), equalTo(1));
+    assertThat(read.getPhoneCalls().iterator().next().getCaller(), equalTo(callerNumber));
   }
 }

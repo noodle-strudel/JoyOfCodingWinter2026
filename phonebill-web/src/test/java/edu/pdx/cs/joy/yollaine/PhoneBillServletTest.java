@@ -11,8 +11,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.*;
 class PhoneBillServletTest {
 
   @Test
-  void initiallyServletContainsNoPhoneBills() throws ServletException, IOException {
+  void customerNameIsRequiredParameter() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();
 
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -42,7 +41,7 @@ class PhoneBillServletTest {
   void addOneCallToPhoneBill() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();
 
-    String customerName = "TEST CUSTOMER";
+    String customerName = "Customer";
     String callerNumber = "123-456-7890";
 
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -67,7 +66,10 @@ class PhoneBillServletTest {
 
     assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_OK));
 
-    assertThat(servlet.getDefinition(customerName), equalTo(callerNumber));
+    PhoneBill phoneBill = servlet.getPhoneBill(customerName);
+    assertThat(phoneBill, notNullValue());
+    PhoneCall call = phoneBill.getPhoneCalls().iterator().next();
+    assertThat(call.getCaller(), equalTo(callerNumber));
   }
 
 }
