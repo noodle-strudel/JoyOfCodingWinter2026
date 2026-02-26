@@ -34,7 +34,7 @@ class PhoneBillServletTest {
 
     // Nothing is written to the response's PrintWriter
     verify(pw, never()).println(anyString());
-    verify(response).setStatus(HttpServletResponse.SC_OK);
+    verify(response).sendError(eq(HttpServletResponse.SC_PRECONDITION_FAILED), anyString());
   }
 
   @Test
@@ -43,10 +43,16 @@ class PhoneBillServletTest {
 
     String customerName = "Customer";
     String callerNumber = "123-456-7890";
+    String calleeNumber = "098-765-4321";
+    String beginTime = "1/2/2002 3:00 PM";
+    String endTime = "1/3/2002 3:00 PM";
 
     HttpServletRequest request = mock(HttpServletRequest.class);
     when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(customerName);
     when(request.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn(callerNumber);
+    when(request.getParameter(PhoneBillServlet.CALLEE_NUMBER_PARAMETER)).thenReturn(calleeNumber);
+    when(request.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn(beginTime);
+    when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn(endTime);
 
     HttpServletResponse response = mock(HttpServletResponse.class);
 
@@ -58,7 +64,8 @@ class PhoneBillServletTest {
 
     servlet.doPost(request, response);
 
-    assertThat(stringWriter.toString(), containsString(Messages.definedWordAs(customerName, callerNumber)));
+    PhoneCall expectedCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+    assertThat(stringWriter.toString(), containsString(Messages.addedPhoneCallToCustomer(customerName, expectedCall)));
 
     // Use an ArgumentCaptor when you want to make multiple assertions against the value passed to the mock
     ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);

@@ -1,11 +1,13 @@
 package edu.pdx.cs.joy.yollaine;
 
+import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs.joy.ParserException;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
-import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The main class that parses the command line and communicates with the
@@ -14,6 +16,34 @@ import java.util.Map;
 public class Project5 {
 
     public static final String MISSING_ARGS = "Missing command line arguments";
+
+    /**
+     * Determines if a date and time is valid.
+     * @param dateAndTime
+     *      The data and time combo to validate.
+     * @return
+     *      Returns true if dataAndTime is valid and false if it's invalid.
+     */
+    @VisibleForTesting
+    static boolean isValidDateAndTime(String dateAndTime) {
+        Pattern p = Pattern.compile("^(0?[1-9]|1[012])/((3[01])|([12][0-9])|0?[1-9])/[1-9][0-9]{3} (0?[0-9]|1[012]):[0-5][0-9] [AP]M$");
+        Matcher m = p.matcher(dateAndTime);
+        return m.find();
+    }
+
+    /**
+     * Determines if a phone number is in a valid format.
+     * @param number
+     *      The phone number to validate.
+     * @return
+     *      Returns true if number is valid.
+     */
+    @VisibleForTesting
+    static boolean isValidPhoneNumber(String number) {
+        Pattern p = Pattern.compile("^([0-9]{3}-){2}[0-9]{4}$");
+        Matcher m = p.matcher(number);
+        return m.find();
+    }
 
     public static void main(String... args) {
         String hostName = null;
@@ -100,8 +130,9 @@ public class Project5 {
 
             } else {
                 // Post the word/definition pair
-                client.addPhoneCall(customerName, new PhoneCall(callerNumber, calleeNumber, beginTime, endTime));
-                message = Messages.definedWordAs(customerName, callerNumber);
+                PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+                client.addPhoneCall(customerName, newCall);
+                message = Messages.addedPhoneCallToCustomer(customerName, newCall);
             }
 
         } catch (IOException | ParserException ex ) {

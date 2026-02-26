@@ -62,13 +62,18 @@ class Project5IT extends InvokeMainTestCase {
     void test4AddPhoneCall() {
         String customerName = "CUSTOMER NAME";
         String callerNumber = "123-456-7890";
+        String calleeNumber = "098-765-4321";
+        String beginTime = "1/1/2004 3:00 PM";
+        String endTime = "1/2/2004 3:00 PM";
 
         MainMethodResult result = invokeMain( Project5.class, HOSTNAME, PORT, customerName, callerNumber );
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
 
         String out = result.getTextWrittenToStandardOut();
-        assertThat(out, out, containsString(Messages.definedWordAs(customerName, callerNumber)));
+
+        PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+        assertThat(out, out, containsString(Messages.addedPhoneCallToCustomer(customerName, newCall)));
 
         result = invokeMain( Project5.class, HOSTNAME, PORT, customerName );
 

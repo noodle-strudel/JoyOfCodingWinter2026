@@ -96,7 +96,7 @@ public class PhoneBillServlet extends HttpServlet
         log("POST " + customerName + " -> " + callerNumber);
 
         PrintWriter pw = response.getWriter();
-        pw.println(Messages.definedWordAs(customerName, callerNumber));
+        pw.println(Messages.addedPhoneCallToCustomer(customerName, call));
         pw.flush();
 
         response.setStatus( HttpServletResponse.SC_OK);
@@ -116,7 +116,7 @@ public class PhoneBillServlet extends HttpServlet
         this.phoneBills.clear();
 
         PrintWriter pw = response.getWriter();
-        pw.println(Messages.allDictionaryEntriesDeleted());
+        pw.println(Messages.allPhoneBillsDeleted());
         pw.flush();
 
         response.setStatus(HttpServletResponse.SC_OK);
