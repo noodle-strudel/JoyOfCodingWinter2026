@@ -37,7 +37,7 @@ class PhoneBillRestClientIT {
   @Test
   void test1EmptyServerContainsNoPhoneBills() throws IOException, ParserException {
     PhoneBillRestClient client = newPhoneBillRestClient();
-    Map<String, String> dictionary = client.getAllDictionaryEntries();
+    Map<String, PhoneBill> dictionary = client.getAllPhoneBillEntries();
     assertThat(dictionary.size(), equalTo(0));
   }
 
@@ -59,11 +59,11 @@ class PhoneBillRestClientIT {
   }
 
   @Test
-  void test4EmptyWordThrowsException() {
+  void test4EmptyCustomerNameThrowsException() {
     PhoneBillRestClient client = newPhoneBillRestClient();
     String emptyString = "";
 
-    RestException ex = assertThrows(RestException.class, () -> client.addPhoneCall("CUSTOMER NAME", new PhoneCall("", "", "", "")));
+    RestException ex = assertThrows(RestException.class, () -> client.addPhoneCall(emptyString, new PhoneCall("123-456-7890", "098-765-4321", "1/1/2004 3:00 PM", "1/2/2004 3:00 PM")));
     assertThat(ex.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
     assertThat(ex.getMessage(), containsString(Messages.missingRequiredParameter(PhoneBillServlet.CUSTOMER_PARAMETER)));
   }

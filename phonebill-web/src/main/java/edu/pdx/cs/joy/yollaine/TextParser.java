@@ -7,6 +7,8 @@ import org.jspecify.annotations.NonNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -59,6 +61,39 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
     } catch (IOException e) {
       throw new ParserException("While parsing phone bill text", e);
     }
+  }
+
+  public Map<String, PhoneBill> parseToMap() {
+
+    return new HashMap<>();
+    /*
+    try (
+        BufferedReader br = new BufferedReader(this.reader)
+    ) {
+
+      String customer = br.readLine();
+
+      if (customer == null) {
+        throw new ParserException("Missing customer name in given text file.");
+      }
+
+      PhoneBill phoneBill = new PhoneBill(customer);
+      String callInfo = br.readLine();
+
+      while(callInfo != null) {
+        // use string tokenizer thing
+        PhoneCall phoneCall = getPhoneCall(callInfo);
+        phoneBill.addPhoneCall(phoneCall);
+        callInfo = br.readLine();
+      }
+
+      return phoneBill;
+
+    } catch (IOException | ParserException e) {
+      throw new ParserException("While parsing phone bill text", e);
+    }
+
+     */
   }
 
   /**

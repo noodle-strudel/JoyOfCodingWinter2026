@@ -31,7 +31,7 @@ public class PhoneBillServlet extends HttpServlet
     /**
      * Handles an HTTP GET request from a client by writing the definition of the
      * word specified in the "word" HTTP parameter to the HTTP response.  If the
-     * "word" parameter is not specified, all of the entries in the dictionary
+     * "customer" parameter is not specified, all of the entries in the dictionary
      * are written to the HTTP response.
      */
     @Override
@@ -45,7 +45,8 @@ public class PhoneBillServlet extends HttpServlet
             writePhoneBillText(customerName, response);
 
         } else {
-            missingRequiredParameter(response, CUSTOMER_PARAMETER);
+            log("GET all phone bills");
+            writeAllPhoneBills(response);
         }
     }
 
@@ -154,6 +155,16 @@ public class PhoneBillServlet extends HttpServlet
 
             response.setStatus(HttpServletResponse.SC_OK);
         }
+    }
+
+    private void writeAllPhoneBills(HttpServletResponse response) throws IOException {
+        PrintWriter pw = response.getWriter();
+
+        TextDumper textDumper = new TextDumper(pw);
+
+        textDumper.dumpAll(phoneBills);
+
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     /**

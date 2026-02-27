@@ -42,14 +42,14 @@ public class PhoneBillRestClient {
   }
 
   /**
-   * Returns all dictionary entries from the server
+   * Returns all phone bills from the server
    */
-  public Map<String, String> getAllDictionaryEntries() throws IOException, ParserException {
+  public Map<String, PhoneBill> getAllPhoneBillEntries() throws IOException, ParserException {
     Response response = http.get(Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
 
     TextParser parser = new TextParser(new StringReader(response.getContent()));
-    throw new UnsupportedEncodingException("Not implemented");
+    return parser.parseToMap();
   }
 
   /**
