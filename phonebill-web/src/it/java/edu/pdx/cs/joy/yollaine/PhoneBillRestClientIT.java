@@ -59,7 +59,51 @@ class PhoneBillRestClientIT {
   }
 
   @Test
-  void test4EmptyCustomerNameThrowsException() {
+  void test3GetAddedPhoneBill() throws IOException, ParserException {
+    PhoneBillRestClient client = newPhoneBillRestClient();
+    String customerName = "TEST NAME";
+
+
+    PhoneBill bill = client.getPhoneBill(customerName);
+    assertThat(bill.getCustomer(), equalTo(customerName));
+  }
+
+  @Test
+  void test4AddMorePhoneBillsWithDifferentCustomerNames() throws IOException, ParserException {
+    PhoneBillRestClient client = newPhoneBillRestClient();
+    String customerName = "TEST NAME";
+    String customerName2 = "123";
+    String customerName3 = "321";
+    String callerNumber = "123-456-7890";
+    String calleeNumber = "098-765-4321";
+    String beginTime = "1/1/2004 3:00 PM";
+    String endTime = "1/2/2004 3:00 PM";
+
+
+    PhoneCall phoneCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+    client.addPhoneCall(customerName, phoneCall);
+    client.addPhoneCall(customerName2, phoneCall);
+    client.addPhoneCall(customerName3, phoneCall);
+
+    PhoneBill bill = client.getPhoneBill(customerName);
+    assertThat(bill.getCustomer(), equalTo(customerName));
+
+    bill = client.getPhoneBill(customerName2);
+    assertThat(bill.getCustomer(), equalTo(customerName2));
+
+    bill = client.getPhoneBill(customerName3);
+    assertThat(bill.getCustomer(), equalTo(customerName3));
+  }
+
+  @Test
+  void test5GetAllPhoneBillsAfterAddingSome() throws ParserException, IOException {
+    PhoneBillRestClient client = newPhoneBillRestClient();
+    Map<String, PhoneBill> dictionary = client.getAllPhoneBillEntries();
+    assertThat(dictionary.size(), equalTo(3));
+  }
+
+  @Test
+  void test6EmptyCustomerNameThrowsException() {
     PhoneBillRestClient client = newPhoneBillRestClient();
     String emptyString = "";
 

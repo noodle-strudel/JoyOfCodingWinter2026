@@ -92,7 +92,11 @@ public class PhoneBillServlet extends HttpServlet
 
         PhoneBill bill = this.phoneBills.computeIfAbsent(customerName, PhoneBill::new);
         PhoneCall call = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
-        bill.addPhoneCall(call);
+
+        // avoid duplicate phone calls
+        if (!bill.getPhoneCalls().contains(call)) {
+            bill.addPhoneCall(call);
+        }
 
         log("POST " + customerName + " -> " + callerNumber);
 

@@ -63,7 +63,14 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
     }
   }
 
-  public Map<String, PhoneBill> parseToMap() {
+  public Map<String, PhoneBill> parseToMap() throws IOException {
+    try (
+        BufferedReader br = new BufferedReader(this.reader)
+    ) {
+      for (String line = br.readLine(); line != null; line = br.readLine()) {
+        System.err.println(line);
+      }
+    }
 
     return new HashMap<>();
     /*

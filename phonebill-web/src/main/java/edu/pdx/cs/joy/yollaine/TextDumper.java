@@ -31,15 +31,34 @@ public class TextDumper implements PhoneBillDumper<PhoneBill> {
     try (
       PrintWriter pw = new PrintWriter(this.writer)
     ) {
-      pw.println(bill.getCustomer());
-      for (PhoneCall call : bill.getPhoneCalls()) {
-        pw.println(call.getCaller() + " " + call.getCallee() + " " + call.getBeginTimeRaw() + " " + call.getEndTimeRaw());
-      }
-
+      printBill(bill, pw);
       pw.flush();
     }
   }
 
+  /**
+   * Dumps all phone bills in a map
+   * @param phoneBills
+   */
   public void dumpAll(Map<String, PhoneBill> phoneBills) {
+    try (PrintWriter pw = new PrintWriter(this.writer)
+    ) {
+      for (PhoneBill bill : phoneBills.values()) {
+        printBill(bill, pw);
+      }
+      pw.flush();
+    }
+  }
+
+  /**
+   * Helper function to print phone bills into PrintWriters
+   * @param bill
+   * @param pw
+   */
+  private static void printBill(PhoneBill bill, PrintWriter pw) {
+    pw.println(bill.getCustomer());
+    for (PhoneCall call : bill.getPhoneCalls()) {
+      pw.println(call.getCaller() + " " + call.getCallee() + " " + call.getBeginTimeRaw() + " " + call.getEndTimeRaw());
+    }
   }
 }
