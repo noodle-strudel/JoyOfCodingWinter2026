@@ -4,7 +4,6 @@ import edu.pdx.cs.joy.PhoneBillDumper;
 
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.Map;
 
 /**
  * Writes a {@link PhoneBill} to a text file along with its associated {@link PhoneCall}s.
@@ -32,20 +31,6 @@ public class TextDumper implements PhoneBillDumper<PhoneBill> {
       PrintWriter pw = new PrintWriter(this.writer)
     ) {
       printBill(bill, pw);
-      pw.flush();
-    }
-  }
-
-  /**
-   * Dumps all phone bills in a map
-   * @param phoneBills
-   */
-  public void dumpAll(Map<String, PhoneBill> phoneBills) {
-    try (PrintWriter pw = new PrintWriter(this.writer)
-    ) {
-      for (PhoneBill bill : phoneBills.values()) {
-        printBill(bill, pw);
-      }
       pw.flush();
     }
   }

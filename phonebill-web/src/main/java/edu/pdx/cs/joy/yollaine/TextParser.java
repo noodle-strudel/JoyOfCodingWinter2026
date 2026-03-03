@@ -96,34 +96,6 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
     }
 
     return phoneBillMap;
-    /*
-    try (
-        BufferedReader br = new BufferedReader(this.reader)
-    ) {
-
-      String customer = br.readLine();
-
-      if (customer == null) {
-        throw new ParserException("Missing customer name in given text file.");
-      }
-
-      PhoneBill phoneBill = new PhoneBill(customer);
-      String callInfo = br.readLine();
-
-      while(callInfo != null) {
-        // use string tokenizer thing
-        PhoneCall phoneCall = getPhoneCall(callInfo);
-        phoneBill.addPhoneCall(phoneCall);
-        callInfo = br.readLine();
-      }
-
-      return phoneBill;
-
-    } catch (IOException | ParserException e) {
-      throw new ParserException("While parsing phone bill text", e);
-    }
-
-     */
   }
 
   /**

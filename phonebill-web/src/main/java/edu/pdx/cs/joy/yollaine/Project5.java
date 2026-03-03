@@ -6,6 +6,9 @@ import edu.pdx.cs.joy.ParserException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,22 +49,59 @@ public class Project5 {
     }
 
     public static void main(String... args) {
-        String hostName = null;
-        String portString = null;
+        ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
+
+        argList.removeIf(String::isEmpty);
+
+        boolean hostNameFlag = false;
+        boolean portFlag = false;
+        boolean searchFlag = false;
+        boolean printFlag = false;
+        boolean readMeFlag = false;
+        String hostNameArg = "";
+        String portArg = "";
+
+        String currentArg;
+        try {
+            while ((currentArg = argList.getFirst()).startsWith("-")) {
+                if (currentArg.contains("host")) {
+                    argList.removeFirst();
+                    hostNameFlag = true;
+                    hostNameArg = argList.removeFirst();
+                } else if (currentArg.contains("port")) {
+                    argList.removeFirst();
+                    portFlag = true;
+                    portArg = argList.removeFirst();
+                } else {
+                    if (currentArg.contains("print")) {
+                        printFlag = true;
+                    } else if (currentArg.contains("search")) {
+                        searchFlag = true;
+                    } else if (currentArg.contains("README")) {
+                        readMeFlag = true;
+                    }
+                    argList.removeFirst();
+                }
+            }
+        } catch (NoSuchElementException e) {
+            if (hostNameFlag && hostNameArg.isEmpty()) {
+                System.err.println("-host requires hostname");
+                return;
+            } else if (portFlag && portArg.isEmpty()) {
+                System.err.println("-port requires port");
+                return;
+            }
+        }
+
         String customerName = null;
         String callerNumber = null;
         String calleeNumber = null;
         String beginTime = null;
         String endTime = null;
 
-        for (String arg : args) {
-            if (hostName == null) {
-                hostName = arg;
+        for (String arg : argList) {
 
-            } else if (portString == null) {
-                portString = arg;
-
-            } else if (customerName == null) {
+            if (customerName == null) {
                 customerName = arg;
 
             } else if (callerNumber == null) {
@@ -81,61 +121,67 @@ public class Project5 {
             }
         }
 
-        if (hostName == null) {
+        if (hostNameArg == null) {
             usage( MISSING_ARGS );
+            return;
 
-        } else if ( portString == null) {
+        } else if ( portArg == null) {
             usage( "Missing port" );
-        } else if (customerName == null) {
-            usage( "Missing customer name" );
-
-        } else if (callerNumber == null) {
-            usage( "Missing caller number" );
-
-        } else if (calleeNumber == null) {
-            usage( "Missing callee number" );
-
-        } else if (beginTime == null) {
-            usage( "Missing begin time" );
-
-        } else if (endTime == null) {
-            usage( "Missing end time" );
+            return;
 
         }
 
-        int port;
-        try {
-            port = Integer.parseInt( portString );
-            
-        } catch (NumberFormatException ex) {
-            usage("Port \"" + portString + "\" must be an integer");
+        if (customerName == null) {
+            usage( "Missing customer name" );
             return;
         }
 
-        PhoneBillRestClient client = new PhoneBillRestClient(hostName, port);
-
-        String message;
+        // connect to server
+        int port;
         try {
-            if (customerName == null) {
-                // Print all customerName/definition pairs
-                throw new UnsupportedOperationException("Missing Customer");
+            port = Integer.parseInt( portArg );
+        } catch (NumberFormatException ex) {
+            usage("Port \"" + portArg + "\" must be an integer");
+            return;
+        }
 
-            } else if (callerNumber == null) {
-                // Print Phone Bill
-                PhoneBill phoneBill = client.getPhoneBill(customerName);
-                StringWriter sw = new StringWriter();
-                PrettyPrinter pretty = new PrettyPrinter(sw);
-                pretty.dump(phoneBill);
-                message = sw.toString();
+        PhoneBillRestClient client = new PhoneBillRestClient(hostNameArg, port);
 
-            } else {
-                // Post the word/definition pair
-                PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
-                client.addPhoneCall(customerName, newCall);
-                message = Messages.addedPhoneCallToCustomer(customerName, newCall);
+        if (searchFlag) {
+            try {
+                client.getPhoneBill(customerName);
+            } catch (IOException | ParserException ex) {
+                error("While contacting server: " + ex.getMessage());
             }
+            return;
+        }
 
-        } catch (IOException | ParserException ex ) {
+        if (callerNumber == null) {
+            usage( "Missing caller number" );
+            return;
+
+        } else if (calleeNumber == null) {
+            usage( "Missing callee number" );
+            return;
+
+        } else if (beginTime == null) {
+            usage( "Missing begin time" );
+            return;
+
+        } else if (endTime == null) {
+            usage( "Missing end time" );
+            return;
+        }
+
+
+        String message = "";
+        try {
+          // Post the word/definition pair
+          PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+          client.addPhoneCall(customerName, newCall);
+          message = Messages.addedPhoneCallToCustomer(customerName, newCall);
+
+        } catch (IOException ex ) {
             error("While contacting server: " + ex.getMessage());
             return;
         }
@@ -158,15 +204,24 @@ public class Project5 {
         PrintStream err = System.err;
         err.println("** " + message);
         err.println();
-        err.println("usage: java Project5 host port [customerName] [definition]");
-        err.println("  host         Host of web server");
-        err.println("  port         Port of web server");
-        err.println("  customerName Word in dictionary");
-        err.println("  definition   Definition of word");
+        err.println("usage: java Project5 [options] <args>");
+        err.println("    args are (in this order):\n" +
+            "        customer        Person whose phone bill we're modeling\n" +
+            "                        or modifying\n" +
+            "        callerNumber    Phone number of caller\n" +
+            "        calleeNumber    Phone number of person who was called\n" +
+            "        begin           Date and time call began (12-hour time)\n" +
+            "        end             Date and time call ended (12-hour time)");
+        err.println("options are (options may appear in any order):");
+        err.println("  -host hostname\tHost computer on which the server runs");
+        err.println("  -port port\tPort on which the server is listening");
+        err.println("  -search\tSearch for phone calls");
+        err.println("  -print\tPrints a description of the new phone call");
+        err.println("  -README\tPrints a README for this project and exits");
         err.println();
-        err.println("This simple program posts  and their definitions");
+        err.println("This simple program posts customer names and their phone bills and phone calls");
         err.println("to the server.");
-        err.println("If no definition is specified, then the word's definition");
+        err.println("A customer name is required to print phone bills from the server.");
         err.println("is printed.");
         err.println("If no word is specified, all dictionary entries are printed");
         err.println();

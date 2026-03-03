@@ -14,9 +14,7 @@ import java.util.Map;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
- * A helper class for accessing the rest client.  Note that this class provides
- * an example of how to make gets and posts to a URL.  You'll need to change it
- * to do something other than just send dictionary entries.
+ * A helper class for accessing the REST client.
  */
 public class PhoneBillRestClient {
 
@@ -27,7 +25,7 @@ public class PhoneBillRestClient {
 
 
     /**
-     * Creates a client to the Phone Bil REST service running on the given host and port
+     * Creates a client to the Phone Bill REST service running on the given host and port
      * @param hostName The name of the host
      * @param port The port
      */
@@ -41,9 +39,8 @@ public class PhoneBillRestClient {
     this.http = http;
   }
 
-  /**
-   * Returns all phone bills from the server
-   */
+  /*
+  @VisibleForTesting
   public Map<String, PhoneBill> getAllPhoneBillEntries() throws IOException, ParserException {
     Response response = http.get(Map.of());
     throwExceptionIfNotOkayHttpStatus(response);
@@ -52,8 +49,13 @@ public class PhoneBillRestClient {
     return parser.parseToMap();
   }
 
+   */
+
   /**
-   * Returns the definition for the given word
+   * Returns the phone bill for the given customer
+   * @param customerName
+   * @return a PhoneBill
+   * @throws
    */
   public PhoneBill getPhoneBill(String customerName) throws IOException, ParserException {
     Response response = http.get(Map.of(PhoneBillServlet.CUSTOMER_PARAMETER, customerName));

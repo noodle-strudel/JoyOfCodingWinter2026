@@ -36,26 +36,19 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
-    void test2EmptyServer() {
+    void test2HostNameAndPortWithoutArguments() {
         MainMethodResult result = invokeMain( Project5.class, HOSTNAME, PORT );
-
-        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-
-        String out = result.getTextWrittenToStandardOut();
-        assertThat(out, out, containsString(PrettyPrinter.formatWordCount(0)));
+        assertThat(result.getTextWrittenToStandardError(), containsString("** Missing customer name"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     }
 
     @Test
-    void test3NoDefinitionsThrowsAppointmentBookRestException() {
+    void test3NonExistentCustomerPrintsNoCustomerFound() {
         String word = "WORD";
-        try {
-            invokeMain(Project5.class, HOSTNAME, PORT, word);
-            fail("Expected a RestException to be thrown");
+        MainMethodResult result = invokeMain(Project5.class, "-host", HOSTNAME, "-port", PORT, "-search", word);
 
-        } catch (UncaughtExceptionInMain ex) {
-            RestException cause = (RestException) ex.getCause();
-            assertThat(cause.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_NOT_FOUND));
-        }
+        assertThat(result.getTextWrittenToStandardError(), containsString("No phone bills associated with WORD"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     }
 
     @Test

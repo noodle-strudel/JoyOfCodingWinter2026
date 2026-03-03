@@ -45,8 +45,7 @@ public class PhoneBillServlet extends HttpServlet
             writePhoneBillText(customerName, response);
 
         } else {
-            log("GET all phone bills");
-            writeAllPhoneBills(response);
+            missingRequiredParameter(response, CUSTOMER_PARAMETER);
         }
     }
 
@@ -160,7 +159,8 @@ public class PhoneBillServlet extends HttpServlet
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }
-
+    /*
+    @VisibleForTesting
     private void writeAllPhoneBills(HttpServletResponse response) throws IOException {
         PrintWriter pw = response.getWriter();
 
@@ -170,6 +170,8 @@ public class PhoneBillServlet extends HttpServlet
 
         response.setStatus(HttpServletResponse.SC_OK);
     }
+
+     */
 
     /**
      * Returns the value of the HTTP request parameter with the given name.

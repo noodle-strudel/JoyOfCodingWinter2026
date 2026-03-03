@@ -18,8 +18,12 @@ import static org.mockito.Mockito.*;
  * A unit test for the {@link PhoneBillServlet}.  It uses mockito to
  * provide mock http requests and responses.
  */
-class PhoneBillServletTest {
 
+
+class PhoneBillServletTest {
+  //TODO:
+  // Servlet does not allow no arguments, it is a required parameter.
+  //
   @Test
   void customerNameIsRequiredParameter() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();
