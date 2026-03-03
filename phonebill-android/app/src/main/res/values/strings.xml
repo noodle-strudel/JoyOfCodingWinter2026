@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Phone Bill</string>
+    <string name="hello_class">Hello Class!</string>
+    <string name="say_hello">Say Hello</string>
+</resources>
