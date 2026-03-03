@@ -2,8 +2,10 @@ package edu.pdx.cs.joy.yollaine;
 
 import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs.joy.ParserException;
+import edu.pdx.cs.joy.web.HttpRequestHelper;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -85,12 +87,18 @@ public class Project5 {
             }
         } catch (NoSuchElementException e) {
             if (hostNameFlag && hostNameArg.isEmpty()) {
-                System.err.println("-host requires hostname");
+                error("-host requires host name");
                 return;
             } else if (portFlag && portArg.isEmpty()) {
-                System.err.println("-port requires port");
+                error("-port requires port number ");
                 return;
             }
+        }
+
+        // check if one is true and the other is false (xor trick!)
+        if (hostNameFlag ^ portFlag) {
+            error("Both host name and port number must be specified at the same time");
+            return;
         }
 
         String customerName = null;
@@ -121,11 +129,11 @@ public class Project5 {
             }
         }
 
-        if (hostNameArg == null) {
+        if (hostNameArg.isEmpty()) {
             usage( MISSING_ARGS );
             return;
 
-        } else if ( portArg == null) {
+        } else if (portArg.isEmpty()) {
             usage( "Missing port" );
             return;
 
@@ -149,8 +157,10 @@ public class Project5 {
 
         if (searchFlag) {
             try {
-                client.getPhoneBill(customerName);
-            } catch (IOException | ParserException ex) {
+                PhoneBill phoneBill = client.getPhoneBill(customerName);
+                PrettyPrinter prettyPrinter = new PrettyPrinter(new OutputStreamWriter(System.out));
+                prettyPrinter.dump(phoneBill);
+            } catch (IOException | ParserException | HttpRequestHelper.RestException ex) {
                 error("While contacting server: " + ex.getMessage());
             }
             return;
@@ -204,7 +214,7 @@ public class Project5 {
         PrintStream err = System.err;
         err.println("** " + message);
         err.println();
-        err.println("usage: java Project5 [options] <args>");
+        err.println("-jar target/phonebill-client.jar [options] <args>");
         err.println("    args are (in this order):\n" +
             "        customer        Person whose phone bill we're modeling\n" +
             "                        or modifying\n" +

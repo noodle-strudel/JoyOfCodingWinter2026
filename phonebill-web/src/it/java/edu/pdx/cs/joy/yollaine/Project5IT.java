@@ -5,6 +5,8 @@ import edu.pdx.cs.joy.UncaughtExceptionInMain;
 import edu.pdx.cs.joy.web.HttpRequestHelper.RestException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -20,8 +22,10 @@ import static org.junit.jupiter.api.MethodOrderer.MethodName;
  */
 @TestMethodOrder(MethodName.class)
 class Project5IT extends InvokeMainTestCase {
+    public static final String CUSTOMER_NAME = "CUSTOMER NAME";
     private static final String HOSTNAME = "localhost";
     private static final String PORT = System.getProperty("http.port", "8080");
+
 
     @Test
     void test0RemoveAllMappings() throws IOException {
@@ -36,50 +40,114 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
-    void test2HostNameAndPortWithoutArguments() {
-        MainMethodResult result = invokeMain( Project5.class, HOSTNAME, PORT );
+    void test2HostNameAndPortMissingTheirArguments() {
+        MainMethodResult result = invokeMain( Project5.class, "-host");
+        assertThat(result.getTextWrittenToStandardError(), containsString("** -host requires host name"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+
+        result = invokeMain( Project5.class, "-host", HOSTNAME, "-port");
+        assertThat(result.getTextWrittenToStandardError(), containsString("** -port requires port number"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    }
+
+    @Test
+    void test3HostNameAndPortWithoutCustomerArguments() {
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT );
         assertThat(result.getTextWrittenToStandardError(), containsString("** Missing customer name"));
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     }
 
     @Test
-    void test3NonExistentCustomerPrintsNoCustomerFound() {
-        String word = "WORD";
-        MainMethodResult result = invokeMain(Project5.class, "-host", HOSTNAME, "-port", PORT, "-search", word);
+    void test4HostNameWithoutPortAndViceVersa() {
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "WORD");
+        assertThat(result.getTextWrittenToStandardError(), containsString("** Both host name and port number must be specified at the same time"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
 
-        assertThat(result.getTextWrittenToStandardError(), containsString("No phone bills associated with WORD"));
+        result = invokeMain( Project5.class, "-port", PORT, "WORD");
+        assertThat(result.getTextWrittenToStandardError(), containsString("** Both host name and port number must be specified at the same time"));
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
     }
 
     @Test
-    void test4AddPhoneCall() {
-        String customerName = "CUSTOMER NAME";
+    void test5NonExistentCustomerPrintsNoCustomerFound() {
+        String word = "WORD";
+        MainMethodResult result = invokeMain(Project5.class, "-host", HOSTNAME, "-port", PORT, "-search", word);
+
+        assertThat(result.getTextWrittenToStandardError(), containsString("No phone bills associated with WORD found."));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    }
+
+    @Test
+    void test6AddPhoneCall() {
         String callerNumber = "123-456-7890";
         String calleeNumber = "098-765-4321";
         String beginTime = "1/1/2004 3:00 PM";
         String endTime = "1/2/2004 3:00 PM";
 
-        MainMethodResult result = invokeMain( Project5.class, HOSTNAME, PORT, customerName, callerNumber );
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, callerNumber, calleeNumber, beginTime, endTime);
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
 
         String out = result.getTextWrittenToStandardOut();
 
         PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
-        assertThat(out, out, containsString(Messages.addedPhoneCallToCustomer(customerName, newCall)));
+        assertThat(out, out, containsString(Messages.addedPhoneCallToCustomer(CUSTOMER_NAME, newCall)));
 
-        result = invokeMain( Project5.class, HOSTNAME, PORT, customerName );
-
-        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-
-        out = result.getTextWrittenToStandardOut();
-        assertThat(out, out, containsString(PrettyPrinter.formatDictionaryEntry(customerName, callerNumber)));
-
-        result = invokeMain( Project5.class, HOSTNAME, PORT );
+        // pretty print it
+        result = invokeMain( Project5.class, "-search", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME);
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
-
         out = result.getTextWrittenToStandardOut();
-        assertThat(out, out, containsString(PrettyPrinter.formatDictionaryEntry(customerName, callerNumber)));
+        assertThat(out, containsString("Customer: "+CUSTOMER_NAME));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        CUSTOMER_NAME+","+"123-456-7890,123-456-7860,12/1/2004 3:45 PM,12/1/2004 4:23 PM,",
+        CUSTOMER_NAME+","+"098-765-4321,078-765-4321,3/4/2025 4:00 AM,3/4/2025 11:00 AM,",
+        CUSTOMER_NAME+","+"456-789-0123,434-789-0123,5/1/2012 8:00 PM,5/1/2012 9:14 PM,",
+        CUSTOMER_NAME+","+"345-678-9012,654-678-9012,7/3/2004 12:00 PM,7/3/2004 3:45 PM"
+    })
+    void test7AddMorePhoneCallsToCustomer(String customerName, String callerNumber, String calleeNumber, String beginTime, String endTime) {
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, customerName, callerNumber, calleeNumber, beginTime, endTime);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        String out = result.getTextWrittenToStandardOut();
+        PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+        assertThat(out, out, containsString(Messages.addedPhoneCallToCustomer(CUSTOMER_NAME, newCall)));
+
+        // pretty print it
+        result = invokeMain( Project5.class, "-search", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        out = result.getTextWrittenToStandardOut();
+        assertThat(out, containsString(customerName));
+        assertThat(out, containsString(callerNumber));
+        assertThat(out, containsString(calleeNumber));
+        assertThat(out, containsString(newCall.getBeginTime().format(PrettyPrinter.PRETTY_DATE_TIME)));
+        assertThat(out, containsString(newCall.getEndTime().format(PrettyPrinter.PRETTY_DATE_TIME)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        CUSTOMER_NAME+" 2,"+"123-456-7890,123-456-7860,12/1/2004 3:45 PM,12/1/2004 4:23 PM,",
+        CUSTOMER_NAME+" 2,"+"098-765-4321,078-765-4321,3/4/2025 4:00 AM,3/4/2025 11:00 AM,",
+        CUSTOMER_NAME+" 2,"+"456-789-0123,434-789-0123,5/1/2012 8:00 PM,5/1/2012 9:14 PM,",
+        CUSTOMER_NAME+" 2,"+"345-678-9012,654-678-9012,7/3/2004 12:00 PM,7/3/2004 3:45 PM"
+    })
+    void test8AddMorePhoneCallsToDifferentCustomer(String customerName, String callerNumber, String calleeNumber, String beginTime, String endTime) {
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, customerName, callerNumber, calleeNumber, beginTime, endTime);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        String out = result.getTextWrittenToStandardOut();
+        PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+        assertThat(out, out, containsString(Messages.addedPhoneCallToCustomer(CUSTOMER_NAME, newCall)));
+
+        // pretty print it
+        result = invokeMain( Project5.class, "-search", "-host", HOSTNAME, "-port", PORT, customerName);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        out = result.getTextWrittenToStandardOut();
+        assertThat(out, containsString(customerName));
+        assertThat(out, containsString(callerNumber));
+        assertThat(out, containsString(calleeNumber));
+        assertThat(out, containsString(newCall.getBeginTime().format(PrettyPrinter.PRETTY_DATE_TIME)));
+        assertThat(out, containsString(newCall.getEndTime().format(PrettyPrinter.PRETTY_DATE_TIME)));
     }
 }

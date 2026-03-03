@@ -149,6 +149,9 @@ public class PhoneBillServlet extends HttpServlet
 
         if (bill == null) {
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            PrintWriter pw = response.getWriter();
+            pw.print("No phone bills associated with "+customerName+" found.");
+            pw.flush();
 
         } else {
             PrintWriter pw = response.getWriter();

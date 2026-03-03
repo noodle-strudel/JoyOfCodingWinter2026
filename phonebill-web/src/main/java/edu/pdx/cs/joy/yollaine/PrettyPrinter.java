@@ -12,6 +12,7 @@ import java.time.temporal.ChronoUnit;
  * Writes a {@link PhoneBill} to a formatted text file meant for viewing along with its associated {@link PhoneCall}s.
  */
 public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
+  public static final DateTimeFormatter PRETTY_DATE_TIME = DateTimeFormatter.ofPattern("E, MMM d yyyy 'at' h:mm a");
   private final Writer writer;
 
   @VisibleForTesting
@@ -55,10 +56,9 @@ public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
       pw.println("Caller Number | Callee Number | Start Date and Time         | End Date and Time           | Duration (min)");
       pw.println("-----------------------------------------------------------------------------------------------------------");
 
-      DateTimeFormatter dTFormat = DateTimeFormatter.ofPattern("E, MMM d yyyy 'at' h:mm a");
       for (PhoneCall call: phoneBill.getPhoneCalls()) {
-        String startDateTime = call.getBeginTime().format(dTFormat);
-        String endDateTime =  call.getEndTime().format(dTFormat);
+        String startDateTime = call.getBeginTime().format(PRETTY_DATE_TIME);
+        String endDateTime =  call.getEndTime().format(PRETTY_DATE_TIME);
         pw.println(call.getCaller() + "  | " + call.getCallee() + "  | " + startDateTime + " | " + endDateTime + " | " + call.getBeginTime().until(call.getEndTime(), ChronoUnit.MINUTES));
       }
     }
