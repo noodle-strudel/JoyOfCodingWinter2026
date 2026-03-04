@@ -13,10 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This servlet ultimately provides a REST API for working with an
- * <code>PhoneBill</code>.  However, in its current state, it is an example
- * of how to use HTTP and Java servlets to store simple dictionary of words
- * and their definitions.
+ * This servlet provides a REST API for working with an
+ * {@link PhoneBill}.
  */
 public class PhoneBillServlet extends HttpServlet
 {
@@ -53,10 +51,14 @@ public class PhoneBillServlet extends HttpServlet
       }
   }
 
+
   /**
    * Handles an HTTP POST request by storing the dictionary entry for the
    * "word" and "definition" request parameters.  It writes the dictionary
    * entry to the HTTP response.
+   * @param request
+   * @param response
+   * @throws IOException
    */
   @Override
   protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws IOException

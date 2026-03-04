@@ -14,9 +14,6 @@ import java.io.IOException;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-// TODO:
-//  print option, readme option
-
 /**
  * Tests the {@link Project5} class by invoking its main method with various arguments
  */
@@ -86,11 +83,14 @@ class Project5IT extends InvokeMainTestCase {
 
     @Test
     @Order(7)
-    void test6AddPhoneCall() {
+    void test6AddPhoneCallWithNoPrint() {
         String callerNumber = "123-456-7890";
         String calleeNumber = "098-765-4321";
-        String beginTime = "1/1/2004 3:00 PM";
+        String beginDate = "1/1/2004";
+        String beginTime = "3:00";
+        String beginAMPM = "PM";
         String endTime = "1/2/2004 3:00 PM";
+
 
         MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, callerNumber, calleeNumber, beginTime, endTime);
 
@@ -98,8 +98,7 @@ class Project5IT extends InvokeMainTestCase {
 
         String out = result.getTextWrittenToStandardOut();
 
-        PhoneCall newCall = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
-        assertThat(out, out, containsString(Messages.addedPhoneCallToCustomer(CUSTOMER_NAME, newCall)));
+        assertThat(out, out, equalTo(""));
 
         // pretty print it
         result = invokeMain( Project5.class, "-search", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME);
@@ -210,4 +209,73 @@ class Project5IT extends InvokeMainTestCase {
         assertThat(result.getTextWrittenToStandardError(), containsString("End time is before begin time"));
     }
 
+    @Test
+    @Order(14)
+    void test13PrintWithAddingPhoneCall() {
+        String callerNumber = "123-456-7890";
+        String calleeNumber = "098-765-4321";
+        String beginTime = "1/5/2004 3:00 PM";
+        String endTime = "1/5/2004 3:00 PM";
+
+        MainMethodResult result = invokeMain( Project5.class, "-print", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, callerNumber, calleeNumber, beginTime, endTime);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString(new PhoneCall(callerNumber, calleeNumber, beginTime, endTime).toString()));
+    }
+
+    // how will they be able to know which one was recently added?
+    @Test
+    @Order(15)
+    void test16PrintWithGettingPhoneCallPrintsError() {
+        MainMethodResult result = invokeMain(Project5.class, "-search", "-print", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME);
+        assertThat(result.getTextWrittenToStandardError(), containsString("-print option incompatible with -search option"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+
+        result = invokeMain(Project5.class, "-print", "-search", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME);
+        assertThat(result.getTextWrittenToStandardError(), containsString("-print option incompatible with -search option"));
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+    }
+
+    @Test
+    @Order(16)
+    void test17ReadMeWhenSearchingOrAddingPhoneCallPrintsReadMeOnly() {
+        String callerNumber = "123-456-7890";
+        String calleeNumber = "098-765-4321";
+        String beginTime = "1/5/2004 3:00 PM";
+        String endTime = "1/5/2004 3:00 PM";
+
+        MainMethodResult result = invokeMain(Project5.class, "-search", "-README", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project 5"));
+
+        result = invokeMain(Project5.class, "-README", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, callerNumber, calleeNumber, beginTime, endTime);
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardOut(), containsString("Project 5"));
+    }
+
+    @Test
+    @Order(17)
+    void test18TooManyArgumentsForAddingPhoneCallAndSearchingForPhoneCall() {
+        String callerNumber = "123-456-7890";
+        String calleeNumber = "098-765-4321";
+        String beginTime = "1/5/2004 3:00 PM";
+        String endTime = "1/5/2004 3:00 PM";
+
+        MainMethodResult result = invokeMain(Project5.class, "-README", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, callerNumber, calleeNumber, beginTime, endTime, "weor324");
+        assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
+        assertThat(result.getTextWrittenToStandardError(), containsString("usage:"));
+
+        result = invokeMain(Project5.class, "-search", "-README", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, "1/1/2004 3:00 PM", "1/20/20204 3:00 PM", "sdsds");
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardError(), containsString("Too many command line arguments"));
+        assertThat(result.getTextWrittenToStandardError(), containsString("usage:"));
+
+    }
+
+    // TODO:
+    //  reformat everything to work with separate begin time end time etc stuff.....
+    @Test
+    @Order(18)
+    void test19NoCallBetweenToTimesPrintsError() {
+
+    }
 }

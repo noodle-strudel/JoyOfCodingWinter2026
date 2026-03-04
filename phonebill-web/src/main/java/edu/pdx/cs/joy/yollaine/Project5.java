@@ -4,9 +4,7 @@ import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs.joy.ParserException;
 import edu.pdx.cs.joy.web.HttpRequestHelper;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.NoSuchElementException;
@@ -20,7 +18,8 @@ import java.util.regex.Pattern;
 public class Project5 {
 
   public static final String MISSING_ARGS = "Missing command line arguments";
-
+  private static final int SEARCH_MAX_ARGS = 7;
+  private static final int ADD_MAX_ARGS = 9;
   /**
    * Determines if a date and time is valid.
    * @param dateAndTime
@@ -94,6 +93,28 @@ public class Project5 {
       }
     }
 
+    if (readMeFlag) {
+      try (InputStream readme = Project5.class.getResourceAsStream("README.txt")
+      ) {
+        if (readme == null) {
+          throw new IOException("Unable to access README.txt");
+        }
+        StringBuffer readMeOutput = new StringBuffer();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(readme));
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+          readMeOutput.append(line);
+          readMeOutput.append('\n');
+        }
+        System.out.println(readMeOutput);
+        return;
+      } catch (IOException e) {
+        System.err.println("Unable to access README.txt");
+        return;
+      }
+    }
+
     // check if one is true and the other is false (xor trick!)
     if (hostNameFlag ^ portFlag) {
       error("Both host name and port number must be specified at the same time");
@@ -162,6 +183,10 @@ public class Project5 {
     PhoneBillRestClient client = new PhoneBillRestClient(hostNameArg, port);
 
     if (searchFlag) {
+      if (printFlag) {
+        error("-print option incompatible with -search option");
+        return;
+      }
 
       if (!(beginTime == null) && endTime == null) {
         error("Time range to search for calls is missing end time");
@@ -214,7 +239,9 @@ public class Project5 {
       return;
     }
 
-    System.out.println(message);
+    if (printFlag) {
+      System.out.println(message);
+    }
   }
 
   private static void error( String message )
@@ -223,6 +250,8 @@ public class Project5 {
     err.println("** " + message);
   }
 
+  // TODO:
+  //  fix the usages text
   /**
    * Prints usage information for this program and exits
    * @param message An error message to print
