@@ -89,10 +89,12 @@ class Project5IT extends InvokeMainTestCase {
         String beginDate = "1/1/2004";
         String beginTime = "3:00";
         String beginAMPM = "PM";
-        String endTime = "1/2/2004 3:00 PM";
+        String endDate = "1/2/2004";
+        String endTime = "3:00";
+        String endAMPM = "PM";
 
 
-        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, callerNumber, calleeNumber, beginTime, endTime);
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, callerNumber, calleeNumber, beginDate, beginTime, beginAMPM, endDate, endTime, endAMPM);
 
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
 

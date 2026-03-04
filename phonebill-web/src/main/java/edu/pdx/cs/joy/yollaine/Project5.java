@@ -124,19 +124,32 @@ public class Project5 {
     String customerName = null;
     String callerNumber = null;
     String calleeNumber = null;
+    String beginDate = null;
     String beginTime = null;
+    String beginAMPM = null;
+    String endDate = null;
     String endTime = null;
+    String endAMPM = null;
 
     if (searchFlag) {
       for (String arg : argList) {
         if (customerName == null) {
           customerName = arg;
+        } else if (beginDate == null) {
+          beginDate = arg;
         } else if (beginTime == null) {
           beginTime = arg;
+        } else if (beginAMPM == null){
+          beginAMPM = arg;
+        } else if (endDate == null) {
+          endDate = arg;
         } else if (endTime == null) {
           endTime = arg;
+        } else if (endAMPM == null) {
+          endAMPM = arg;
         } else {
           usage("Extraneous command line argument: " + arg);
+          return;
         }
       }
     } else {
@@ -153,6 +166,7 @@ public class Project5 {
           endTime = arg;
         } else {
           usage("Extraneous command line argument: " + arg);
+          return;
         }
       }
     }
@@ -236,6 +250,9 @@ public class Project5 {
 
     } catch (IOException ex ) {
       error("While contacting server: " + ex.getMessage());
+      return;
+    } catch (IllegalArgumentException ex) {
+      error(ex.getMessage());
       return;
     }
 
