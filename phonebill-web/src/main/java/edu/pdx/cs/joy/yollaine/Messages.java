@@ -15,7 +15,7 @@ public class Messages
 
     public static String missingRequiredParameter( String parameterName )
     {
-        return String.format("The required parameter \"%s\" is missing", parameterName);
+        return String.format("The required parameter %s is missing", parameterName);
     }
 
     public static String addedPhoneCallToCustomer(String customerName, PhoneCall phoneCall)

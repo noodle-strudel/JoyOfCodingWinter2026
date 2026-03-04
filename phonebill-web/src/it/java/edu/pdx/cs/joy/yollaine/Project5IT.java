@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.MethodOrderer.MethodName;
 
@@ -150,4 +150,46 @@ class Project5IT extends InvokeMainTestCase {
         assertThat(out, containsString(newCall.getBeginTime().format(PrettyPrinter.PRETTY_DATE_TIME)));
         assertThat(out, containsString(newCall.getEndTime().format(PrettyPrinter.PRETTY_DATE_TIME)));
     }
+
+    @Test
+    void test9SearchCustomerCallsBetweenTwoDates() {
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-search", "-port", PORT, CUSTOMER_NAME, "1/1/2004 12:00 AM", "12/31/2004 11:59 PM");
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+
+        String out = result.getTextWrittenToStandardOut();
+        assertThat(out, containsString(CUSTOMER_NAME));
+        assertThat(out, containsString("Jul 3 2004"));
+        assertThat(out, containsString("Dec 1 2004"));
+        assertThat(out, not(containsString("May 1 2012")));
+        assertThat(out, not(containsString("Mar 4 2025")));
+
+        result = invokeMain( Project5.class, "-host", HOSTNAME, "-search", "-port", PORT, CUSTOMER_NAME, "7/3/2004 12:00 PM", "12/1/2004 4:23 PM");
+        assertThat(result.getTextWrittenToStandardError(), equalTo(""));
+
+        out = result.getTextWrittenToStandardOut();
+        assertThat(out, containsString(CUSTOMER_NAME));
+        assertThat(out, containsString("Jul 3 2004"));
+        assertThat(out, containsString("Dec 1 2004"));
+        assertThat(out, not(containsString("May 1 2012")));
+        assertThat(out, not(containsString("Mar 4 2025")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"localhos","12kj","[[][p,l","\\v[=-p"})
+    void test10InvalidCommandLineSyntax(String invalidPort) {
+        MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-search", "-port", invalidPort, CUSTOMER_NAME);
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardError(), containsString("** Port \""+invalidPort+"\" must be an integer"));
+    }
+
+    @Test
+    void test12BeginTimeWithoutEndTime() {
+        MainMethodResult result = invokeMain(Project5.class, "-search", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, "1/1/2024 1:00 PM");
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardError(), containsString("** Time range to search for calls is missing end time"));
+    }
+
+
+    // TODO:
+    //  end time is before begin time
 }

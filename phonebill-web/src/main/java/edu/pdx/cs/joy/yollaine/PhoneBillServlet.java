@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,10 +42,12 @@ public class PhoneBillServlet extends HttpServlet
     {
         response.setContentType( "text/plain" );
 
-        String customerName = getParameter(CUSTOMER_PARAMETER, request );
+        String customerName = getParameter(CUSTOMER_PARAMETER, request);
+        String beginTime = getParameter(BEGIN_TIME_PARAMETER, request);
+        String endTime = getParameter(END_TIME_PARAMETER, request);
         if (customerName != null) {
             log("GET " + customerName);
-            writePhoneBillText(customerName, response);
+            writePhoneBillText(customerName, beginTime, endTime, response);
 
         } else {
             missingRequiredParameter(response, CUSTOMER_PARAMETER);
@@ -144,7 +149,7 @@ public class PhoneBillServlet extends HttpServlet
      *
      * The text of the message is formatted with {@link TextDumper}
      */
-    private void writePhoneBillText(String customerName, HttpServletResponse response) throws IOException {
+    private void writePhoneBillText(String customerName, String beginTime, String endTime, HttpServletResponse response) throws IOException {
         PhoneBill bill = this.phoneBills.get(customerName);
 
         if (bill == null) {
@@ -154,6 +159,37 @@ public class PhoneBillServlet extends HttpServlet
             pw.flush();
 
         } else {
+            if (beginTime != null && endTime != null) {
+                PhoneBill parsedBill = new PhoneBill(bill.getCustomer());
+                LocalDateTime queriedEndTime = null;
+                LocalDateTime queriedBeginTime = null;
+                try {
+                  queriedBeginTime = LocalDateTime.parse(beginTime, PhoneCall.DATE_TIME_FORMAT);
+                } catch (DateTimeParseException e) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    PrintWriter pw = response.getWriter();
+                    pw.print("Begin time "+beginTime+" is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm AM/PM");
+                    pw.flush();
+                    return;
+                }
+
+                try {
+                  queriedEndTime = LocalDateTime.parse(endTime, PhoneCall.DATE_TIME_FORMAT);
+                } catch (DateTimeParseException e) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    PrintWriter pw = response.getWriter();
+                    pw.print("End time "+endTime+" is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm AM/PM");
+                    pw.flush();
+                    return;
+                }
+
+                for (PhoneCall call : bill.getPhoneCalls()) {
+                    if (!call.getBeginTime().isBefore(queriedBeginTime) && !call.getBeginTime().isAfter(queriedEndTime)) {
+                        parsedBill.addPhoneCall(call);
+                    }
+                }
+                bill = parsedBill;
+            }
             PrintWriter pw = response.getWriter();
 
             TextDumper dumper = new TextDumper(pw);
@@ -162,23 +198,11 @@ public class PhoneBillServlet extends HttpServlet
             response.setStatus(HttpServletResponse.SC_OK);
         }
     }
-    /*
-    @VisibleForTesting
-    private void writeAllPhoneBills(HttpServletResponse response) throws IOException {
-        PrintWriter pw = response.getWriter();
-
-        TextDumper textDumper = new TextDumper(pw);
-
-        textDumper.dumpAll(phoneBills);
-
-        response.setStatus(HttpServletResponse.SC_OK);
-    }
-
-     */
 
     /**
      * Returns the value of the HTTP request parameter with the given name.
-     *
+     * @param name
+     * @param request
      * @return <code>null</code> if the value of the parameter is
      *         <code>null</code> or is the empty string
      */

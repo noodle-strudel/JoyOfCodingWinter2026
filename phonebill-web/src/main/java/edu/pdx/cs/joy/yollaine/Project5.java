@@ -107,25 +107,33 @@ public class Project5 {
         String beginTime = null;
         String endTime = null;
 
-        for (String arg : argList) {
-
-            if (customerName == null) {
-                customerName = arg;
-
-            } else if (callerNumber == null) {
-                callerNumber = arg;
-
-            } else if (calleeNumber == null) {
-                calleeNumber = arg;
-
-            } else if (beginTime == null) {
-                beginTime = arg;
-
-            } else if (endTime == null) {
-                endTime = arg;
-
-            } else {
-                usage("Extraneous command line argument: " + arg);
+        if (searchFlag) {
+            for (String arg : argList) {
+                if (customerName == null) {
+                    customerName = arg;
+                } else if (beginTime == null) {
+                    beginTime = arg;
+                } else if (endTime == null) {
+                    endTime = arg;
+                } else {
+                    usage("Extraneous command line argument: " + arg);
+                }
+            }
+        } else {
+            for (String arg : argList) {
+                if (customerName == null) {
+                    customerName = arg;
+                } else if (callerNumber == null) {
+                    callerNumber = arg;
+                } else if (calleeNumber == null) {
+                    calleeNumber = arg;
+                } else if (beginTime == null) {
+                    beginTime = arg;
+                } else if (endTime == null) {
+                    endTime = arg;
+                } else {
+                    usage("Extraneous command line argument: " + arg);
+                }
             }
         }
 
@@ -136,7 +144,6 @@ public class Project5 {
         } else if (portArg.isEmpty()) {
             usage( "Missing port" );
             return;
-
         }
 
         if (customerName == null) {
@@ -156,10 +163,22 @@ public class Project5 {
         PhoneBillRestClient client = new PhoneBillRestClient(hostNameArg, port);
 
         if (searchFlag) {
+
+            if (!(beginTime == null) && endTime == null) {
+                error("Time range to search for calls is missing end time");
+                return;
+            }
+
             try {
-                PhoneBill phoneBill = client.getPhoneBill(customerName);
-                PrettyPrinter prettyPrinter = new PrettyPrinter(new OutputStreamWriter(System.out));
-                prettyPrinter.dump(phoneBill);
+                if (beginTime == null) {
+                    PhoneBill phoneBill = client.getPhoneBill(customerName);
+                    PrettyPrinter prettyPrinter = new PrettyPrinter(new OutputStreamWriter(System.out));
+                    prettyPrinter.dump(phoneBill);
+                } else {
+                    PhoneBill phoneBill = client.getPhoneBill(customerName, beginTime, endTime);
+                    PrettyPrinter prettyPrinter = new PrettyPrinter(new OutputStreamWriter(System.out));
+                    prettyPrinter.dump(phoneBill);
+                }
             } catch (IOException | ParserException | HttpRequestHelper.RestException ex) {
                 error("While contacting server: " + ex.getMessage());
             }

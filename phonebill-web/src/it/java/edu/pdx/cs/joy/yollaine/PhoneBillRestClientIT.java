@@ -35,7 +35,7 @@ class PhoneBillRestClientIT {
   }
 
   @Test
-  void test1DefineOneWord() throws IOException, ParserException {
+  void test1AddOnePhoneBill() throws IOException, ParserException {
     PhoneBillRestClient client = newPhoneBillRestClient();
     String customerName = "TEST NAME";
     String callerNumber = "123-456-7890";
@@ -87,6 +87,7 @@ class PhoneBillRestClientIT {
     assertThat(bill.getCustomer(), equalTo(customerName3));
   }
 
+  // The phone call already has input verification built into it
   @Test
   void test4EmptyCustomerNameThrowsException() {
     PhoneBillRestClient client = newPhoneBillRestClient();
@@ -96,25 +97,5 @@ class PhoneBillRestClientIT {
     assertThat(ex.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
     assertThat(ex.getMessage(), containsString(Messages.missingRequiredParameter(PhoneBillServlet.CUSTOMER_PARAMETER)));
   }
-
-  // The phone call already has input verification built into it
-  @Test
-  void test5EmptyArgumentsThrowsExceptions() {
-    PhoneBillRestClient client = newPhoneBillRestClient();
-    String emptyString = "";
-    String customerName = "TEST NAME";
-    String callerNumber = "123-456-7890";
-    String calleeNumber = "098-765-4321";
-    String beginTime = "1/1/2004 3:00 PM";
-    String endTime = "1/2/2004 3:00 PM";
-
-    RestException ex = assertThrows(RestException.class, () -> client.addPhoneCall(emptyString, new PhoneCall("123-456-7890", "098-765-4321", "1/1/2004 3:00 PM", "1/2/2004 3:00 PM")));
-    assertThat(ex.getHttpStatusCode(), equalTo(HttpURLConnection.HTTP_PRECON_FAILED));
-    assertThat(ex.getMessage(), containsString(Messages.missingRequiredParameter(PhoneBillServlet.CUSTOMER_PARAMETER)));
-
-    ex = assertThrows(RestException.class, () -> client.addPhoneCall(customerName, new PhoneCall(emptyString, "098-765-4321", "1/1/2004 3:00 PM", "1/2/2004 3:00 PM")));
-
-  }
-
 
 }

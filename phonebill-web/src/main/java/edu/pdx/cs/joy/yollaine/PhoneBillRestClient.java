@@ -54,8 +54,9 @@ public class PhoneBillRestClient {
   /**
    * Returns the phone bill for the given customer
    * @param customerName
-   * @return a PhoneBill
-   * @throws
+   * @return
+   * @throws IOException
+   * @throws ParserException
    */
   public PhoneBill getPhoneBill(String customerName) throws IOException, ParserException {
     Response response = http.get(Map.of(PhoneBillServlet.CUSTOMER_PARAMETER, customerName));
@@ -66,17 +67,26 @@ public class PhoneBillRestClient {
     return parser.parse();
   }
 
-    public void addPhoneCall(String customerName, PhoneCall phoneCall) throws IOException {
-      Response response = http.post(
-          Map.of(
-              PhoneBillServlet.CUSTOMER_PARAMETER, customerName,
-              PhoneBillServlet.CALLER_NUMBER_PARAMETER, phoneCall.getCaller(),
-              PhoneBillServlet.CALLEE_NUMBER_PARAMETER, phoneCall.getCallee(),
-              PhoneBillServlet.BEGIN_TIME_PARAMETER, phoneCall.getBeginTimeRaw(),
-              PhoneBillServlet.END_TIME_PARAMETER, phoneCall.getEndTimeRaw())
-      );
-      throwExceptionIfNotOkayHttpStatus(response);
-    }
+  public PhoneBill getPhoneBill(String customerName, String beginTime, String endTime) throws IOException, ParserException {
+    Response response = http.get(Map.of(PhoneBillServlet.CUSTOMER_PARAMETER, customerName, PhoneBillServlet.BEGIN_TIME_PARAMETER, beginTime, PhoneBillServlet.END_TIME_PARAMETER, endTime));
+    throwExceptionIfNotOkayHttpStatus(response);
+    String content = response.getContent();
+
+    TextParser parser = new TextParser(new StringReader(content));
+    return parser.parse();
+  }
+
+  public void addPhoneCall(String customerName, PhoneCall phoneCall) throws IOException {
+    Response response = http.post(
+        Map.of(
+            PhoneBillServlet.CUSTOMER_PARAMETER, customerName,
+            PhoneBillServlet.CALLER_NUMBER_PARAMETER, phoneCall.getCaller(),
+            PhoneBillServlet.CALLEE_NUMBER_PARAMETER, phoneCall.getCallee(),
+            PhoneBillServlet.BEGIN_TIME_PARAMETER, phoneCall.getBeginTimeRaw(),
+            PhoneBillServlet.END_TIME_PARAMETER, phoneCall.getEndTimeRaw())
+    );
+    throwExceptionIfNotOkayHttpStatus(response);
+  }
 
   public void removeAllPhoneBills() throws IOException {
       Response response = http.delete(Map.of());
@@ -90,5 +100,4 @@ public class PhoneBillRestClient {
         throw new RestException(code, message);
       }
     }
-
 }

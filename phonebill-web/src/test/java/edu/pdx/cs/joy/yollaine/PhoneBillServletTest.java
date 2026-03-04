@@ -19,11 +19,10 @@ import static org.mockito.Mockito.*;
  * provide mock http requests and responses.
  */
 
-
 class PhoneBillServletTest {
-  //TODO:
-  // Servlet does not allow no arguments, it is a required parameter.
-  //
+  // TODO:
+  //  incorrect format for caller number, callee number, begin time, end time for post
+  //  incorrect format for begin time and end time for get
   @Test
   void customerNameIsRequiredParameter() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();
@@ -81,6 +80,40 @@ class PhoneBillServletTest {
     assertThat(phoneBill, notNullValue());
     PhoneCall call = phoneBill.getPhoneCalls().iterator().next();
     assertThat(call.getCaller(), equalTo(callerNumber));
+  }
+
+  @Test
+  void incorrectFormatsForParameters() throws IOException {
+    String customerName = "Customer";
+    String callerNumber = "123-456-7890";
+    String calleeNumber = "098-765-4321";
+    String beginTime = "1/2/2002 3:00 PM";
+    String endTime = "1/3/2002 3:00 PM";
+
+    PhoneBillServlet servlet = new PhoneBillServlet();
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn("");
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter pw = new PrintWriter(stringWriter, true);
+
+    when(response.getWriter()).thenReturn(pw);
+
+    servlet.doPost(request, response);
+    ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
+    verify(response).sendError(statusCode.capture(), eq("The required parameter "+PhoneBillServlet.CUSTOMER_PARAMETER+" is missing"));
+
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_PRECONDITION_FAILED));
+
+    when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(customerName);
+    when(request.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn("");
+
+    servlet.doPost(request, response);
+    verify(response).sendError(statusCode.capture(), eq("The required parameter "+PhoneBillServlet.CALLER_NUMBER_PARAMETER+" is missing"));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_PRECONDITION_FAILED));
   }
 
 }

@@ -30,21 +30,18 @@
 
 <div>
     <form method="get" action="calls">
-        List all dictionary entries <input type="submit" definition="Submit"/>
-    </form>
-</div>
-
-<div>
-    <form method="get" action="calls">
-        List definition for word <input name="word" type="text" size="10" title="word"/>
+        List a phone call for a customer <input name="customer" type="text" size="10" title="customer"/>
         <input type="submit" definition="Submit"/>
     </form>
 </div>
 
 <div>
     <form method="post" action="calls">
-        Create a dictionary entry <input name="word" type="text" size="10" title="word"/> :
-        <input name="definition" type="text" size="100" title="definition"/>
+        Create a phone bill <input name="customer" type="text" size="10" title="customer"/> :
+        <input name="callerNumber" type="text" size="10" title="callerNumber"/>
+        <input name="calleeNumber" type="text" size="10" title="calleeNumber"/>
+        <input name="beginTime" type="text" size="100" title="beginTime"/>
+        <input name="endTime" type="text" size="100" title="endTime"/>
         <input type="submit" definition="Submit"/>
     </form>
 </div>
