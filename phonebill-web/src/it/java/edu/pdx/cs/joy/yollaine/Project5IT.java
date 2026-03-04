@@ -1,6 +1,8 @@
 package edu.pdx.cs.joy.yollaine;
 
 import edu.pdx.cs.joy.InvokeMainTestCase;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,7 +13,6 @@ import java.io.IOException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.MethodOrderer.MethodName;
 
 // TODO:
 //  print option, readme option
@@ -19,7 +20,7 @@ import static org.junit.jupiter.api.MethodOrderer.MethodName;
 /**
  * Tests the {@link Project5} class by invoking its main method with various arguments
  */
-@TestMethodOrder(MethodName.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class Project5IT extends InvokeMainTestCase {
     public static final String CUSTOMER_NAME = "CUSTOMER NAME";
     private static final String HOSTNAME = "localhost";
@@ -27,18 +28,22 @@ class Project5IT extends InvokeMainTestCase {
 
 
     @Test
+    @Order(1)
     void test0RemoveAllMappings() throws IOException {
       PhoneBillRestClient client = new PhoneBillRestClient(HOSTNAME, Integer.parseInt(PORT));
       client.removeAllPhoneBills();
     }
 
+
     @Test
+    @Order(2)
     void test1NoCommandLineArguments() {
         MainMethodResult result = invokeMain( Project5.class );
         assertThat(result.getTextWrittenToStandardError(), containsString(Project5.MISSING_ARGS));
     }
 
     @Test
+    @Order(3)
     void test2HostNameAndPortMissingTheirArguments() {
         MainMethodResult result = invokeMain( Project5.class, "-host");
         assertThat(result.getTextWrittenToStandardError(), containsString("** -host requires host name"));
@@ -50,6 +55,7 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
+    @Order(4)
     void test3HostNameAndPortWithoutCustomerArguments() {
         MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT );
         assertThat(result.getTextWrittenToStandardError(), containsString("** Missing customer name"));
@@ -57,6 +63,7 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
+    @Order(5)
     void test4HostNameWithoutPortAndViceVersa() {
         MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "WORD");
         assertThat(result.getTextWrittenToStandardError(), containsString("** Both host name and port number must be specified at the same time"));
@@ -68,6 +75,7 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
+    @Order(6)
     void test5NonExistentCustomerPrintsNoCustomerFound() {
         String word = "WORD";
         MainMethodResult result = invokeMain(Project5.class, "-host", HOSTNAME, "-port", PORT, "-search", word);
@@ -77,6 +85,7 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
+    @Order(7)
     void test6AddPhoneCall() {
         String callerNumber = "123-456-7890";
         String calleeNumber = "098-765-4321";
@@ -107,6 +116,7 @@ class Project5IT extends InvokeMainTestCase {
         CUSTOMER_NAME+","+"456-789-0123,434-789-0123,5/1/2012 8:00 PM,5/1/2012 9:14 PM,",
         CUSTOMER_NAME+","+"345-678-9012,654-678-9012,7/3/2004 12:00 PM,7/3/2004 3:45 PM"
     })
+    @Order(8)
     void test7AddMorePhoneCallsToCustomer(String customerName, String callerNumber, String calleeNumber, String beginTime, String endTime) {
         MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, customerName, callerNumber, calleeNumber, beginTime, endTime);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
@@ -132,6 +142,7 @@ class Project5IT extends InvokeMainTestCase {
         CUSTOMER_NAME+" 2,"+"456-789-0123,434-789-0123,5/1/2012 8:00 PM,5/1/2012 9:14 PM,",
         CUSTOMER_NAME+" 2,"+"345-678-9012,654-678-9012,7/3/2004 12:00 PM,7/3/2004 3:45 PM"
     })
+    @Order(9)
     void test8AddMorePhoneCallsToDifferentCustomer(String customerName, String callerNumber, String calleeNumber, String beginTime, String endTime) {
         MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-port", PORT, customerName, callerNumber, calleeNumber, beginTime, endTime);
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
@@ -151,6 +162,7 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
+    @Order(10)
     void test9SearchCustomerCallsBetweenTwoDates() {
         MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-search", "-port", PORT, CUSTOMER_NAME, "1/1/2004 12:00 AM", "12/31/2004 11:59 PM");
         assertThat(result.getTextWrittenToStandardError(), equalTo(""));
@@ -175,6 +187,7 @@ class Project5IT extends InvokeMainTestCase {
 
     @ParameterizedTest
     @ValueSource(strings = {"localhos","12kj","[[][p,l","\\v[=-p"})
+    @Order(11)
     void test10InvalidCommandLineSyntax(String invalidPort) {
         MainMethodResult result = invokeMain( Project5.class, "-host", HOSTNAME, "-search", "-port", invalidPort, CUSTOMER_NAME);
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
@@ -182,13 +195,19 @@ class Project5IT extends InvokeMainTestCase {
     }
 
     @Test
-    void test12BeginTimeWithoutEndTime() {
+    @Order(12)
+    void test11BeginTimeWithoutEndTime() {
         MainMethodResult result = invokeMain(Project5.class, "-search", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, "1/1/2024 1:00 PM");
         assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
         assertThat(result.getTextWrittenToStandardError(), containsString("** Time range to search for calls is missing end time"));
     }
 
+    @Test
+    @Order(13)
+    void test12EndTimeBeforeBeginTime() {
+        MainMethodResult result = invokeMain(Project5.class, "-search", "-host", HOSTNAME, "-port", PORT, CUSTOMER_NAME, "3/1/2024 1:00 PM", "1/1/2024 1:00 PM");
+        assertThat(result.getTextWrittenToStandardOut(), equalTo(""));
+        assertThat(result.getTextWrittenToStandardError(), containsString("End time is before begin time"));
+    }
 
-    // TODO:
-    //  end time is before begin time
 }

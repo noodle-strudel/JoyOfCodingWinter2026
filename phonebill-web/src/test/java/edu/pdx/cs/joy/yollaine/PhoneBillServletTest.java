@@ -21,11 +21,6 @@ import static org.mockito.Mockito.*;
  */
 
 class PhoneBillServletTest {
-  // TODO:
-  //  incorrect format for begin time and end time for get
-  //  mock a get
-  //  mock a get between two dates
-  //  mock a deletion
   @Test
   void customerNameIsRequiredParameter() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();
@@ -163,7 +158,79 @@ class PhoneBillServletTest {
     servlet.doPost(newRequest, newResponse);
     verify(newResponse).sendError(statusCode.capture(), eq("End time of abc is an invalid date and time. Date and time format should be mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format."));
     assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
-
   }
 
+  @Test
+  void incorrectFormatForBeginTimeAndEndTimeGet() throws IOException {
+    String customerName = "Customer";
+    String callerNumber = "123-456-7890";
+    String calleeNumber = "098-765-4321";
+    String beginTime = "1/2/2002 3:00 PM";
+    String endTime = "1/3/2002 3:00 PM";
+
+    PhoneBillServlet servlet = new PhoneBillServlet();
+
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(customerName);
+    when(request.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn(callerNumber);
+    when(request.getParameter(PhoneBillServlet.CALLEE_NUMBER_PARAMETER)).thenReturn(calleeNumber);
+    when(request.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn(beginTime);
+    when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn(endTime);
+
+    HttpServletResponse response = mock(HttpServletResponse.class);
+
+    // Use a StringWriter to gather the text from multiple calls to println()
+    StringWriter stringWriter = new StringWriter();
+    PrintWriter pw = new PrintWriter(stringWriter, true);
+
+    when(response.getWriter()).thenReturn(pw);
+
+    // add phone call to servlet
+    servlet.doPost(request, response);
+
+    /* EMPTY PARAMETERS */
+    when(request.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn("");
+    when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn(endTime);
+
+    ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
+    servlet.doGet(request, response);
+    verify(response).sendError(statusCode.capture(), eq("The required parameter beginTime is missing"));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_PRECONDITION_FAILED));
+
+    when(request.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn(beginTime);
+    when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn("");
+
+    servlet.doGet(request, response);
+    verify(response).sendError(statusCode.capture(), eq("The required parameter endTime is missing"));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_PRECONDITION_FAILED));
+
+    /* INVALID PARAMETERS */
+    when(request.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn("123-abc");
+    when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn(endTime);
+
+    servlet.doGet(request, response);
+    verify(response).sendError(statusCode.capture(), eq("Begin time of 123-abc is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format."));
+
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
+
+    when(request.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn(beginTime);
+    when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn("123-abc");
+
+    servlet.doGet(request, response);
+    verify(response).sendError(statusCode.capture(), eq("End time of 123-abc is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format."));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
+
+
+    /* END TIME BEFORE BEGIN TIME */
+    when(request.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn(endTime);
+    when(request.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn(beginTime);
+
+    servlet.doGet(request, response);
+    verify(response).sendError(statusCode.capture(), eq("End time is before begin time."));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
+  }
+  // TODO:
+  //  mock a get
+  //  mock a get between two dates
+  //  mock a deletion
 }

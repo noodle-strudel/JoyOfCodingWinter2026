@@ -178,27 +178,41 @@ public class PhoneBillServlet extends HttpServlet
       pw.flush();
 
     } else {
-      if (beginTime != null && endTime != null) {
+      // if begin time is not null but end time is null or ""
+      if (beginTime != null) {
+        if (endTime == null || endTime.isEmpty()) {
+          missingRequiredParameter(response, END_TIME_PARAMETER);
+          return;
+        }
+      }
+
+      if (endTime != null) {
+        if (beginTime == null || beginTime.isEmpty()) {
+          missingRequiredParameter(response, BEGIN_TIME_PARAMETER);
+          return;
+        }
+      }
+
+      if (beginTime != null) {
         PhoneBill parsedBill = new PhoneBill(bill.getCustomer());
-        LocalDateTime queriedEndTime = null;
-        LocalDateTime queriedBeginTime = null;
+        LocalDateTime queriedEndTime;
+        LocalDateTime queriedBeginTime;
         try {
           queriedBeginTime = LocalDateTime.parse(beginTime, PhoneCall.DATE_TIME_FORMAT);
         } catch (DateTimeParseException e) {
-          response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-          PrintWriter pw = response.getWriter();
-          pw.print("Begin time "+beginTime+" is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm AM/PM");
-          pw.flush();
+          invalidCallArgument(response, "Begin time of "+beginTime+" is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format.");
           return;
         }
 
         try {
           queriedEndTime = LocalDateTime.parse(endTime, PhoneCall.DATE_TIME_FORMAT);
         } catch (DateTimeParseException e) {
-          response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-          PrintWriter pw = response.getWriter();
-          pw.print("End time "+endTime+" is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm AM/PM");
-          pw.flush();
+          invalidCallArgument(response, "End time of "+endTime+" is an invalid date and time. Date and time should be in the format: mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format.");
+          return;
+        }
+
+        if (queriedEndTime.isBefore(queriedBeginTime)) {
+          invalidCallArgument(response, "End time is before begin time.");
           return;
         }
 
@@ -209,6 +223,7 @@ public class PhoneBillServlet extends HttpServlet
         }
         bill = parsedBill;
       }
+
       PrintWriter pw = response.getWriter();
 
       TextDumper dumper = new TextDumper(pw);
