@@ -13,11 +13,22 @@ public class Messages
 
     }
 
+    /**
+     *
+     * @param parameterName
+     * @return
+     */
     public static String missingRequiredParameter( String parameterName )
     {
         return String.format("The required parameter %s is missing", parameterName);
     }
 
+    /**
+     *
+     * @param customerName
+     * @param phoneCall
+     * @return
+     */
     public static String addedPhoneCallToCustomer(String customerName, PhoneCall phoneCall)
     {
         return String.format( "Added %s to %s", phoneCall, customerName);

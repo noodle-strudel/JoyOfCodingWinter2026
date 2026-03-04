@@ -9,8 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -23,8 +22,10 @@ import static org.mockito.Mockito.*;
 
 class PhoneBillServletTest {
   // TODO:
-  //  incorrect format for caller number, callee number, begin time, end time for post
   //  incorrect format for begin time and end time for get
+  //  mock a get
+  //  mock a get between two dates
+  //  mock a deletion
   @Test
   void customerNameIsRequiredParameter() throws ServletException, IOException {
     PhoneBillServlet servlet = new PhoneBillServlet();

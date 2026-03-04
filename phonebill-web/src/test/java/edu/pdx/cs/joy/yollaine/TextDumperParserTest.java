@@ -6,21 +6,11 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collections;
-import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 public class TextDumperParserTest {
-
-  @Test
-  void emptyPhoneBillCanBeDumpedAndParsed() throws ParserException, IOException {
-    String customerName = "Test Customer";
-    PhoneBill phoneBill = new PhoneBill(customerName);
-    PhoneBill read = dumpAndParse(phoneBill);
-    assertThat(read.getCustomer(), equalTo(customerName));
-  }
 
   private PhoneBill dumpAndParse(PhoneBill bill) throws ParserException, IOException {
     StringWriter sw = new StringWriter();
@@ -32,6 +22,17 @@ public class TextDumperParserTest {
     TextParser parser = new TextParser(new StringReader(text));
     return parser.parse();
   }
+
+
+  @Test
+  void emptyPhoneBillCanBeDumpedAndParsed() throws ParserException, IOException {
+    String customerName = "Test Customer";
+    PhoneBill phoneBill = new PhoneBill(customerName);
+    PhoneBill read = dumpAndParse(phoneBill);
+    assertThat(read.getCustomer(), equalTo(customerName));
+  }
+
+
 
   @Test
   void phoneBillWithOnePhoneCallCanBeDumpedAndParsed() throws ParserException, IOException {

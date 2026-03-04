@@ -23,6 +23,11 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
   private final LocalDateTime beginTime;
   private final LocalDateTime endTime;
 
+  /**
+   *
+   * @param number
+   * @return
+   */
   private static boolean isValidPhoneNumber(String number) {
     Pattern p = Pattern.compile("^([0-9]{3}-){2}[0-9]{4}$");
     Matcher m = p.matcher(number);
