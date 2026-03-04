@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
 * Represents a phone call that extends the {@link AbstractPhoneCall} class.
@@ -20,6 +22,12 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
   private final String endTimeString;
   private final LocalDateTime beginTime;
   private final LocalDateTime endTime;
+
+  private static boolean isValidPhoneNumber(String number) {
+    Pattern p = Pattern.compile("^([0-9]{3}-){2}[0-9]{4}$");
+    Matcher m = p.matcher(number);
+    return m.find();
+  }
 
   /**
   * Constructor for the PhoneCall class.
@@ -61,8 +69,18 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
       throw new IllegalArgumentException("Error: End Time is before Begin Time");
     }
 
-    this.caller = newCaller;
-    this.callee = newCallee;
+    if (isValidPhoneNumber(newCaller)) {
+      this.caller = newCaller;
+    } else {
+      throw new IllegalArgumentException("Caller number "+newCaller+" is an invalid phone number. Phone numbers are in the format ###-###-####.");
+    }
+
+    if (isValidPhoneNumber(newCallee)) {
+      this.callee = newCallee;
+    } else {
+      throw new IllegalArgumentException("Callee number "+newCallee+" is an invalid phone number. Phone numbers are in the format ###-###-####.");
+    }
+
     this.beginTimeString = newBeginTime;
     this.endTimeString = newEndTime;
   }

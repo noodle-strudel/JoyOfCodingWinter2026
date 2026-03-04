@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -84,12 +86,16 @@ class PhoneBillServletTest {
 
   @Test
   void incorrectFormatsForParameters() throws IOException {
-    String customerName = "Customer";
-    String callerNumber = "123-456-7890";
-    String calleeNumber = "098-765-4321";
-    String beginTime = "1/2/2002 3:00 PM";
-    String endTime = "1/3/2002 3:00 PM";
+    String[] validParams = {"Customer", "123-456-7890", "098-765-4321", "1/2/2002 3:00 PM", "1/3/2002 3:00 PM"};
+    String[] servletParams = {
+        PhoneBillServlet.CUSTOMER_PARAMETER,
+        PhoneBillServlet.CALLER_NUMBER_PARAMETER,
+        PhoneBillServlet.CALLEE_NUMBER_PARAMETER,
+        PhoneBillServlet.BEGIN_TIME_PARAMETER,
+        PhoneBillServlet.END_TIME_PARAMETER
+    };
 
+    /* EMPTY PARAMETERS */
     PhoneBillServlet servlet = new PhoneBillServlet();
 
     HttpServletRequest request = mock(HttpServletRequest.class);
@@ -105,15 +111,58 @@ class PhoneBillServletTest {
     servlet.doPost(request, response);
     ArgumentCaptor<Integer> statusCode = ArgumentCaptor.forClass(Integer.class);
     verify(response).sendError(statusCode.capture(), eq("The required parameter "+PhoneBillServlet.CUSTOMER_PARAMETER+" is missing"));
-
     assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_PRECONDITION_FAILED));
 
-    when(request.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(customerName);
-    when(request.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn("");
+    for (int i = 1; i < validParams.length; ++i) {
+      when(request.getParameter(servletParams[i-1])).thenReturn(validParams[i-1]);
+      when(request.getParameter(servletParams[i])).thenReturn("");
 
-    servlet.doPost(request, response);
-    verify(response).sendError(statusCode.capture(), eq("The required parameter "+PhoneBillServlet.CALLER_NUMBER_PARAMETER+" is missing"));
-    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_PRECONDITION_FAILED));
+      servlet.doPost(request, response);
+      verify(response).sendError(statusCode.capture(), eq("The required parameter "+servletParams[i]+" is missing"));
+      assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_PRECONDITION_FAILED));
+    }
+
+    /* INVALID FORMAT */
+    String customerName = "Customer";
+    String callerNumber = "123-456-7890";
+    String calleeNumber = "098-765-4321";
+    String beginTime = "1/2/2002 3:00 PM";
+    String endTime = "1/3/2002 3:00 PM";
+
+    HttpServletRequest newRequest = mock(HttpServletRequest.class);
+    when(newRequest.getParameter(PhoneBillServlet.CUSTOMER_PARAMETER)).thenReturn(customerName);
+    when(newRequest.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn(callerNumber);
+    when(newRequest.getParameter(PhoneBillServlet.CALLEE_NUMBER_PARAMETER)).thenReturn(calleeNumber);
+    when(newRequest.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn(beginTime);
+    when(newRequest.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn(endTime);
+
+    HttpServletResponse newResponse = mock(HttpServletResponse.class);
+
+    when(newResponse.getWriter()).thenReturn(pw);
+
+    when(newRequest.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn("abc");
+    servlet.doPost(newRequest, newResponse);
+    verify(newResponse).sendError(statusCode.capture(), eq("Caller number abc is an invalid phone number. Phone numbers are in the format ###-###-####."));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
+
+    when(newRequest.getParameter(PhoneBillServlet.CALLER_NUMBER_PARAMETER)).thenReturn(validParams[1]);
+    when(newRequest.getParameter(PhoneBillServlet.CALLEE_NUMBER_PARAMETER)).thenReturn("abc");
+    servlet.doPost(newRequest, newResponse);
+    verify(newResponse).sendError(statusCode.capture(), eq("Callee number abc is an invalid phone number. Phone numbers are in the format ###-###-####."));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
+
+    when(newRequest.getParameter(PhoneBillServlet.CALLEE_NUMBER_PARAMETER)).thenReturn(validParams[2]);
+    when(newRequest.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn("abc");
+    servlet.doPost(newRequest, newResponse);
+    verify(newResponse).sendError(statusCode.capture(), eq("Begin time of abc is an invalid date and time. Date and time format should be mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format."));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
+
+    when(newRequest.getParameter(PhoneBillServlet.BEGIN_TIME_PARAMETER)).thenReturn(validParams[3]);
+    when(newRequest.getParameter(PhoneBillServlet.END_TIME_PARAMETER)).thenReturn("abc");
+    servlet.doPost(newRequest, newResponse);
+    verify(newResponse).sendError(statusCode.capture(), eq("End time of abc is an invalid date and time. Date and time format should be mm/dd/yyyy hh:mm (AM/PM), with time in a 12-hour format."));
+    assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
+
   }
 
 }

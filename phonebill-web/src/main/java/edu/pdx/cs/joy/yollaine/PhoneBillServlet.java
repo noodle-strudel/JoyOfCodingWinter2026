@@ -95,7 +95,13 @@ public class PhoneBillServlet extends HttpServlet
         }
 
         PhoneBill bill = this.phoneBills.computeIfAbsent(customerName, PhoneBill::new);
-        PhoneCall call = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+        PhoneCall call = null;
+        try {
+          call = new PhoneCall(callerNumber, calleeNumber, beginTime, endTime);
+        } catch (IllegalArgumentException e) {
+            invalidCallArgument(response, e.getMessage());
+            return;
+        }
 
         // avoid duplicate phone calls
         if (!bill.getPhoneCalls().contains(call)) {
@@ -110,6 +116,8 @@ public class PhoneBillServlet extends HttpServlet
 
         response.setStatus( HttpServletResponse.SC_OK);
     }
+
+
 
     /**
      * Handles an HTTP DELETE request by removing all dictionary entries.  This
@@ -142,6 +150,15 @@ public class PhoneBillServlet extends HttpServlet
     {
         String message = Messages.missingRequiredParameter(parameterName);
         response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, message);
+    }
+
+    /**
+     *
+     * @param response
+     * @param message
+     */
+    private void invalidCallArgument(HttpServletResponse response, String message) throws IOException {
+        response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
     }
 
     /**
