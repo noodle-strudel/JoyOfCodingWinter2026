@@ -48,6 +48,10 @@ public class Project5 {
     return m.find();
   }
 
+  /**
+   * The main function for Project 5
+   * @param args the command line arguments
+   */
   public static void main(String... args) {
     ArrayList<String> argList = new ArrayList<>(Arrays.asList(args));
 
@@ -294,18 +298,18 @@ public class Project5 {
     err.println("** " + message);
     err.println();
     err.println("usage: -jar target/phonebill-client.jar [options] <args>");
-    err.println("    args are (in this order):\n" +
-        "        customer        Person whose is attached to a phone bill\n" +
-        "        callerNumber    Phone number of caller\n" +
-        "        calleeNumber    Phone number of person who was called\n" +
-        "        begin           Date and time call began (12-hour time)\n" +
-        "        end             Date and time call ended (12-hour time)");
+    err.println("\targs are (in this order):\n" +
+        "\t\tcustomer\tPerson whose is attached to a phone bill\n" +
+        "\t\tcallerNumber\tPhone number of caller\n" +
+        "\t\tcalleeNumber\tPhone number of person who was called\n" +
+        "\t\tbegin\t\tDate and time call began (12-hour time)\n" +
+        "\t\tend\t\tDate and time call ended (12-hour time)");
     err.println("\toptions are (options may appear in any order):");
-    err.println("  \t\t-host hostname\tHost computer on which the server runs");
-    err.println("  \t\t-port port\t\tPort on which the server is listening");
-    err.println("  \t\t-search\t\t\tSearch for phone calls");
-    err.println("  \t\t-print\t\t\tPrints a description of the new phone call");
-    err.println("  \t\t-README\t\t\tPrints a README for this project and exits");
+    err.println("\t\t-host hostname\tHost computer on which the server runs");
+    err.println("\t\t-port port\tPort on which the server is listening");
+    err.println("\t\t-search\t\tSearch for phone calls");
+    err.println("\t\t-print\t\tPrints a description of the new phone call");
+    err.println("\t\t-README\t\tPrints a README for this project and exits");
     err.println();
   }
 }

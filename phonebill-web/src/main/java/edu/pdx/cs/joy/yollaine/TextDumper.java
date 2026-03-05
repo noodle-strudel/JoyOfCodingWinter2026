@@ -37,8 +37,8 @@ public class TextDumper implements PhoneBillDumper<PhoneBill> {
 
   /**
    * Helper function to print phone bills into PrintWriters
-   * @param bill
-   * @param pw
+   * @param bill The PhoneBill to write to the given file.
+   * @param pw the PrintWriter to write the phone bill to.
    */
   private static void printBill(PhoneBill bill, PrintWriter pw) {
     pw.println(bill.getCustomer());

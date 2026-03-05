@@ -24,9 +24,11 @@ public class PhoneCall extends AbstractPhoneCall implements Comparable<PhoneCall
   private final LocalDateTime endTime;
 
   /**
-   *
+   * Determines if a phone number is in a valid format.
    * @param number
+   *      The phone number to validate.
    * @return
+   *      Returns true if number is valid.
    */
   private static boolean isValidPhoneNumber(String number) {
     Pattern p = Pattern.compile("^([0-9]{3}-){2}[0-9]{4}$");

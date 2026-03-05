@@ -7,12 +7,8 @@ import org.jspecify.annotations.NonNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Parses a text file to create a {@link PhoneBill} with its associated {@link PhoneCall}s.
@@ -63,39 +59,6 @@ public class TextParser implements PhoneBillParser<PhoneBill> {
     } catch (IOException e) {
       throw new ParserException("While parsing phone bill text", e);
     }
-  }
-
-  public Map<String, PhoneBill> parseToMap() throws ParserException {
-    Map<String, PhoneBill> phoneBillMap = new HashMap<>();
-    try (
-        BufferedReader br = new BufferedReader(this.reader)
-    ) {
-      PhoneBill currentBill = null;
-      Pattern callPattern = Pattern.compile("^(([0-9]{3}-){2}[0-9]{4} ){2}((0?[1-9]|1[012])/((3[01])|([12][0-9])|0?[1-9])/[1-9][0-9]{3} (0?[0-9]|1[012]):[0-5][0-9] [AP]M ?){2}");
-
-      for (String line = br.readLine(); line != null; line = br.readLine()) {
-        Matcher callMatcher = callPattern.matcher(line);
-        if (callMatcher.find()) {
-          PhoneCall newCall = getPhoneCall(line);
-          assert currentBill != null;
-          currentBill.addPhoneCall(newCall);
-        } else {
-          if (currentBill != null) {
-            phoneBillMap.put(currentBill.getCustomer(), currentBill);
-          }
-          currentBill = new PhoneBill(line);
-        }
-      }
-      if (currentBill != null) {
-        phoneBillMap.put(currentBill.getCustomer(), currentBill);
-      }
-    } catch (IOException e) {
-      throw new ParserException("While parsing phone bill text", e);
-    } catch (AssertionError e) {
-      throw new ParserException("Error: One or more phone bills missing customer name before phone calls in given phone bill text.");
-    }
-
-    return phoneBillMap;
   }
 
   /**

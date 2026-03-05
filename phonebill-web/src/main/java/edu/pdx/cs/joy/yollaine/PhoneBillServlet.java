@@ -26,13 +26,11 @@ public class PhoneBillServlet extends HttpServlet
   private final Map<String, PhoneBill> phoneBills = new HashMap<>();
 
   /**
-   * Handles an HTTP GET request from a client by writing the definition of the
-   * word specified in the "word" HTTP parameter to the HTTP response.  If the
-   * "customer" parameter is not specified, all of the entries in the dictionary
-   * are written to the HTTP response.
-   * @param request
-   * @param response
-   * @throws IOException
+   * Handles an HTTP GET request from a client by finding the phone bill associated
+   * with the customer.
+   * @param request the request to analyze
+   * @param response the response to create
+   * @throws IOException if an error occurs while processin the request
    */
   @Override
   protected void doGet( HttpServletRequest request, HttpServletResponse response ) throws IOException
@@ -53,12 +51,11 @@ public class PhoneBillServlet extends HttpServlet
 
 
   /**
-   * Handles an HTTP POST request by storing the dictionary entry for the
-   * "word" and "definition" request parameters.  It writes the dictionary
-   * entry to the HTTP response.
-   * @param request
-   * @param response
-   * @throws IOException
+   * Handles an HTTP POST request by storing the phone call associated with
+   * the customer.
+   * @param request the request to analyze
+   * @param response the response to make
+   * @throws IOException if an error occurs while processing the request
    */
   @Override
   protected void doPost( HttpServletRequest request, HttpServletResponse response ) throws IOException
@@ -119,11 +116,11 @@ public class PhoneBillServlet extends HttpServlet
   }
 
 
-
   /**
-   * Handles an HTTP DELETE request by removing all dictionary entries.  This
-   * behavior is exposed for testing purposes only.  It's probably not
-   * something that you'd want a real application to expose.
+   * Removes all phone bills from the servlet
+   * @param request the request to proces
+   * @param response the response to make
+   * @throws IOException if an error occurs while processing the request
    */
   @Override
   protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -143,9 +140,9 @@ public class PhoneBillServlet extends HttpServlet
   /**
    * Writes an error message about a missing parameter to the HTTP response.
    * The text of the error message is created by {@link Messages#missingRequiredParameter(String)}
-   * @param response
-   * @param parameterName
-   * @throws IOException
+   * @param response the response to modify
+   * @param parameterName the missing parameter
+   * @throws IOException if an error occurs while sending the error
    */
   private void missingRequiredParameter( HttpServletResponse response, String parameterName ) throws IOException {
     String message = Messages.missingRequiredParameter(parameterName);
@@ -153,22 +150,23 @@ public class PhoneBillServlet extends HttpServlet
   }
 
   /**
-   *
-   * @param response
-   * @param message
+   * Writes an error message about an invalid call argument
+   * @param response the response to modify
+   * @param message the message to send
+   * @throws IOException if an error occurs while sending the message
    */
   private void invalidCallArgument(HttpServletResponse response, String message) throws IOException {
     response.sendError(HttpServletResponse.SC_BAD_REQUEST, message);
   }
 
   /**
-   * Writes the definition of the given word to the HTTP response.
+   * Writes the phone bill of the given customer to the HTTP response.
    * The text of the message is formatted with {@link TextDumper}
-   * @param customerName
-   * @param beginTime
-   * @param endTime
-   * @param response
-   * @throws IOException
+   * @param customerName the customer's name
+   * @param beginTime the start of the time range
+   * @param endTime the end of the time range
+   * @param response the response to make
+   * @throws IOException if an error occurs while getting the phone bill
    */
   private void writePhoneBillText(String customerName, String beginTime, String endTime, HttpServletResponse response) throws IOException {
     PhoneBill bill = this.phoneBills.get(customerName);
@@ -246,9 +244,9 @@ public class PhoneBillServlet extends HttpServlet
 
   /**
    * Returns the value of the HTTP request parameter with the given name.
-   * @param name
-   * @param request
-   * @return <code>null</code> if the value of the parameter is
+   * @param name the parameter to get
+   * @param request the request to analyze
+   * @return the value of the parameter or <code>null</code> if the value of the parameter is
    *         <code>null</code> or is the empty string
    */
   private String getParameter(String name, HttpServletRequest request) {
@@ -261,9 +259,9 @@ public class PhoneBillServlet extends HttpServlet
   }
 
   /**
-   *
-   * @param customerName
-   * @return
+   * Gets a phone bill by name
+   * @param customerName the customer's name
+   * @return a phone bill
    */
   @VisibleForTesting
   PhoneBill getPhoneBill(String customerName) {
@@ -271,8 +269,8 @@ public class PhoneBillServlet extends HttpServlet
   }
 
   /**
-   *
-   * @param msg
+   * Logs a message from the server
+   * @param msg the message to output
    */
   @Override
   public void log(String msg) {

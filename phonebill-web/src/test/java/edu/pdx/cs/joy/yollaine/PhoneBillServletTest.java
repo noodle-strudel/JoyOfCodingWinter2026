@@ -229,6 +229,20 @@ class PhoneBillServletTest {
     verify(response).sendError(statusCode.capture(), eq("End time is before begin time."));
     assertThat(statusCode.getValue(), equalTo(HttpServletResponse.SC_BAD_REQUEST));
   }
+
+  @Test
+  void deleteAllPhoneCallsFromServlet() throws IOException {
+    PhoneBillServlet servlet = new PhoneBillServlet();
+    HttpServletRequest request = mock(HttpServletRequest.class);
+    HttpServletResponse response = mock(HttpServletResponse.class);
+    PrintWriter pw = mock(PrintWriter.class);
+
+    when(response.getWriter()).thenReturn(pw);
+
+    servlet.doDelete(request, response);
+    verify(pw).println(eq(Messages.allPhoneBillsDeleted()));
+  }
+
   // TODO:
   //  mock a get
   //  mock a get between two dates

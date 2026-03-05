@@ -14,9 +14,9 @@ public class Messages
     }
 
     /**
-     *
-     * @param parameterName
-     * @return
+     * String for a missing required parameter
+     * @param parameterName the parameter that's missing
+     * @return the formatted string
      */
     public static String missingRequiredParameter( String parameterName )
     {
@@ -24,10 +24,10 @@ public class Messages
     }
 
     /**
-     *
-     * @param customerName
-     * @param phoneCall
-     * @return
+     * String for adding a phone call to the customer
+     * @param customerName the customer's name
+     * @param phoneCall the phone call that was added
+     * @return the formatted string
      */
     public static String addedPhoneCallToCustomer(String customerName, PhoneCall phoneCall)
     {

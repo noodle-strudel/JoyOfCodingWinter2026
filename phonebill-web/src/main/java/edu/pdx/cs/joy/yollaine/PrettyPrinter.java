@@ -1,6 +1,5 @@
 package edu.pdx.cs.joy.yollaine;
 
-import com.google.common.annotations.VisibleForTesting;
 import edu.pdx.cs.joy.PhoneBillDumper;
 
 import java.io.PrintWriter;
@@ -14,18 +13,6 @@ import java.time.temporal.ChronoUnit;
 public class PrettyPrinter implements PhoneBillDumper<PhoneBill> {
   public static final DateTimeFormatter PRETTY_DATE_TIME = DateTimeFormatter.ofPattern("E, MMM d yyyy 'at' h:mm a");
   private final Writer writer;
-
-  @VisibleForTesting
-  static String formatWordCount(int count )
-  {
-    return String.format( "Dictionary on server contains %d words", count );
-  }
-
-  @VisibleForTesting
-  static String formatDictionaryEntry(String word, String definition )
-  {
-    return String.format("  %s -> %s", word, definition);
-  }
 
   /**
    * The constructor for the PrettyPrinter class.

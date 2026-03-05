@@ -33,17 +33,6 @@ public class PhoneBillRestClientTest {
     assertThat(newBill.getCustomer(), equalTo(customerName));
   }
 
-  // TODO
-  //  correct and incorrect 3 parameter
-  //  incorrect 1 parameter
-  //  add phonecall correctly
-  //  maybe incorrectly too
-  //  remove all phone bills
-  @Test
-  void getPhoneBillBetweenTwoDatesPerformsHttpGetWithCustomerNameBeginTimeEndTime() {
-
-  }
-
   private Response phoneBillAsText(PhoneBill bill) {
     StringWriter writer = new StringWriter();
     new TextDumper(writer).dump(bill);
