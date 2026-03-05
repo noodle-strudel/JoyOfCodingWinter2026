@@ -160,15 +160,32 @@ public class Project5 {
           callerNumber = arg;
         } else if (calleeNumber == null) {
           calleeNumber = arg;
+        } else if (beginDate == null) {
+          beginDate = arg;
         } else if (beginTime == null) {
           beginTime = arg;
+        } else if (beginAMPM == null) {
+          beginAMPM = arg;
+        } else if (endDate == null) {
+          endDate = arg;
         } else if (endTime == null) {
           endTime = arg;
+        } else if (endAMPM == null) {
+          endAMPM = arg;
         } else {
           usage("Extraneous command line argument: " + arg);
           return;
         }
       }
+    }
+
+    // frankenstein the begin and end time together
+    if (beginTime != null) {
+      beginTime = beginDate + " " + beginTime + " " + beginAMPM;
+    }
+
+    if (endTime != null) {
+      endTime = endDate + " " + endTime + " " + endAMPM;
     }
 
     if (hostNameArg.isEmpty()) {
@@ -267,8 +284,6 @@ public class Project5 {
     err.println("** " + message);
   }
 
-  // TODO:
-  //  fix the usages text
   /**
    * Prints usage information for this program and exits
    * @param message An error message to print
@@ -278,26 +293,19 @@ public class Project5 {
     PrintStream err = System.err;
     err.println("** " + message);
     err.println();
-    err.println("-jar target/phonebill-client.jar [options] <args>");
+    err.println("usage: -jar target/phonebill-client.jar [options] <args>");
     err.println("    args are (in this order):\n" +
-        "        customer        Person whose phone bill we're modeling\n" +
-        "                        or modifying\n" +
+        "        customer        Person whose is attached to a phone bill\n" +
         "        callerNumber    Phone number of caller\n" +
         "        calleeNumber    Phone number of person who was called\n" +
         "        begin           Date and time call began (12-hour time)\n" +
         "        end             Date and time call ended (12-hour time)");
-    err.println("options are (options may appear in any order):");
-    err.println("  -host hostname\tHost computer on which the server runs");
-    err.println("  -port port\tPort on which the server is listening");
-    err.println("  -search\tSearch for phone calls");
-    err.println("  -print\tPrints a description of the new phone call");
-    err.println("  -README\tPrints a README for this project and exits");
-    err.println();
-    err.println("This simple program posts customer names and their phone bills and phone calls");
-    err.println("to the server.");
-    err.println("A customer name is required to print phone bills from the server.");
-    err.println("is printed.");
-    err.println("If no word is specified, all dictionary entries are printed");
+    err.println("\toptions are (options may appear in any order):");
+    err.println("  \t\t-host hostname\tHost computer on which the server runs");
+    err.println("  \t\t-port port\t\tPort on which the server is listening");
+    err.println("  \t\t-search\t\t\tSearch for phone calls");
+    err.println("  \t\t-print\t\t\tPrints a description of the new phone call");
+    err.println("  \t\t-README\t\t\tPrints a README for this project and exits");
     err.println();
   }
 }

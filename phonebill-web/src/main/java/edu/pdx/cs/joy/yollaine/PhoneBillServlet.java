@@ -223,6 +223,15 @@ public class PhoneBillServlet extends HttpServlet
             parsedBill.addPhoneCall(call);
           }
         }
+
+        if (parsedBill.getPhoneCalls().isEmpty()) {
+          response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+          PrintWriter pw = response.getWriter();
+          pw.print("No phone bills associated with "+customerName+" found between the given date times.");
+          pw.flush();
+          return;
+        }
+
         bill = parsedBill;
       }
 
