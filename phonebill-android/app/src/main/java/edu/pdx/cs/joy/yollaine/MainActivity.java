@@ -1,5 +1,6 @@
 package edu.pdx.cs.joy.yollaine;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -24,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void sayHello(View view) {
-        Toast.makeText(this, "Hello!!", Toast.LENGTH_LONG).show();
+    public void launchCalculator(View view) {
+        Intent intent = new Intent(this, CalculatorActivity.class);
+        startActivity(intent);
     }
 }
