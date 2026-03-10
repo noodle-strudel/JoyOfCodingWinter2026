@@ -8,11 +8,23 @@
     tools:context=".CalculatorActivity">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/calculatorTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="This is a calculator!"
+        android:text="@string/this_is_a_calculator"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="145dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back_to_main"
+        android:onClick="goBackToMainActivity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/calculatorTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

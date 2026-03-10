@@ -2,4 +2,6 @@
     <string name="app_name">Phone Bill</string>
     <string name="hello_class">Hello Everyone!!</string>
     <string name="launch_calculator">Launch Calculator</string>
+    <string name="this_is_a_calculator">This is a calculator!</string>
+    <string name="back_to_main">Back to main</string>
 </resources>
