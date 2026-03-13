@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ public class PhoneBillActivity extends AppCompatActivity {
 
     public static final String SUM = "SUM";
     private int sum;
+    private PhoneBill phoneBill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,50 @@ public class PhoneBillActivity extends AppCompatActivity {
         intent.putExtra(SUM, this.sum);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    public void clearForm(View view) {
+        EditText customerNameField = findViewById(R.id.nameField);
+        customerNameField.setText("");
+
+        EditText callerField = findViewById(R.id.callerField);
+        callerField.setText("");
+
+        EditText calleeField = findViewById(R.id.calleeField);
+        calleeField.setText("");
+
+        EditText beginTimeField = findViewById(R.id.beginTimeField);
+        beginTimeField.setText("");
+
+        EditText endTimeField = findViewById(R.id.endTimeField);
+        endTimeField.setText("");
+    }
+
+    public void createPhoneBill(View view) {
+        EditText customerNameField = findViewById(R.id.nameField);
+        String customerNameString = customerNameField.getText().toString();
+
+        EditText callerField = findViewById(R.id.callerField);
+        String callerString = callerField.getText().toString();
+
+        EditText calleeField = findViewById(R.id.calleeField);
+        String calleeString = calleeField.getText().toString();
+
+        EditText beginTimeField = findViewById(R.id.beginTimeField);
+        String beginTimeString = beginTimeField.getText().toString();
+
+        EditText endTimeField = findViewById(R.id.endTimeField);
+        String endTimeString = endTimeField.getText().toString();
+
+        try {
+            phoneBill = new PhoneBill(customerNameString);
+            PhoneCall phoneCall = new PhoneCall(callerString, calleeString, beginTimeString, endTimeString);
+            phoneBill.addPhoneCall(phoneCall);
+            TextView phoneBillConfirmationField = findViewById(R.id.phoneBillConfirmation);
+            phoneBillConfirmationField.setText(R.string.new_phone_bill_created);
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     /*

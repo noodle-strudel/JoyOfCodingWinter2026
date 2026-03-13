@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="219dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/backToMain"
+        app:layout_constraintBottom_toTopOf="@+id/backToMainButton"
         app:layout_constraintTop_toBottomOf="@id/phoneBillAppInstructions"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -110,11 +110,11 @@
                 android:text="@string/call_begin_time" />
 
             <EditText
-                android:id="@+id/editTextTime"
+                android:id="@+id/beginTimeField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="time" />
+                android:inputType="datetime" />
         </LinearLayout>
 
         <LinearLayout
@@ -135,13 +135,47 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="time" />
+                android:inputType="datetime" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/clearFormButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="clearForm"
+                android:text="Clear Form" />
+
+            <Button
+                android:id="@+id/submitPhoneBillButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:onClick="createPhoneBill"
+                android:text="Submit" />
+
         </LinearLayout>
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/phoneBillConfirmation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="174dp"
+        tools:layout_editor_absoluteY="455dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phoneBillLayoutBlock"
+        app:layout_constraintBottom_toTopOf="@id/backToMainButton" />
+
     <Button
-        android:id="@+id/backToMain"
+        android:id="@+id/backToMainButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="goBackToMainActivity"
@@ -149,8 +183,9 @@
         tools:layout_editor_absoluteX="141dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneBillLayoutBlock"
+        app:layout_constraintTop_toBottomOf="@id/phoneBillConfirmation"
         app:layout_constraintBottom_toBottomOf="parent" />
+
 
 
 

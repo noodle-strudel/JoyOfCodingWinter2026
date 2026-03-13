@@ -13,4 +13,5 @@
     <string name="call_begin_time">Call Begin Time</string>
     <string name="call_end_time">Call End Time</string>
     <string name="help">Help</string>
+    <string name="new_phone_bill_created">New phone bill created!</string>
 </resources>
