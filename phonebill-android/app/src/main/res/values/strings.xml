@@ -4,4 +4,7 @@
     <string name="launch_calculator">Launch Calculator</string>
     <string name="this_is_a_calculator">This is a calculator!</string>
     <string name="back_to_main">Back to main</string>
+    <string name="record_a_phone_bill_button">Record A Phone Bill</string>
+    <string name="phone_bill_title">Phone Bill Tracker</string>
+    <string name="phoneBillActivityInstructions">Enter your phone bill information below.</string>
 </resources>

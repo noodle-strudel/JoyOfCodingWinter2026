@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,12 +36,12 @@ public class MainActivity extends AppCompatActivity {
         });
         sums = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
-        ListView sumsListView = findViewById(R.id.sums);
+        ListView sumsListView = findViewById(R.id.phoneBills);
         sumsListView.setAdapter(sums);
     }
 
     public void launchCalculator(View view) {
-        Intent intent = new Intent(this, CalculatorActivity.class);
+        Intent intent = new Intent(this, PhoneBillActivity.class);
         startActivityForResult(intent, GET_SUM_CODE);
     }
 
@@ -52,12 +51,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == GET_SUM_CODE) {
             if (resultCode == RESULT_OK && data != null) {
-                int sum = data.getIntExtra(CalculatorActivity.SUM, 0);
+                int sum = data.getIntExtra(PhoneBillActivity.SUM, 0);
                 this.sums.add(sum);
                 try {
                     writeSumsToFile();
                 } catch (IOException e) {
-
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         }
@@ -67,9 +66,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void writeSumsToFile() throws IOException {
         File sumsFile = new File(this.getDataDir(), "sums.txt");
-        try (PrintWriter pw = new PrintWriter(new FileWriter(sumsFile), true)
-        ) {
-            for (int i = 0; i == this.sums.getCount(); ++i) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(sumsFile), true)) {
+            for (int i = 0; i < this.sums.getCount(); ++i) {
                 int sum = this.sums.getItem(i);
                 pw.println(sum);
             }
