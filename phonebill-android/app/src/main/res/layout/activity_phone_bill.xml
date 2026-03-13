@@ -38,10 +38,10 @@
 
             <TextView
                 android:id="@+id/nameTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Customer Name" />
+                android:text="@string/customer_name" />
 
             <EditText
                 android:id="@+id/nameField"
@@ -60,10 +60,10 @@
 
             <TextView
                 android:id="@+id/callerTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Caller's Phone Number" />
+                android:text="@string/caller_s_phone_number" />
 
             <EditText
                 android:id="@+id/callerField"
@@ -82,10 +82,10 @@
 
             <TextView
                 android:id="@+id/calleeTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Callee's Phone Number" />
+                android:text="@string/callee_s_phone_number" />
 
             <EditText
                 android:id="@+id/calleeField"
@@ -104,10 +104,10 @@
 
             <TextView
                 android:id="@+id/beginTimeTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Call Begin Time" />
+                android:text="@string/call_begin_time" />
 
             <EditText
                 android:id="@+id/editTextTime"
@@ -125,10 +125,10 @@
 
             <TextView
                 android:id="@+id/endTimeTextView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Call End Time" />
+                android:text="@string/call_end_time" />
 
             <EditText
                 android:id="@+id/endTimeField"

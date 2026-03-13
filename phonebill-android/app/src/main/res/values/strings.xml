@@ -7,4 +7,10 @@
     <string name="record_a_phone_bill_button">Record A Phone Bill</string>
     <string name="phone_bill_title">Phone Bill Tracker</string>
     <string name="phoneBillActivityInstructions">Enter your phone bill information below.</string>
+    <string name="customer_name">Customer Name</string>
+    <string name="caller_s_phone_number">Caller\'s Phone Number</string>
+    <string name="callee_s_phone_number">Callee\'s Phone Number</string>
+    <string name="call_begin_time">Call Begin Time</string>
+    <string name="call_end_time">Call End Time</string>
+    <string name="help">Help</string>
 </resources>

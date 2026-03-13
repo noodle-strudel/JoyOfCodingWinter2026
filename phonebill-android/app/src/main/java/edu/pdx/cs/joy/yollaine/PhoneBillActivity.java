@@ -36,6 +36,7 @@ public class PhoneBillActivity extends AppCompatActivity {
         finish();
     }
 
+    /*
     public void computeSum(View view) {
         EditText leftOperandField = findViewById(R.id.leftOperand);
         String leftOperandString = leftOperandField.getText().toString();
@@ -51,4 +52,6 @@ public class PhoneBillActivity extends AppCompatActivity {
         TextView sumField = findViewById(R.id.sum);
         sumField.setText(String.valueOf(sum));
     }
+
+     */
 }

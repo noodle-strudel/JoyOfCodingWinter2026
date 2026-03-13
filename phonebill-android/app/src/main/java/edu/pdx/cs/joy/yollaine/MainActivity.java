@@ -45,6 +45,11 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, GET_SUM_CODE);
     }
 
+    public void launchREADME(View view) {
+        Intent intent = new Intent(this, READMEActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -60,8 +65,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-
-
     }
 
     private void writeSumsToFile() throws IOException {
