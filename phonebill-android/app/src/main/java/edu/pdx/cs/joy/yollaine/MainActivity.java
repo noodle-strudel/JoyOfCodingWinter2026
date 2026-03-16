@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == GET_SUM_CODE) {
             if (resultCode == RESULT_OK && data != null) {
-                int sum = data.getIntExtra(PhoneBillActivity.SUM, 0);
+                int sum = data.getIntExtra(PhoneBillActivity.PHONE_BILL, 0);
                 this.phoneBills.add(sum);
                 try {
                     writeSumsToFile();

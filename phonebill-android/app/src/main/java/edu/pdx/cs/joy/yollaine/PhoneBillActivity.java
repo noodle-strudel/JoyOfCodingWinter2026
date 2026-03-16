@@ -15,7 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class PhoneBillActivity extends AppCompatActivity {
 
-    public static final String SUM = "SUM";
+    public static final String PHONE_BILL = "SUM";
     private int sum;
     private PhoneBill phoneBill;
 
@@ -33,7 +33,7 @@ public class PhoneBillActivity extends AppCompatActivity {
 
     public void goBackToMainActivity(View view) {
         Intent intent = new Intent();
-        intent.putExtra(SUM, this.sum);
+        intent.putExtra(PHONE_BILL, this.sum);
         setResult(RESULT_OK, intent);
         finish();
     }
@@ -70,6 +70,12 @@ public class PhoneBillActivity extends AppCompatActivity {
 
         EditText endTimeField = findViewById(R.id.endTimeField);
         String endTimeString = endTimeField.getText().toString();
+
+
+        // see if a phone bill with the corresponding text file exists
+        // load the phone bill in
+        // then add a new one
+        // result ok should refresh the page with all the new phone bills
 
         try {
             phoneBill = new PhoneBill(customerNameString);
