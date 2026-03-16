@@ -25,21 +25,39 @@
         android:layout_width="326dp"
         android:layout_height="156dp"
         android:background="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/launchPhoneBillRecorder"
+        app:layout_constraintBottom_toTopOf="@id/phoneBillActivitiesBlock"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/phoneBillAppTitle" />
 
-    <Button
-        android:id="@+id/launchPhoneBillRecorder"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:id="@+id/phoneBillActivitiesBlock"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:onClick="launchCalculator"
-        android:text="@string/record_a_phone_bill_button"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/helpButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneBills" />
+        app:layout_constraintTop_toBottomOf="@id/phoneBills"
+
+        >
+
+        <Button
+            android:id="@+id/launchPhoneBillRecorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="launchCalculator"
+            android:text="@string/record_a_phone_bill_button" />
+
+        <Button
+            android:id="@+id/launchPhoneBillSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/search_phone_bills" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/helpButton"
@@ -50,7 +68,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/launchPhoneBillRecorder" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneBillActivitiesBlock" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

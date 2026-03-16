@@ -13,9 +13,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import edu.pdx.cs.joy.ParserException;
+
 public class PhoneBillActivity extends AppCompatActivity {
 
-    public static final String PHONE_BILL = "SUM";
+    public static final String PHONE_BILL_NAME = "PHONE_BILL_NAME";
+    public static final String PHONEBILL_TXT = "-phonebill.txt";
     private int sum;
     private PhoneBill phoneBill;
 
@@ -32,9 +41,11 @@ public class PhoneBillActivity extends AppCompatActivity {
     }
 
     public void goBackToMainActivity(View view) {
-        Intent intent = new Intent();
-        intent.putExtra(PHONE_BILL, this.sum);
-        setResult(RESULT_OK, intent);
+        if (phoneBill != null) {
+            setResult(RESULT_OK);
+        } else {
+            setResult(RESULT_CANCELED);
+        }
         finish();
     }
 
@@ -56,6 +67,8 @@ public class PhoneBillActivity extends AppCompatActivity {
     }
 
     public void createPhoneBill(View view) {
+        boolean newPhoneBill = false;
+
         EditText customerNameField = findViewById(R.id.nameField);
         String customerNameString = customerNameField.getText().toString();
 
@@ -77,33 +90,51 @@ public class PhoneBillActivity extends AppCompatActivity {
         // then add a new one
         // result ok should refresh the page with all the new phone bills
 
-        try {
+        phoneBill = readPhoneBillFromFile(customerNameString);
+
+        if (phoneBill == null) {
             phoneBill = new PhoneBill(customerNameString);
+            newPhoneBill = true;
+        }
+
+        try {
             PhoneCall phoneCall = new PhoneCall(callerString, calleeString, beginTimeString, endTimeString);
             phoneBill.addPhoneCall(phoneCall);
             TextView phoneBillConfirmationField = findViewById(R.id.phoneBillConfirmation);
-            phoneBillConfirmationField.setText(R.string.new_phone_bill_created);
-        } catch (IllegalArgumentException e) {
+            if (newPhoneBill) {
+                phoneBillConfirmationField.setText(R.string.new_phone_bill_created);
+            } else {
+                phoneBillConfirmationField.setText(R.string.add_phone_call_to_existing);
+            }
+
+            writePhoneBillToFile(phoneBill);
+
+        } catch (IllegalArgumentException | IOException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
-
-    /*
-    public void computeSum(View view) {
-        EditText leftOperandField = findViewById(R.id.leftOperand);
-        String leftOperandString = leftOperandField.getText().toString();
-
-        EditText rightOperandField = findViewById(R.id.rightOperand);
-        String rightOperandString = rightOperandField.getText().toString();
-
-        int leftOperand = Integer.parseInt(leftOperandString);
-        int rightOperand = Integer.parseInt(rightOperandString);
-
-        sum = leftOperand + rightOperand;
-
-        TextView sumField = findViewById(R.id.sum);
-        sumField.setText(String.valueOf(sum));
+    private void writePhoneBillToFile(PhoneBill phoneBill) throws IOException {
+        File newPhoneBillFile = new File(this.getDataDir(), phoneBill.getCustomer() + PHONEBILL_TXT);
+        TextDumper textDumper = new TextDumper(new FileWriter(newPhoneBillFile));
+        textDumper.dump(phoneBill);
     }
 
-     */
+    private PhoneBill readPhoneBillFromFile(String customerName) {
+        File phoneBillFile = new File(this.getDataDir(), customerName + PHONEBILL_TXT);
+        try {
+            TextParser textParser = new TextParser(new FileReader(phoneBillFile));
+            return textParser.parse();
+        } catch (IOException | ParserException e) {
+            return null;
+        }
+    }
 }
+
+/*
+try {
+                    writeSumsToFile();
+                } catch (IOException e) {
+                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+
+ */
