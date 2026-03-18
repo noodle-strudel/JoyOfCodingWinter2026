@@ -25,7 +25,6 @@ public class PhoneCallArrayAdapter extends ArrayAdapter<PhoneCall> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("ViewHolder") View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_phone_call, parent, false);
         int[] ids = {R.id.phoneCallCallerText, R.id.phoneCallCalleeText, R.id.phoneCallBeginTimeText, R.id.phoneCallEndTimeText};
         PhoneCall phoneCall = phoneCalls.get(position);

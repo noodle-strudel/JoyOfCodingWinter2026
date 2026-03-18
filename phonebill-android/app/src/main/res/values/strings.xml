@@ -17,4 +17,6 @@
     <string name="add_phone_call_to_existing">Added phone call to phone bill!</string>
     <string name="search_phone_bills">Search Phone Bills</string>
     <string name="load_phone_bill_failed_test">Unable to load phone bill</string>
+    <string name="clear_form">Clear Form</string>
+    <string name="submit">Submit</string>
 </resources>

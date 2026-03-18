@@ -154,7 +154,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="clearForm"
-                android:text="Clear Form" />
+                android:text="@string/clear_form" />
 
             <Button
                 android:id="@+id/submitPhoneBillButton"
@@ -162,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:onClick="createPhoneBill"
-                android:text="Submit" />
+                android:text="@string/submit" />
 
         </LinearLayout>
 

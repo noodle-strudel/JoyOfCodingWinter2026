@@ -129,12 +129,3 @@ public class PhoneBillActivity extends AppCompatActivity {
         }
     }
 }
-
-/*
-try {
-                    writeSumsToFile();
-                } catch (IOException e) {
-                    Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-
- */

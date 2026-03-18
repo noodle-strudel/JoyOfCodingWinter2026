@@ -29,7 +29,6 @@ public class PhoneBillArrayAdapter extends ArrayAdapter<PhoneBill> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         @SuppressLint("ViewHolder") View rowView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_phone_bill, parent, false);
         TextView phoneBillCustomer = rowView.findViewById(R.id.phoneBillCustomerName);
         phoneBillCustomer.setText(phoneBills.get(position).getCustomer());
