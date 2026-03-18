@@ -33,8 +33,11 @@ public class PhoneBillArrayAdapter extends ArrayAdapter<PhoneBill> {
         TextView phoneBillCustomer = rowView.findViewById(R.id.phoneBillCustomerName);
         phoneBillCustomer.setText(phoneBills.get(position).getCustomer());
         PhoneCallArrayAdapter phoneCallArrayAdapter = new PhoneCallArrayAdapter(getContext(), phoneBills.get(position).getPhoneCalls());
+        /*
         ListView phoneCallsListView = rowView.findViewById(R.id.phoneCallLayoutListView);
         phoneCallsListView.setAdapter(phoneCallArrayAdapter);
+        
+         */
 
         return rowView;
     }

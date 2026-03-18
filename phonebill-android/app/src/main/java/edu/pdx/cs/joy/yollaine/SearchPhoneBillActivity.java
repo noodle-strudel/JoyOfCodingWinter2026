@@ -1,7 +1,9 @@
 package edu.pdx.cs.joy.yollaine;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -17,6 +19,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.textview.MaterialTextView;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
@@ -31,8 +35,10 @@ import edu.pdx.cs.joy.ParserException;
 
 public class SearchPhoneBillActivity extends AppCompatActivity {
 
+    private static final String PHONE_BILL = "PHONE_BILL";
     private PhoneBillArrayAdapter foundPhoneBills;
     private ListView phoneBillListView;
+    public static PhoneBill phoneBillToDisplay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +68,26 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
 
         this.phoneBillListView = findViewById(R.id.searchPhoneBillListView);
 
+        AdapterView.OnItemClickListener quickDisplay = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                phoneBillToDisplay = foundPhoneBills.getItem(position);
+                launchQuickDisplay(findViewById(R.id.launchPhoneBillSearch));
+            }
+        };
+
+        this.phoneBillListView.setOnItemClickListener(quickDisplay);
+
+        /*
+
+
         ArrayList<PhoneCall> testPhoneCalls = new ArrayList<>();
         testPhoneCalls.add(new PhoneCall("123-456-7890", "456-435-3455", "1/1/2004 1:00 PM", "1/2/2004 2:00 PM"));
         testPhoneCalls.add(new PhoneCall("123-456-7890", "456-435-3455", "1/1/2004 1:00 PM", "1/2/2004 2:00 PM"));
 
         this.phoneBillListView.setAdapter(new PhoneCallArrayAdapter(this, testPhoneCalls));
+
+         */
     }
 
     public void goBackToMainActivity(View view) {
@@ -143,8 +164,13 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
             phoneBills.add(customerBill);
             foundPhoneBills = new PhoneBillArrayAdapter(this, phoneBills);
             phoneBillListView.setAdapter(foundPhoneBills);
-
         }
+    }
+    public void launchQuickDisplay(View view) {
+        Intent intent = new Intent(this, QuickDisplayActivity.class);
+
+        intent.putExtra(PHONE_BILL, phoneBillToDisplay);
+        startActivity(intent);
     }
 
     private PhoneBill readPhoneBillFromFile(String customerName) {

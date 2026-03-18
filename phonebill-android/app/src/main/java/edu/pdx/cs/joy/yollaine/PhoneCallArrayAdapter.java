@@ -22,6 +22,27 @@ public class PhoneCallArrayAdapter extends ArrayAdapter<PhoneCall> {
         this.context = context;
     }
 
+    @Override
+    public int getCount() {
+        return phoneCalls.size();
+    }
+
+    @Nullable
+    @Override
+    public PhoneCall getItem(int position) {
+        return phoneCalls.get(position);
+    }
+
+    @Override
+    public int getPosition(@Nullable PhoneCall item) {
+        return phoneCalls.indexOf(item);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
+
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {

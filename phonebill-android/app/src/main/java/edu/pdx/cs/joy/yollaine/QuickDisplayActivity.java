@@ -34,14 +34,28 @@ public class QuickDisplayActivity extends AppCompatActivity {
         });
         Intent intent = this.getIntent();
         String customerName = intent.getStringExtra(MainActivity.CUSTOMER_NAME);
-        loadPhoneBill(customerName);
-
-        if (phoneBill != null) {
-            TextView customerNameTextView = findViewById(R.id.quickDisplayCustomer);
-            customerNameTextView.setText(customerName);
-            ListView phoneCallList = findViewById(R.id.quickDisplayPhoneCallListView);
-            phoneCallList.setAdapter(new PhoneCallArrayAdapter(this, phoneBill.getPhoneCalls()));
+        if (customerName != null) {
+            loadPhoneBill(customerName);
+            if (phoneBill != null) {
+                TextView customerNameTextView = findViewById(R.id.quickDisplayCustomer);
+                customerNameTextView.setText(customerName);
+                ListView phoneCallList = findViewById(R.id.quickDisplayPhoneCallListView);
+                phoneCallList.setAdapter(new PhoneCallArrayAdapter(this, phoneBill.getPhoneCalls()));
+            }
+            return;
         }
+
+        PhoneBill suppliedBill = SearchPhoneBillActivity.phoneBillToDisplay;
+        if (suppliedBill != null) {
+            TextView customerNameText = findViewById(R.id.quickDisplayCustomer);
+            customerNameText.setText(suppliedBill.getCustomer());
+            ListView phoneCallList = findViewById(R.id.quickDisplayPhoneCallListView);
+            phoneCallList.setAdapter(new PhoneCallArrayAdapter(this, suppliedBill.getPhoneCalls()));
+        }
+
+
+
+
     }
 
     public void goBackToMainActivity(View view) {
