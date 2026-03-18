@@ -3,7 +3,7 @@
     <string name="hello_class">Hello Everyone!!</string>
     <string name="launch_calculator">Launch Calculator</string>
     <string name="this_is_a_calculator">This is a calculator!</string>
-    <string name="back_to_main">Back to main</string>
+    <string name="back_to_main">Main Menu</string>
     <string name="record_a_phone_bill_button">Record A Phone Bill</string>
     <string name="phone_bill_title">Phone Bill Tracker</string>
     <string name="phoneBillActivityInstructions">Enter your phone bill information below.</string>
@@ -16,4 +16,5 @@
     <string name="new_phone_bill_created">New phone bill created!</string>
     <string name="add_phone_call_to_existing">Added phone call to phone bill!</string>
     <string name="search_phone_bills">Search Phone Bills</string>
+    <string name="load_phone_bill_failed_test">Unable to load phone bill</string>
 </resources>

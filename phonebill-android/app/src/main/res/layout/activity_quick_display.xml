@@ -7,18 +7,40 @@
     android:layout_height="match_parent"
     tools:context=".QuickDisplayActivity">
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="374dp"
-        android:layout_height="670dp"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="18dp"
-        tools:layout_editor_absoluteY="30dp">
+    <TextView
+        android:id="@+id/quickDisplayCustomer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/load_phone_bill_failed_test"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/quickDisplayPhoneCallListView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center" />
-    </LinearLayout>
+    <ListView
+        android:id="@+id/quickDisplayPhoneCallListView"
+        android:layout_width="380dp"
+        android:layout_height="472dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quickDisplayCustomer" />
+
+    <Button
+        android:id="@+id/quickDisplayReturnToMainMenuButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back_to_main"
+        android:onClick="goBackToMainActivity"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/quickDisplayPhoneCallListView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

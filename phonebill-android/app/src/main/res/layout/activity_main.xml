@@ -47,7 +47,7 @@
             android:id="@+id/launchPhoneBillRecorder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="launchCalculator"
+            android:onClick="launchRecordPhoneBill"
             android:text="@string/record_a_phone_bill_button" />
 
         <Button

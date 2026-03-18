@@ -2,6 +2,11 @@ package edu.pdx.cs.joy.yollaine;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,10 +18,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 
 import edu.pdx.cs.joy.ParserException;
 
 public class QuickDisplayActivity extends AppCompatActivity {
+
+    private PhoneBill phoneBill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +38,25 @@ public class QuickDisplayActivity extends AppCompatActivity {
         });
         Intent intent = this.getIntent();
         String customerName = intent.getStringExtra(MainActivity.CUSTOMER_NAME);
+        loadPhoneBill(customerName);
+
+        if (phoneBill != null) {
+            TextView customerNameTextView = findViewById(R.id.quickDisplayCustomer);
+            customerNameTextView.setText(customerName);
+            ListView phoneCallList = findViewById(R.id.quickDisplayPhoneCallListView);
+            phoneCallList.setAdapter(new PhoneCallArrayAdapter(this, phoneBill.getPhoneCalls()));
+        }
+    }
+
+    public void goBackToMainActivity(View view) {
+        finish();
     }
 
     private void loadPhoneBill(String customerName) {
         File phoneBillFile = new File(getDataDir(), customerName+PhoneBillActivity.PHONEBILL_TXT);
-        PhoneBill parsedPhoneBill = null;
         try {
             TextParser textParser = new TextParser(new FileReader(phoneBillFile));
-            parsedPhoneBill = textParser.parse();
+            phoneBill = textParser.parse();
         } catch (IOException | ParserException ignored) {
         }
     }

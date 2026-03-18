@@ -6,8 +6,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int GET_PHONE_BILL_CODE = 42;
     public static final String CUSTOMER_NAME = "CUSTOMER_NAME";
     private ArrayAdapter<String> phoneBills;
-
     private String customerQuickDisplay;
 
     @Override
@@ -61,9 +58,14 @@ public class MainActivity extends AppCompatActivity {
         sumsListView.setOnItemClickListener(quickDisplay);
     }
 
-    public void launchCalculator(View view) {
+    public void launchRecordPhoneBill(View view) {
         Intent intent = new Intent(this, PhoneBillActivity.class);
         startActivityForResult(intent, GET_PHONE_BILL_CODE);
+    }
+    
+    public void launchSearchPhoneBills(View view) {
+        Intent intent = new Intent(this, SearchPhoneBillActivity.class);
+        startActivity(intent);
     }
 
     public void launchREADME(View view) {
