@@ -9,90 +9,117 @@
 
     <LinearLayout
         android:id="@+id/searchPhoneBillOptionsBlock"
-        android:layout_width="match_parent"
+        android:layout_width="388dp"
         android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="36dp"
         android:layout_weight="2"
         android:orientation="vertical"
-        android:layout_margin="16dp"
-        app:layout_constraintBottom_toTopOf="@id/searchPhoneBillListView"
+        app:layout_constraintBottom_toTopOf="@+id/searchPhoneBillListView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/searchPhoneCallTitle">
 
         <LinearLayout
             android:id="@+id/searchPhoneBillOptionsTop"
-            android:layout_width="408dp"
-            android:layout_height="90dp"
-            android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                android:weightSum="2">
 
                 <TextView
                     android:id="@+id/searchPhoneBillCustomerNameLabel"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:text="@string/customer_name"
-                    android:textAlignment="center" />
+                    android:textAlignment="viewStart" />
 
                 <EditText
                     android:id="@+id/searchPhoneBillCustomerNameField"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:inputType="text"
                     android:text="test" />
             </LinearLayout>
 
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/searchPhoneCallBetweenRangeSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:text="Search between time range" />
+
             <LinearLayout
                 android:id="@+id/searchPhoneBillTimeRangeBlock"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="8">
 
                     <TextView
                         android:id="@+id/textView2"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:text="@string/call_begin_time" />
 
                     <EditText
                         android:id="@+id/searchPhoneCallBeginTimeField"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="4"
                         android:ems="10"
                         android:inputType="datetime" />
+
+                    <Spinner
+                        android:id="@+id/searchBeginTimeSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:weightSum="8">
 
                     <TextView
                         android:id="@+id/textView3"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:text="@string/call_end_time" />
 
                     <EditText
                         android:id="@+id/searchPhoneCallEndTimeField"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="4"
                         android:ems="10"
                         android:inputType="text" />
+
+                    <Spinner
+                        android:id="@+id/searchEndTimeSpinner"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -111,26 +138,25 @@
                 android:text="@string/clear_form" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/submitSearchButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:onClick="searchForPhoneBillAndCalls"
                 android:text="@string/submit" />
         </LinearLayout>
     </LinearLayout>
 
     <ListView
         android:id="@+id/searchPhoneBillListView"
-        android:layout_width="317dp"
-        android:layout_height="523dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_constraintBottom_toTopOf="@id/searchActivityBackToMainButton"
+        android:layout_width="302dp"
+        android:layout_height="350dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="55dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchPhoneBillOptionsBlock" />
+        app:layout_constraintTop_toBottomOf="@+id/searchPhoneBillOptionsBlock" />
 
     <Button
         android:id="@+id/searchActivityBackToMainButton"
@@ -142,5 +168,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchPhoneBillListView" />
+
+    <TextView
+        android:id="@+id/searchPhoneCallTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search for Phone Bills/Phone Calls"
+        app:layout_constraintBottom_toTopOf="@+id/searchPhoneBillOptionsBlock"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

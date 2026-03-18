@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhoneBillActivity">
+    tools:context=".AddPhoneBillActivity">
 
     <TextView
         android:id="@+id/phoneBillAppInstructions"
@@ -103,44 +103,61 @@
             android:id="@+id/beginTimeFieldBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="8">
 
             <TextView
                 android:id="@+id/beginTimeTextView"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/call_begin_time" />
+                android:layout_weight="2"
+                android:text="@string/call_begin_time"
+                android:layout_width="0dp"/>
 
             <EditText
                 android:id="@+id/beginTimeField"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="4"
                 android:ems="10"
                 android:inputType="datetime"
-                android:text="10/2/2004 11:00 pm" />
+                android:text="10/2/2004 11:00" />
+
+            <Spinner
+                android:id="@+id/beginTimeSpinner"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_width="0dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/endTimeFieldBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:weightSum="8">
 
             <TextView
                 android:id="@+id/endTimeTextView"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/call_end_time" />
+                android:layout_weight="2"
+                android:text="@string/call_end_time"
+                android:layout_width="0dp"/>
 
             <EditText
                 android:id="@+id/endTimeField"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="4"
                 android:ems="10"
                 android:inputType="datetime"
-                android:text="10/2/2004 11:34 pm" />
+                android:text="10/20/2004 11:34" />
+
+            <Spinner
+                android:id="@+id/endTimeSpinner"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_width="0dp" />
+
         </LinearLayout>
 
         <LinearLayout

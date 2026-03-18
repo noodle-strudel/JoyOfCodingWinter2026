@@ -1,9 +1,10 @@
 package edu.pdx.cs.joy.yollaine;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,11 +18,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import edu.pdx.cs.joy.ParserException;
 
-public class PhoneBillActivity extends AppCompatActivity {
+public class AddPhoneBillActivity extends AppCompatActivity {
 
     public static final String PHONE_BILL_NAME = "PHONE_BILL_NAME";
     public static final String PHONEBILL_TXT = "-phonebill.txt";
@@ -38,6 +38,15 @@ public class PhoneBillActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        Spinner beginSpinner = findViewById(R.id.beginTimeSpinner);
+        Spinner endSpinner = findViewById(R.id.endTimeSpinner);
+
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.am_pm, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        beginSpinner.setAdapter(spinnerAdapter);
+        endSpinner.setAdapter(spinnerAdapter);
     }
 
     public void goBackToMainActivity(View view) {
@@ -80,9 +89,17 @@ public class PhoneBillActivity extends AppCompatActivity {
 
         EditText beginTimeField = findViewById(R.id.beginTimeField);
         String beginTimeString = beginTimeField.getText().toString();
+        Spinner beginTimeSpinner = findViewById(R.id.beginTimeSpinner);
+
+        String beginTimeAMPM = beginTimeSpinner.getSelectedItem().toString();
+        beginTimeString = beginTimeString+" "+beginTimeAMPM;
 
         EditText endTimeField = findViewById(R.id.endTimeField);
         String endTimeString = endTimeField.getText().toString();
+        Spinner endTimeSpinner = findViewById(R.id.endTimeSpinner);
+
+        String endTimeAMPM = endTimeSpinner.getSelectedItem().toString();
+        endTimeString = endTimeString+" "+endTimeAMPM;
 
 
         // see if a phone bill with the corresponding text file exists

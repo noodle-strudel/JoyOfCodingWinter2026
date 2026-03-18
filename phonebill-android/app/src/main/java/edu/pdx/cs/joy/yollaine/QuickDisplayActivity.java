@@ -3,8 +3,6 @@ package edu.pdx.cs.joy.yollaine;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -16,9 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.lang.reflect.Array;
 
 import edu.pdx.cs.joy.ParserException;
 
@@ -53,7 +49,7 @@ public class QuickDisplayActivity extends AppCompatActivity {
     }
 
     private void loadPhoneBill(String customerName) {
-        File phoneBillFile = new File(getDataDir(), customerName+PhoneBillActivity.PHONEBILL_TXT);
+        File phoneBillFile = new File(getDataDir(), customerName+ AddPhoneBillActivity.PHONEBILL_TXT);
         try {
             TextParser textParser = new TextParser(new FileReader(phoneBillFile));
             phoneBill = textParser.parse();

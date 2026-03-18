@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void launchRecordPhoneBill(View view) {
-        Intent intent = new Intent(this, PhoneBillActivity.class);
+        Intent intent = new Intent(this, AddPhoneBillActivity.class);
         startActivityForResult(intent, GET_PHONE_BILL_CODE);
     }
     
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         FilenameFilter phoneBillExtension = new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.contains(PhoneBillActivity.PHONEBILL_TXT);
+                return name.contains(AddPhoneBillActivity.PHONEBILL_TXT);
             }
         };
 

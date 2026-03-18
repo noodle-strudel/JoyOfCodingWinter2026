@@ -21,7 +21,7 @@
             android:name=".READMEActivity"
             android:exported="false" />
         <activity
-            android:name=".PhoneBillActivity"
+            android:name=".AddPhoneBillActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
