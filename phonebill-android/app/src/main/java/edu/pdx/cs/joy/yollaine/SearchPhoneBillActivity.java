@@ -97,6 +97,11 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
     public void searchForPhoneBillAndCalls(View view) {
         TextView customerNameTextView = findViewById(R.id.searchPhoneBillCustomerNameField);
         String customerName = customerNameTextView.getText().toString();
+        LocalDateTime queriedBeginTime = null;
+        LocalDateTime queriedEndTime = null;
+
+        SwitchCompat timeRangeSwitch = findViewById(R.id.searchPhoneCallBetweenRangeSwitch);
+
         if (customerName.isEmpty()) {
             foundPhoneBills = new PhoneBillArrayAdapter(this, listAllPhoneBills());
             // TODO: if theres no phone bills then there should be a thing that says so
@@ -105,10 +110,6 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
             return;
         }
 
-        LocalDateTime queriedBeginTime = null;
-        LocalDateTime queriedEndTime = null;
-
-        SwitchCompat timeRangeSwitch = findViewById(R.id.searchPhoneCallBetweenRangeSwitch);
         if (timeRangeSwitch.isChecked()) {
             EditText beginTimeField = findViewById(R.id.searchPhoneCallBeginTimeField);
             String beginTimeString = beginTimeField.getText().toString();
@@ -147,7 +148,7 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
 
         PhoneBill customerBill = readPhoneBillFromFile(customerName);
         if (customerBill == null) {
-            // TODO: unable to find phone bill
+            Toast.makeText(this, "Customer not found", Toast.LENGTH_LONG).show();
         } else {
             if (queriedBeginTime != null) {
                 PhoneBill parsedBill = new PhoneBill(customerName);
