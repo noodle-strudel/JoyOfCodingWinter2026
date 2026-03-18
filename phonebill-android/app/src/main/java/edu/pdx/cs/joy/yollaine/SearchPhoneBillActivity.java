@@ -5,8 +5,10 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,14 +19,20 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import edu.pdx.cs.joy.ParserException;
 
 public class SearchPhoneBillActivity extends AppCompatActivity {
 
-    PhoneBillArrayAdapter foundPhoneBills;
+    private PhoneBillArrayAdapter foundPhoneBills;
+    private ListView phoneBillListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +59,14 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
             LinearLayout timeRangeSearchBlock = findViewById(R.id.searchPhoneBillTimeRangeBlock);
             timeRangeSearchBlock.setVisibility(isChecked ? View.VISIBLE : View.GONE);
         });
+
+        this.phoneBillListView = findViewById(R.id.searchPhoneBillListView);
+
+        ArrayList<PhoneCall> testPhoneCalls = new ArrayList<>();
+        testPhoneCalls.add(new PhoneCall("123-456-7890", "456-435-3455", "1/1/2004 1:00 PM", "1/2/2004 2:00 PM"));
+        testPhoneCalls.add(new PhoneCall("123-456-7890", "456-435-3455", "1/1/2004 1:00 PM", "1/2/2004 2:00 PM"));
+
+        this.phoneBillListView.setAdapter(new PhoneCallArrayAdapter(this, testPhoneCalls));
     }
 
     public void goBackToMainActivity(View view) {
@@ -60,43 +76,75 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
     public void searchForPhoneBillAndCalls(View view) {
         TextView customerNameTextView = findViewById(R.id.searchPhoneBillCustomerNameField);
         String customerName = customerNameTextView.getText().toString();
-        String beginTimeString = null;
-        String endTimeString = null;
+        if (customerName.isEmpty()) {
+            foundPhoneBills = new PhoneBillArrayAdapter(this, listAllPhoneBills());
+            // TODO: if theres no phone bills then there should be a thing that says so
+
+            phoneBillListView.setAdapter(foundPhoneBills);
+            return;
+        }
+
+        LocalDateTime queriedBeginTime = null;
+        LocalDateTime queriedEndTime = null;
 
         SwitchCompat timeRangeSwitch = findViewById(R.id.searchPhoneCallBetweenRangeSwitch);
         if (timeRangeSwitch.isChecked()) {
             EditText beginTimeField = findViewById(R.id.searchPhoneCallBeginTimeField);
-            beginTimeString = beginTimeField.getText().toString();
+            String beginTimeString = beginTimeField.getText().toString();
             Spinner beginTimeSpinner = findViewById(R.id.searchBeginTimeSpinner);
 
             String beginTimeAMPM = beginTimeSpinner.getSelectedItem().toString();
             beginTimeString = beginTimeString+" "+beginTimeAMPM;
 
             EditText endTimeField = findViewById(R.id.searchPhoneCallEndTimeField);
-            endTimeString = endTimeField.getText().toString();
+            String endTimeString = endTimeField.getText().toString();
             Spinner endTimeSpinner = findViewById(R.id.searchEndTimeSpinner);
 
             String endTimeAMPM = endTimeSpinner.getSelectedItem().toString();
             endTimeString = endTimeString+" "+endTimeAMPM;
 
-            // input validation
-        }
 
-        if (customerName.isEmpty()) {
+            try {
+                queriedBeginTime = LocalDateTime.parse(beginTimeString, PhoneCall.DATE_TIME_FORMAT);
+            } catch (DateTimeParseException e) {
+                Toast.makeText(this, "Invalid Begin time. "+PhoneCall.DATE_TIME_PARSE_ERROR, Toast.LENGTH_LONG).show();
+                return;
+            }
 
-        } else {
-            PhoneBill customerBill = readPhoneBillFromFile(customerName);
-            if (customerBill == null) {
-                // unable to find phone bill
-            } else {
-                List<PhoneCall> phoneCalls = customerBill.getPhoneCalls();
-                if (beginTimeString != null) {
+            try {
+                queriedEndTime = LocalDateTime.parse(endTimeString, PhoneCall.DATE_TIME_FORMAT);
+            } catch (DateTimeParseException e) {
+                Toast.makeText(this, "Invalid End time. "+PhoneCall.DATE_TIME_PARSE_ERROR, Toast.LENGTH_LONG).show();
+                return;
+            }
 
-                }
+            if (queriedEndTime.isBefore(queriedBeginTime)) {
+                Toast.makeText(this, "End time is before begin time.", Toast.LENGTH_LONG).show();
+                return;
             }
         }
 
+        PhoneBill customerBill = readPhoneBillFromFile(customerName);
+        if (customerBill == null) {
+            // TODO: unable to find phone bill
+        } else {
+            if (queriedBeginTime != null) {
+                PhoneBill parsedBill = new PhoneBill(customerName);
 
+                for (PhoneCall call: customerBill.getPhoneCalls()) {
+                    if (!call.getBeginTime().isBefore(queriedBeginTime) && !call.getBeginTime().isAfter(queriedEndTime)) {
+                        parsedBill.addPhoneCall(call);
+                    }
+                }
+                customerBill = parsedBill;
+            }
+
+            List<PhoneBill> phoneBills = new ArrayList<>();
+            phoneBills.add(customerBill);
+            foundPhoneBills = new PhoneBillArrayAdapter(this, phoneBills);
+            phoneBillListView.setAdapter(foundPhoneBills);
+
+        }
     }
 
     private PhoneBill readPhoneBillFromFile(String customerName) {
@@ -107,5 +155,23 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
         } catch (IOException | ParserException e) {
             return null;
         }
+    }
+
+    private List<PhoneBill> listAllPhoneBills() {
+        File dataDirectory = this.getDataDir();
+
+        FilenameFilter phoneBillExtension = (dir, name) -> name.contains(AddPhoneBillActivity.PHONEBILL_TXT);
+
+        List<PhoneBill> phoneBills = new ArrayList<>();
+
+        for (File phoneBillFile : Objects.requireNonNull(dataDirectory.listFiles(phoneBillExtension))) {
+            try {
+                TextParser textParser = new TextParser(new FileReader(phoneBillFile));
+                phoneBills.add(textParser.parse());
+            } catch (IOException | ParserException ignored) {
+            }
+        }
+
+        return phoneBills;
     }
 }

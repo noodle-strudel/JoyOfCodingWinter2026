@@ -23,9 +23,7 @@ import edu.pdx.cs.joy.ParserException;
 
 public class AddPhoneBillActivity extends AppCompatActivity {
 
-    public static final String PHONE_BILL_NAME = "PHONE_BILL_NAME";
     public static final String PHONEBILL_TXT = "-phonebill.txt";
-    private int sum;
     private PhoneBill phoneBill;
 
     @Override

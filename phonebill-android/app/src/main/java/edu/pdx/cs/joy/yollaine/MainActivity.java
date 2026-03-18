@@ -98,12 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         File dataDirectory = this.getDataDir();
 
-        FilenameFilter phoneBillExtension = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.contains(AddPhoneBillActivity.PHONEBILL_TXT);
-            }
-        };
+        FilenameFilter phoneBillExtension = (dir, name) -> name.contains(AddPhoneBillActivity.PHONEBILL_TXT);
 
         this.phoneBills.clear();
 
