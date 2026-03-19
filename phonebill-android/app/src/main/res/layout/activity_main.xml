@@ -5,15 +5,20 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey"
+    android:background="@color/pink"
     tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/phoneBillAppTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/grey"
         android:text="@string/phone_bill_title"
+        android:textAlignment="center"
         android:textColor="@color/white"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/phoneBills"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,28 +40,35 @@
         android:id="@+id/phoneBillActivitiesBlock"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:orientation="horizontal"
+        android:weightSum="2"
         app:layout_constraintBottom_toTopOf="@id/helpButton"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneBills"
-
-        >
+        app:layout_constraintTop_toBottomOf="@id/phoneBills">
 
         <Button
             android:id="@+id/launchPhoneBillRecorder"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
             android:onClick="launchRecordPhoneBill"
-            android:text="@string/record_a_phone_bill_button" />
+            android:text="@string/record_a_phone_bill_button"
+            android:backgroundTint="@color/red"/>
 
         <Button
             android:id="@+id/launchPhoneBillSearch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:layout_weight="1"
             android:onClick="launchSearchPhoneBills"
-            android:text="@string/search_phone_bills" />
+            android:text="@string/search_phone_bills"
+            android:backgroundTint="@color/red"/>
 
     </LinearLayout>
 
@@ -69,7 +81,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneBillActivitiesBlock" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneBillActivitiesBlock"
+        android:backgroundTint="@color/red"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

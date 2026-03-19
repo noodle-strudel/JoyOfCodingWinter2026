@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, READMEActivity.class);
         startActivity(intent);
     }
-
     public void launchQuickDisplay(View view) {
         Intent intent = new Intent(this, QuickDisplayActivity.class);
         intent.putExtra(CUSTOMER_NAME, customerQuickDisplay);

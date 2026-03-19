@@ -6,4 +6,7 @@
     </style>
 
     <style name="Theme.PhoneBill" parent="Base.Theme.PhoneBill" />
+    <style name="Button.cinnamon" parent="Base.Theme.PhoneBill">
+        <item name="colorAccent">@color/cinnamon</item>
+    </style>
 </resources>

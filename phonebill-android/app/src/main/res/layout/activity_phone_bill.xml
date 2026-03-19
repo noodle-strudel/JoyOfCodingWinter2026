@@ -5,35 +5,41 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/pink"
     tools:context=".AddPhoneBillActivity">
 
     <TextView
         android:id="@+id/phoneBillAppInstructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:layout_marginBottom="52dp"
+        android:background="@color/white"
+        android:padding="20dp"
         android:text="@string/phoneBillActivityInstructions"
+        app:layout_constraintBottom_toTopOf="@+id/phoneBillLayoutBlock"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/phoneBillLayoutBlock"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/phoneBillLayoutBlock"
-        android:layout_width="409dp"
+        android:layout_width="379dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="219dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/backToMainButton"
-        app:layout_constraintTop_toBottomOf="@id/phoneBillAppInstructions"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
 
-        tools:layout_editor_absoluteX="1dp">
+        android:layout_marginBottom="197dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/phoneBillConfirmation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
             android:id="@+id/nameFieldBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@color/white"
             android:orientation="horizontal">
 
             <TextView
@@ -41,15 +47,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/customer_name" />
+                android:text="@string/customer_name"
+                android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/nameField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="text"
-                android:text="test" />
+                android:inputType="text" />
 
         </LinearLayout>
 
@@ -57,6 +63,8 @@
             android:id="@+id/callerFieldBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@color/white"
             android:orientation="horizontal">
 
             <TextView
@@ -64,15 +72,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/caller_s_phone_number" />
+                android:text="@string/caller_s_phone_number"
+                android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/callerField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="phone"
-                android:text="123-456-7890" />
+                android:inputType="phone" />
 
         </LinearLayout>
 
@@ -80,6 +88,8 @@
             android:id="@+id/calleeFieldBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@color/white"
             android:orientation="horizontal">
 
             <TextView
@@ -87,15 +97,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/callee_s_phone_number" />
+                android:text="@string/callee_s_phone_number"
+                android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/calleeField"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:inputType="phone"
-                android:text="123-557-8853" />
+                android:inputType="phone" />
 
         </LinearLayout>
 
@@ -103,15 +113,18 @@
             android:id="@+id/beginTimeFieldBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@color/white"
             android:orientation="horizontal"
-            android:weightSum="8">
+            android:weightSum="9">
 
             <TextView
                 android:id="@+id/beginTimeTextView"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:text="@string/call_begin_time"
-                android:layout_width="0dp"/>
+                android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/beginTimeField"
@@ -119,29 +132,31 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:ems="10"
-                android:inputType="datetime"
-                android:text="10/2/2004 11:00" />
+                android:inputType="datetime" />
 
             <Spinner
                 android:id="@+id/beginTimeSpinner"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_width="0dp"/>
+                android:layout_weight="2" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/endTimeFieldBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="@color/white"
             android:orientation="horizontal"
-            android:weightSum="8">
+            android:weightSum="9">
 
             <TextView
                 android:id="@+id/endTimeTextView"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="3"
                 android:text="@string/call_end_time"
-                android:layout_width="0dp"/>
+                android:textAlignment="center" />
 
             <EditText
                 android:id="@+id/endTimeField"
@@ -149,14 +164,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="4"
                 android:ems="10"
-                android:inputType="datetime"
-                android:text="10/20/2004 11:34" />
+                android:inputType="datetime" />
 
             <Spinner
                 android:id="@+id/endTimeSpinner"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_width="0dp" />
+                android:layout_weight="2" />
 
         </LinearLayout>
 
@@ -169,7 +183,9 @@
                 android:id="@+id/clearFormButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:layout_weight="1"
+                android:backgroundTint="@color/red"
                 android:onClick="clearForm"
                 android:text="@string/clear_form" />
 
@@ -177,7 +193,9 @@
                 android:id="@+id/submitPhoneBillButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="8dp"
                 android:layout_weight="3"
+                android:backgroundTint="@color/red"
                 android:onClick="createPhoneBill"
                 android:text="@string/submit" />
 
@@ -189,12 +207,12 @@
         android:id="@+id/phoneBillConfirmation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:layout_editor_absoluteX="174dp"
-        tools:layout_editor_absoluteY="455dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="44dp"
+        android:background="@color/white"
+        android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/phoneBillLayoutBlock"
-        app:layout_constraintBottom_toTopOf="@id/backToMainButton" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/phoneBillLayoutBlock" />
 
     <Button
         android:id="@+id/backToMainButton"
@@ -202,13 +220,11 @@
         android:layout_height="wrap_content"
         android:onClick="goBackToMainActivity"
         android:text="@string/back_to_main"
-        tools:layout_editor_absoluteX="141dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/phoneBillConfirmation"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-
+        android:backgroundTint="@color/red"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

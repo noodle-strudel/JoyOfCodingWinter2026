@@ -78,20 +78,21 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
 
         this.phoneBillListView.setOnItemClickListener(quickDisplay);
 
-        /*
-
-
-        ArrayList<PhoneCall> testPhoneCalls = new ArrayList<>();
-        testPhoneCalls.add(new PhoneCall("123-456-7890", "456-435-3455", "1/1/2004 1:00 PM", "1/2/2004 2:00 PM"));
-        testPhoneCalls.add(new PhoneCall("123-456-7890", "456-435-3455", "1/1/2004 1:00 PM", "1/2/2004 2:00 PM"));
-
-        this.phoneBillListView.setAdapter(new PhoneCallArrayAdapter(this, testPhoneCalls));
-
-         */
     }
 
     public void goBackToMainActivity(View view) {
         finish();
+    }
+
+    public void clearForm(View view) {
+        EditText customerNameField = findViewById(R.id.searchPhoneBillCustomerNameField);
+        customerNameField.setText("");
+
+        EditText beginTimeField = findViewById(R.id.searchPhoneCallBeginTimeField);
+        beginTimeField.setText("");
+
+        EditText endTimeField = findViewById(R.id.searchPhoneCallEndTimeField);
+        endTimeField.setText("");
     }
 
     public void searchForPhoneBillAndCalls(View view) {
@@ -104,8 +105,6 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
 
         if (customerName.isEmpty()) {
             foundPhoneBills = new PhoneBillArrayAdapter(this, listAllPhoneBills());
-            // TODO: if theres no phone bills then there should be a thing that says so
-
             phoneBillListView.setAdapter(foundPhoneBills);
             return;
         }
@@ -157,6 +156,10 @@ public class SearchPhoneBillActivity extends AppCompatActivity {
                     if (!call.getBeginTime().isBefore(queriedBeginTime) && !call.getBeginTime().isAfter(queriedEndTime)) {
                         parsedBill.addPhoneCall(call);
                     }
+                }
+                if (parsedBill.getPhoneCalls().isEmpty()) {
+                    Toast.makeText(this, "No phone calls found within given range.", Toast.LENGTH_LONG).show();
+                    return;
                 }
                 customerBill = parsedBill;
             }
